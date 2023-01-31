@@ -23,15 +23,16 @@ export default () =>
         restart: ['my.config.[jt]s']
       }),
       AutoImport({
-        imports: ['vue', 'vue-router', 'pinia', '@vueuse/core']
+        imports: ['vue', 'vue-router', 'pinia', '@vueuse/core'],
         // 可以选择auto-import.d.ts生成的位置，使用ts建议设置为'src/auto-import.d.ts'
-        // dts: 'src/auto-import.d.ts',
+        dts: 'types/auto-import.d.ts'
       }),
       Components({
         // dirs: ['src/components'], // 目标文件夹
         // extensions: ['vue', 'tsx'], // 文件类型
-        // dts: 'src/components.d.ts', // 输出文件，里面都是一些import的组件键值对
+        dts: 'types/components.d.ts', // 输出文件，里面都是一些import的组件键值对
         // ui库解析器，也可以自定义，需要安装相关UI库
+        deep: true,
         resolvers: [NaiveUiResolver()]
       })
       // createStyleImportPlugin({
@@ -45,7 +46,7 @@ export default () =>
       }
     },
     server: {
-      port: 8080, //启动端口
+      port: 3333, //启动端口
       hmr: {
         host: '127.0.0.1',
         port: 8080
