@@ -23,14 +23,16 @@ export default () =>
         restart: ['my.config.[jt]s']
       }),
       AutoImport({
+        dirs: ['src/components'],
         imports: ['vue', 'vue-router', 'pinia', '@vueuse/core'],
         // 可以选择auto-import.d.ts生成的位置，使用ts建议设置为'src/auto-import.d.ts'
         dts: 'types/auto-import.d.ts',
+        // eslintrc: { enabled: true },
         resolvers: [NaiveUiResolver()]
       }),
       Components({
-        // dirs: ['src/components'], // 目标文件夹
-        // extensions: ['vue', 'tsx'], // 文件类型
+        dirs: ['src/components'], // 目标文件夹
+        extensions: ['vue', 'tsx'], // 文件类型
         dts: 'types/components.d.ts', // 输出文件，里面都是一些import的组件键值对
         // ui库解析器，也可以自定义，需要安装相关UI库
         deep: true,

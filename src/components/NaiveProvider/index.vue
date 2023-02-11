@@ -1,16 +1,19 @@
 <template>
   <n-config-provider :theme="theme">
-    <slot />
+    <dialog-content>
+      <loading-content>
+        <message-content>
+          <content />
+        </message-content>
+      </loading-content>
+    </dialog-content>
   </n-config-provider>
 </template>
 
 <script lang="ts" setup name="NaiveProvider">
-  // import { darkTheme } from 'naive-ui'
+  import { darkTheme } from 'naive-ui'
   import type { GlobalTheme } from 'naive-ui'
-  // import LoadingContent from './content/LoadingContent.vue'
-  // import DialogContent from './content/DialogContent.vue'
-  // import MessageContent from './content/MessageContent.vue'
-  const theme = ref<GlobalTheme | null>(null)
+  const theme = ref<GlobalTheme | null>(darkTheme)
 </script>
 
 <style scoped></style>

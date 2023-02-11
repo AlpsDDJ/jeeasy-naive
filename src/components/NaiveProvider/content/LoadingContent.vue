@@ -1,6 +1,5 @@
-<template><div /></template>
-<script lang="ts" setup name="LoadingContent">
-  import { useLoadingBar } from 'naive-ui'
-
-  window['$loading'] = useLoadingBar()
-</script>
+<template>
+  <n-loading-bar-provider>
+    <slot />
+  </n-loading-bar-provider>
+</template>

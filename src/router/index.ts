@@ -6,6 +6,7 @@ import { PageEnum } from '@/enums/PageEnum'
 export const RootRoute: RouteRecordRaw = {
   path: '/',
   name: 'Root',
+  alias: '/dashboard',
   redirect: PageEnum.BASE_HOME,
   meta: {
     title: 'Root'
@@ -30,8 +31,8 @@ const router = createRouter({
   scrollBehavior: () => ({ left: 0, top: 0 })
 })
 
-export function setupRouter(app: App) {
-  app.use(router)
+export async function setupRouter(app: App) {
+  await app.use(router)
   // 创建路由守卫
   // createRouterGuards(router)
 }
