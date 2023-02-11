@@ -25,7 +25,8 @@ export default () =>
       AutoImport({
         imports: ['vue', 'vue-router', 'pinia', '@vueuse/core'],
         // 可以选择auto-import.d.ts生成的位置，使用ts建议设置为'src/auto-import.d.ts'
-        dts: 'types/auto-import.d.ts'
+        dts: 'types/auto-import.d.ts',
+        resolvers: [NaiveUiResolver()]
       }),
       Components({
         // dirs: ['src/components'], // 目标文件夹
