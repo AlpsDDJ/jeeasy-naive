@@ -7,12 +7,7 @@ import VueJsx from '@vitejs/plugin-vue-jsx'
 import VueSetupExtend from 'vite-plugin-vue-setup-extend'
 import Components from 'unplugin-vue-components/vite'
 import { NaiveUiResolver } from 'unplugin-vue-components/resolvers'
-// import {
-//     NutuiResolve,
-//     createStyleImportPlugin,
-// } from 'vite-plugin-style-import';
 
-// https://vitejs.dev/config/
 export default () =>
   defineConfig({
     plugins: [

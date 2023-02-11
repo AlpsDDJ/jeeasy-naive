@@ -7,8 +7,11 @@ export {}
 
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
+    AsideMenu: typeof import('./../src/components/ParentLayout/AsideMenu/index.vue')['default']
     Content: typeof import('./../src/components/NaiveProvider/content/index.vue')['default']
     DialogContent: typeof import('./../src/components/NaiveProvider/content/DialogContent.vue')['default']
+    JLayout: typeof import('./../src/components/JLayout/index.vue')['default']
+    Layout: typeof import('./../src/components/Layout/index.vue')['default']
     LoadingContent: typeof import('./../src/components/NaiveProvider/content/LoadingContent.vue')['default']
     MessageContent: typeof import('./../src/components/NaiveProvider/content/MessageContent.vue')['default']
     NaiveProvider: typeof import('./../src/components/NaiveProvider/index.vue')['default']
@@ -16,9 +19,13 @@ declare module '@vue/runtime-core' {
     NConfigProvider: typeof import('naive-ui')['NConfigProvider']
     NDialogProvider: typeof import('naive-ui')['NDialogProvider']
     NLayout: typeof import('naive-ui')['NLayout']
+    NLayoutContent: typeof import('naive-ui')['NLayoutContent']
+    NLayoutHeader: typeof import('naive-ui')['NLayoutHeader']
     NLayoutSider: typeof import('naive-ui')['NLayoutSider']
     NLoadingBarProvider: typeof import('naive-ui')['NLoadingBarProvider']
+    NMenu: typeof import('naive-ui')['NMenu']
     NMessageProvider: typeof import('naive-ui')['NMessageProvider']
+    ParentLayout: typeof import('./../src/components/ParentLayout/index.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
   }

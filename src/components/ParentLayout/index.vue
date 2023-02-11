@@ -7,6 +7,8 @@
   </n-layout>
 </template>
 
-<script lang="ts" setup name="Layout"></script>
+<script lang="ts" setup name="ParentLayout">
+  // 不可谓空
+</script>
 
 <style scoped lang="less"></style>

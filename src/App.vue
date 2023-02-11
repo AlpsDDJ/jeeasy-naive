@@ -5,7 +5,9 @@
 </script>
 
 <template>
-  <router-view />
+  <naive-provider>
+    <router-view />
+  </naive-provider>
 </template>
 
 <style>

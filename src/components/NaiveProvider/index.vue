@@ -1,5 +1,5 @@
 <template>
-  <n-config-provider :theme="theme">
+  <n-config-provider :theme="settingStore.getTheme">
     <dialog-content>
       <loading-content>
         <message-content>
@@ -7,13 +7,14 @@
         </message-content>
       </loading-content>
     </dialog-content>
+    <slot />
   </n-config-provider>
 </template>
 
 <script lang="ts" setup name="NaiveProvider">
-  import { darkTheme } from 'naive-ui'
-  import type { GlobalTheme } from 'naive-ui'
-  const theme = ref<GlobalTheme | null>(darkTheme)
+  import { useSettingStore } from '@/store/modules/setting'
+
+  const settingStore = useSettingStore()
 </script>
 
 <style scoped></style>
