@@ -1,20 +1,27 @@
 import { App } from 'vue'
 import { createRouter, RouteRecordRaw, createWebHashHistory } from 'vue-router'
-import { RedirectRoute } from '@/router/base'
+import { ErrorPageRoute, RedirectRoute } from '@/router/base'
 import { PageEnum } from '@/enums/PageEnum'
+import { Layout } from '@/router/constant'
 
 export const RootRoute: RouteRecordRaw = {
   path: '/',
   name: 'Root',
-  alias: '/dashboard',
   redirect: PageEnum.BASE_HOME,
+  component: Layout,
   meta: {
     title: 'Root'
-  }
+  },
+  children: [
+    {
+      path: PageEnum.BASE_HOME,
+      component: () => import('@/views/dashboard/index.vue')
+    }
+  ]
 }
 
 export const LoginRoute: RouteRecordRaw = {
-  path: '/login',
+  path: PageEnum.BASE_LOGIN,
   name: 'Login',
   component: () => import('@/views/login/index.vue'),
   meta: {
@@ -22,7 +29,7 @@ export const LoginRoute: RouteRecordRaw = {
   }
 }
 
-export const constantRouter: any[] = [LoginRoute, RootRoute, RedirectRoute]
+export const constantRouter: any[] = [LoginRoute, RootRoute, RedirectRoute, ErrorPageRoute]
 
 const router = createRouter({
   history: createWebHashHistory(),

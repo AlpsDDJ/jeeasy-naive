@@ -1,7 +1,9 @@
 <template>
   <n-layout class="layout" :has-sider="true">
     <n-layout-sider>menu</n-layout-sider>
-    <n-layout>main</n-layout>
+    <n-layout>
+      <router-view />
+    </n-layout>
   </n-layout>
 </template>
 
