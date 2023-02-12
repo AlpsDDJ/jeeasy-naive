@@ -11,6 +11,9 @@ declare global {
   interface LayoutState {
     collapsed: boolean
     accordion: boolean
+    headerHeight: number
+    menuMinWidth: number
+    menuWidth: number
   }
 }
 

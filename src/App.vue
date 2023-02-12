@@ -10,16 +10,4 @@
   </naive-provider>
 </template>
 
-<style>
-  #app {
-    color: #2c3e50;
-    margin-top: 60px;
-    text-align: center;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
-
-  #app {
-    font-family: Avenir, Helvetica, Arial, sans-serif;
-  }
-</style>
+<style></style>

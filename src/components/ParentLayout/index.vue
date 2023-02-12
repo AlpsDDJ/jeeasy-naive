@@ -1,14 +1,52 @@
 <template>
   <n-layout class="layout" :has-sider="true">
-    <aside-menu></aside-menu>
+    <n-layout-sider
+      collapse-mode="width"
+      :collapsed-width="appStore.layout.menuMinWidth"
+      :width="appStore.layout.menuWidth"
+      :collapsed="appStore.getCollapsed"
+      :native-scrollbar="false"
+      bordered
+      class="layout-sider"
+    >
+      <layout-logo :collapsed="appStore.getCollapsed" />
+      <aside-menu />
+    </n-layout-sider>
     <n-layout>
-      <router-view />
+      <n-layout-header bordered class="layout-header">
+        <layout-header />
+      </n-layout-header>
+      <n-layout>
+        <router-view />
+      </n-layout>
     </n-layout>
   </n-layout>
 </template>
 
 <script lang="ts" setup name="ParentLayout">
   // 不可谓空
+  import { useAppStore } from '@/store/modules/app'
+
+  const appStore = useAppStore()
 </script>
 
-<style scoped lang="less"></style>
+<style scoped lang="less">
+  .layout {
+    .layout-sider {
+      min-height: 100vh;
+      box-shadow: 2px 0 8px 0 rgb(29 35 41 / 5%);
+      position: relative;
+      z-index: 13;
+      transition: all 0.2s ease-in-out;
+    }
+    .layout-header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 64px;
+      line-height: 64px;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+  }
+</style>

@@ -5,48 +5,48 @@ import { PageEnum } from '@/enums/PageEnum'
 import { Layout } from '@/router/constant'
 // import { LaptopOutline as WorkIcon, LogOutOutline as HomeIcon } from '@vicons/ionicons5'
 
-export const RootRoute: RouteRecordRaw = {
-  path: '/',
-  name: 'Root',
-  redirect: PageEnum.BASE_HOME,
-  meta: {
-    hideMenu: true
-  },
-  children: [
-    {
-      path: PageEnum.BASE_HOME,
-      component: Layout,
-      name: 'Dashboard',
-      redirect: {
-        name: 'Workplace'
-      },
-      meta: {
-        title: ''
-      },
-      children: [
-        {
-          path: 'workplace',
-          name: 'Workplace',
-          component: () => import('@/views/dashboard/workplace.vue'),
-          meta: {
-            title: '工作台'
-            // icon: WorkIcon
-          }
-        },
-        {
-          path: 'console',
-          name: 'Console',
-          component: () => import('@/views/dashboard/console.vue'),
-          meta: {
-            title: '主控台',
-            icon: 'Accessibility'
-          }
-        }
-      ]
+export const RootRoute: RouteRecordRaw[] = [
+  {
+    path: '/',
+    name: 'Root',
+    redirect: PageEnum.BASE_HOME,
+    meta: {
+      hideMenu: true
     }
-  ]
-}
-
+  },
+  {
+    path: PageEnum.BASE_HOME,
+    component: Layout,
+    name: 'Dashboard',
+    redirect: {
+      name: 'Workplace'
+    },
+    meta: {
+      title: 'Dashboard',
+      icon: 'SpeedometerOutline'
+    },
+    children: [
+      {
+        path: 'console',
+        name: 'Console',
+        component: () => import('@/views/dashboard/console.vue'),
+        meta: {
+          title: '主控台',
+          icon: 'HomeOutline'
+        }
+      },
+      {
+        path: 'workplace',
+        name: 'Workplace',
+        component: () => import('@/views/dashboard/workplace.vue'),
+        meta: {
+          title: '工作台',
+          icon: 'DesktopOutline'
+        }
+      }
+    ]
+  }
+]
 export const LoginRoute: RouteRecordRaw = {
   path: PageEnum.BASE_LOGIN,
   name: 'Login',
@@ -57,7 +57,7 @@ export const LoginRoute: RouteRecordRaw = {
   }
 }
 
-export const constantRouter: any[] = [LoginRoute, RootRoute, RedirectRoute, ErrorPageRoute]
+export const constantRouter: any[] = [LoginRoute, ...RootRoute, RedirectRoute, ErrorPageRoute]
 
 const router = createRouter({
   history: createWebHashHistory(),
