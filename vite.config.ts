@@ -6,6 +6,8 @@ import AutoImport from 'unplugin-auto-import/vite'
 import VueJsx from '@vitejs/plugin-vue-jsx'
 import VueSetupExtend from 'vite-plugin-vue-setup-extend'
 import Components from 'unplugin-vue-components/vite'
+import Icons from 'unplugin-icons/vite'
+import IconResolver from 'unplugin-icons/resolver'
 import { NaiveUiResolver } from 'unplugin-vue-components/resolvers'
 
 export default () =>
@@ -31,8 +33,9 @@ export default () =>
         dts: 'types/components.d.ts', // 输出文件，里面都是一些import的组件键值对
         // ui库解析器，也可以自定义，需要安装相关UI库
         deep: true,
-        resolvers: [NaiveUiResolver()]
-      })
+        resolvers: [NaiveUiResolver(), IconResolver({ componentPrefix: 'icon' })]
+      }),
+      Icons({ compiler: 'vue3', scale: 1, defaultClass: 'inline-block', autoInstall: true })
       // createStyleImportPlugin({
       //     resolves: [NutuiResolve()],
       // }),
