@@ -1,5 +1,5 @@
 <template>
-  <n-config-provider :theme="settingStore.getTheme">
+  <n-config-provider :theme="appStore.getTheme">
     <dialog-content>
       <loading-content>
         <message-content>
@@ -12,9 +12,9 @@
 </template>
 
 <script lang="ts" setup name="NaiveProvider">
-  import { useSettingStore } from '@/store/modules/setting'
+  import { useAppStore } from '@/store/modules/app'
 
-  const settingStore = useSettingStore()
+  const appStore = useAppStore()
 </script>
 
 <style scoped></style>

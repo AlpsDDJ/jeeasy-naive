@@ -1,13 +1,15 @@
 import { darkTheme } from 'naive-ui'
 import type { GlobalTheme } from 'naive-ui'
 
-export const useSettingStore = defineStore('setting', {
-  state: (): SettingState => ({
+export const useAppStore = defineStore('app', {
+  state: (): AppState => ({
     siteName: 'Jeeasy Naive',
     darkTheme: false,
     layout: {
-      collapsed: true
-    }
+      collapsed: true,
+      accordion: false
+    },
+    menus: []
   }),
   actions: {
     toggleTheme: (state) => {
@@ -19,6 +21,8 @@ export const useSettingStore = defineStore('setting', {
     getSiteName: (state) => state.siteName,
     getTheme: (state): GlobalTheme | null => {
       return state.darkTheme ? darkTheme : null
-    }
+    },
+    getAccordion: (state) => state.layout.accordion,
+    getMenus: (state) => state.menus
   }
 })

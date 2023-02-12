@@ -3,19 +3,46 @@ import { createRouter, RouteRecordRaw, createWebHashHistory } from 'vue-router'
 import { ErrorPageRoute, RedirectRoute } from '@/router/base'
 import { PageEnum } from '@/enums/PageEnum'
 import { Layout } from '@/router/constant'
+// import { LaptopOutline as WorkIcon, LogOutOutline as HomeIcon } from '@vicons/ionicons5'
 
 export const RootRoute: RouteRecordRaw = {
   path: '/',
   name: 'Root',
   redirect: PageEnum.BASE_HOME,
-  component: Layout,
   meta: {
-    title: 'Root'
+    hideMenu: true
   },
   children: [
     {
       path: PageEnum.BASE_HOME,
-      component: () => import('@/views/dashboard/index.vue')
+      component: Layout,
+      name: 'Dashboard',
+      redirect: {
+        name: 'Workplace'
+      },
+      meta: {
+        title: ''
+      },
+      children: [
+        {
+          path: 'workplace',
+          name: 'Workplace',
+          component: () => import('@/views/dashboard/workplace.vue'),
+          meta: {
+            title: '工作台'
+            // icon: WorkIcon
+          }
+        },
+        {
+          path: 'console',
+          name: 'Console',
+          component: () => import('@/views/dashboard/console.vue'),
+          meta: {
+            title: '主控台',
+            icon: 'Accessibility'
+          }
+        }
+      ]
     }
   ]
 }
@@ -25,7 +52,8 @@ export const LoginRoute: RouteRecordRaw = {
   name: 'Login',
   component: () => import('@/views/login/index.vue'),
   meta: {
-    title: '登录'
+    title: '登录',
+    hideMenu: true
   }
 }
 
