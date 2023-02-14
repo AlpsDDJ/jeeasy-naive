@@ -16,6 +16,7 @@
       <n-layout-header bordered class="layout-header">
         <layout-header />
       </n-layout-header>
+      <tags-view />
       <n-layout>
         <router-view />
       </n-layout>
@@ -28,6 +29,7 @@
   import { useAppStore } from '@/store/modules/app'
 
   const appStore = useAppStore()
+  const headerHeight = ref<string>(`${appStore.layout.headerHeight}px`)
 </script>
 
 <style scoped lang="less">
@@ -43,8 +45,8 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      height: 64px;
-      line-height: 64px;
+      height: v-bind(headerHeight);
+      line-height: v-bind(headerHeight);
       overflow: hidden;
       white-space: nowrap;
     }
