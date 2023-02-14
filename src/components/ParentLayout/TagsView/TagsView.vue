@@ -2,7 +2,16 @@
   <div class="tags-view">
     <n-scrollbar ref="scrollRef" x-scrollable @wheel="scrollHandle($event)">
       <n-space :wrap="false" inline>
-        <n-tag v-for="tag in tags" :key="tag.key" :checked="tag.closable" closable :bordered="false" class="tag">
+        <n-tag
+          v-for="tag in showTags"
+          :key="tag.key"
+          :closable="tags && tags.length > 1"
+          :bordered="false"
+          :type="activeTagKey(tag.key) ? 'info' : ''"
+          class="tag"
+          @click="tagClickHandle(tag.key)"
+          @close="tagCloseHandle(tag.key)"
+        >
           <span>{{ tag.title }}</span>
         </n-tag>
       </n-space>
@@ -11,33 +20,71 @@
 </template>
 
 <script lang="ts" setup name="TagsView">
-  // import { useAppStore } from '@/store/modules/app'
-
   import type { ScrollbarInst } from 'naive-ui'
+  import { remove, sortBy } from 'lodash'
+
+  const router = useRouter()
 
   type Tag = {
-    key: string | number
+    key: string
     title: string
-    closable?: boolean
+    index: number
+    // closable?: boolean
   }
 
   const tags = ref<Tag[]>([])
+  const tagIndex = ref<number>(0)
+  const currTagKey = ref<string>('')
 
-  for (let i = 0; i < 35; i++) {
-    tags.value.push({
-      key: i,
-      title: `菜单 ${i}`
-    })
+  const showTags = computed(() => sortBy(tags.value, 'index'))
+  const activeTagKey = computed(() => (key) => currTagKey.value === key)
+
+  watchEffect(() => {
+    const { fullPath, meta } = router.currentRoute.value
+    currTagKey.value = fullPath
+    const tag = tags.value.find(({ key }) => key === fullPath)
+
+    if (!tag) {
+      const { title = '' } = meta
+      tags.value.push({
+        key: fullPath,
+        title: title as string,
+        index: tagIndex.value++
+      })
+    } else {
+      removeTag(fullPath)
+      tags.value.push(tag)
+    }
+  })
+
+  /**
+   * 移除标签
+   * @param removkKey
+   * @param _route
+   */
+  async function removeTag(removkKey: string, _route = false) {
+    if (removkKey === currTagKey.value) {
+      if (_route) {
+        await router.push(tags.value[tags.value.length - 2].key)
+      }
+      remove(tags.value, ({ key }) => key === removkKey)
+    } else {
+      remove(tags.value, ({ key }) => key === removkKey)
+    }
+  }
+
+  function tagClickHandle(key: string) {
+    router.push(key)
+  }
+
+  function tagCloseHandle(key) {
+    removeTag(key, true)
   }
 
   const scrollRef = ref<ScrollbarInst>()
-
   const scrollHandle = (e) => {
     scrollRef.value!.scrollBy(e.deltaY, 0)
   }
-
-  // const appStore = useAppStore()
-  // const headerHeight = ref<string>(`${appStore.layout.headerHeight / 2}px`)
 </script>
 
 <style lang="less" scoped>
