@@ -13,6 +13,7 @@ declare module '@vue/runtime-core' {
     Icon: typeof import('./../src/components/Icon/index.vue')['default']
     LayoutHeader: typeof import('./../src/components/ParentLayout/LayoutHeader/index.vue')['default']
     LayoutLogo: typeof import('./../src/components/ParentLayout/LayoutLogo/index.vue')['default']
+    LayoutMain: typeof import('./../src/components/ParentLayout/LayoutMain/LayoutMain.vue')['default']
     LoadingContent: typeof import('./../src/components/NaiveProvider/content/LoadingContent.vue')['default']
     MessageContent: typeof import('./../src/components/NaiveProvider/content/MessageContent.vue')['default']
     NaiveProvider: typeof import('./../src/components/NaiveProvider/index.vue')['default']

@@ -12,20 +12,19 @@
       <layout-logo :collapsed="appStore.getCollapsed" />
       <aside-menu />
     </n-layout-sider>
-    <n-layout>
+    <n-layout :native-scrollbar="false">
       <n-layout-header bordered class="layout-header">
         <layout-header />
       </n-layout-header>
       <tags-view />
-      <n-layout>
-        <router-view />
+      <n-layout class="main-content" :native-scrollbar="false">
+        <layout-main />
       </n-layout>
     </n-layout>
   </n-layout>
 </template>
 
 <script lang="ts" setup name="ParentLayout">
-  // 不可谓空
   import { useAppStore } from '@/store/modules/app'
 
   const appStore = useAppStore()
