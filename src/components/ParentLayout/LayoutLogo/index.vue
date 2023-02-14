@@ -1,12 +1,14 @@
 <template>
   <div class="logo no-select">
-    <img :src="Logo" alt="" :class="{ 'mr-2': !appStore.getCollapsed }" />
-    <span v-show="!appStore.getCollapsed" class="logo-title">{{ appStore.getSiteName }}</span>
+    <transition name="scale" mode="out-in" appear>
+      <img :src="Logo" :width="appStore.getCollapsed ? 55 : 120" alt="" :class="{ 'mr-2': !appStore.getCollapsed }" />
+      <!--    <span v-show="!appStore.getCollapsed" class="logo-title">{{ appStore.getSiteName }}</span>-->
+    </transition>
   </div>
 </template>
 
 <script lang="ts" setup name="LayoutLogo">
-  import Logo from '@/assets/logo.png'
+  import Logo from '@/assets/image/logo.png'
   import { useAppStore } from '@/store/modules/app'
   const appStore = useAppStore()
   const headerHeight = ref<string>(`${appStore.layout.headerHeight}px`)
@@ -22,8 +24,6 @@
     overflow: hidden;
     white-space: nowrap;
     img {
-      width: auto;
-      height: 32px;
     }
     .logo-title {
       margin: 0;

@@ -5,12 +5,13 @@
         <n-tag
           v-for="tag in showTags"
           :key="tag.key"
-          :closable="tags && tags.length > 1"
+          :closable="tagClosable"
           :bordered="false"
           :type="activeTagKey(tag.key) ? 'success' : ''"
           class="tag no-select"
           @click="tagClickHandle(tag.key)"
           @close="tagCloseHandle(tag.key)"
+          @mousedown="({ button: type }) => mousedownHandle(type, tag.key)"
         >
           <span>{{ tag.title }}</span>
         </n-tag>
@@ -36,8 +37,12 @@
   const tagIndex = ref<number>(0)
   const currTagKey = ref<string>('')
 
+  // 展示标签 (排序后)
   const showTags = computed(() => sortBy(tags.value, 'index'))
+  // 是否为当前标签
   const activeTagKey = computed(() => (key) => currTagKey.value === key)
+  // 标签是否可关闭
+  const tagClosable = computed(() => tags.value && tags.value.length > 1)
 
   watchEffect(() => {
     const { fullPath, meta } = router.currentRoute.value
@@ -79,6 +84,12 @@
 
   function tagCloseHandle(key) {
     removeTag(key, true)
+  }
+
+  function mousedownHandle(type, key) {
+    if (tagClosable.value && type === 1) {
+      removeTag(key, true)
+    }
   }
 
   const scrollRef = ref<ScrollbarInst>()
