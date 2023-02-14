@@ -1,5 +1,5 @@
 <template>
-  <div class="logo">
+  <div class="logo no-select">
     <img :src="Logo" alt="" :class="{ 'mr-2': !appStore.getCollapsed }" />
     <span v-show="!appStore.getCollapsed" class="logo-title">{{ appStore.getSiteName }}</span>
   </div>

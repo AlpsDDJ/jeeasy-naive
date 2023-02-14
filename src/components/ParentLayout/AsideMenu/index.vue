@@ -25,9 +25,11 @@
       key: route.name,
       label: () =>
         isNotNull(route.children) ? (
-          <span>{route.meta?.title}</span>
+          <span class="no-select">{route.meta?.title}</span>
         ) : (
-          <router-link to={route.path}>{route.meta?.title}</router-link>
+          <router-link to={route.path}>
+            <span class="no-select">{route.meta?.title}</span>
+          </router-link>
         ),
       icon: () => route.meta?.icon && <icon iconName={route.meta.icon} />
     } as MenuMixedOption

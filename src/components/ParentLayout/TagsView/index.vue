@@ -7,8 +7,8 @@
           :key="tag.key"
           :closable="tags && tags.length > 1"
           :bordered="false"
-          :type="activeTagKey(tag.key) ? 'info' : ''"
-          class="tag"
+          :type="activeTagKey(tag.key) ? 'success' : ''"
+          class="tag no-select"
           @click="tagClickHandle(tag.key)"
           @close="tagCloseHandle(tag.key)"
         >
@@ -112,6 +112,7 @@
         display: none;
       }
       &:hover {
+        cursor: pointer;
         .n-base-close {
           display: block;
         }

@@ -1,9 +1,10 @@
 import 'vue-global-api'
 import { createApp } from 'vue'
 import App from './App.vue'
-// import NaiveProvider from '@/components/NaiveProvider/index.vue'
 import router, { setupRouter } from '@/router'
 import { setupStore } from '@/store'
+
+import '@/assets/style/index.less'
 
 // createApp(App).mount('#app')
 

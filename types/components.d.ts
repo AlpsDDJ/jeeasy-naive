@@ -16,6 +16,8 @@ declare module '@vue/runtime-core' {
     LoadingContent: typeof import('./../src/components/NaiveProvider/content/LoadingContent.vue')['default']
     MessageContent: typeof import('./../src/components/NaiveProvider/content/MessageContent.vue')['default']
     NaiveProvider: typeof import('./../src/components/NaiveProvider/index.vue')['default']
+    NBreadcrumb: typeof import('naive-ui')['NBreadcrumb']
+    NBreadcrumbItem: typeof import('naive-ui')['NBreadcrumbItem']
     NButton: typeof import('naive-ui')['NButton']
     NConfigProvider: typeof import('naive-ui')['NConfigProvider']
     NDialogProvider: typeof import('naive-ui')['NDialogProvider']
@@ -34,6 +36,6 @@ declare module '@vue/runtime-core' {
     ParentLayout: typeof import('./../src/components/ParentLayout/index.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
-    TagsView: typeof import('./../src/components/ParentLayout/TagsView/TagsView.vue')['default']
+    TagsView: typeof import('./../src/components/ParentLayout/TagsView/index.vue')['default']
   }
 }

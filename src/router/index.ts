@@ -23,7 +23,7 @@ export const RootRoute: RouteRecordRaw[] = [
     },
     meta: {
       title: 'Dashboard',
-      icon: 'SpeedometerOutline'
+      icon: 'HomeOutline'
     },
     children: [
       {
@@ -32,7 +32,7 @@ export const RootRoute: RouteRecordRaw[] = [
         component: () => import('@/views/dashboard/console.vue'),
         meta: {
           title: '主控台',
-          icon: 'HomeOutline'
+          icon: 'SpeedometerOutline'
         }
       },
       {
