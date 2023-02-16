@@ -4,6 +4,8 @@ import App from './App.vue'
 import router, { setupRouter } from '@/router'
 import { setupStore } from '@/store'
 
+import '@/assets/style/tailwind.css'
+import 'animate.css/animate.min.css'
 import '@/assets/style/index.less'
 
 // createApp(App).mount('#app')

@@ -1,7 +1,12 @@
 <template>
   <div class="logo no-select">
     <transition name="scale" mode="out-in" appear>
-      <img :src="Logo" :width="appStore.getCollapsed ? 55 : 120" alt="" :class="{ 'mr-2': !appStore.getCollapsed }" />
+      <img
+        :src="Logo"
+        :width="appStore.getCollapsed ? 55 : 120"
+        alt="jeeasy"
+        :class="{ 'mr-2': !appStore.getCollapsed }"
+      />
       <!--    <span v-show="!appStore.getCollapsed" class="logo-title">{{ appStore.getSiteName }}</span>-->
     </transition>
   </div>

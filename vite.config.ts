@@ -34,6 +34,15 @@ export default () =>
         resolvers: [NaiveUiResolver()]
       })
     ],
+    css: {
+      preprocessorOptions: {
+        less: {
+          modifyVars: {},
+          javascriptEnabled: true,
+          additionalData: '@import "src/assets/style/var.less";'
+        }
+      }
+    },
     resolve: {
       //设置别名
       alias: {
