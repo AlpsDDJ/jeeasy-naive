@@ -15,6 +15,7 @@
     "jsxFragmentFactory": "Fragment",
     "sourceMap": true,
     "resolveJsonModule": true,
+    "experimentalDecorators": true,
     "isolatedModules": true,
     "esModuleInterop": true,
     "lib": [

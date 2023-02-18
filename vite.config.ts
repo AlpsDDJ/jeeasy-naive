@@ -18,7 +18,7 @@ export default () =>
         restart: ['my.config.[jt]s']
       }),
       AutoImport({
-        dirs: ['src/components'],
+        dirs: ['src/components', 'src/hooks/**'],
         imports: ['vue', 'vue-router', 'pinia', '@vueuse/core'],
         // 可以选择auto-import.d.ts生成的位置，使用ts建议设置为'src/auto-import.d.ts'
         dts: 'types/auto-import.d.ts',
@@ -46,7 +46,8 @@ export default () =>
     resolve: {
       //设置别名
       alias: {
-        '@': path.resolve(__dirname, 'src')
+        '@': path.resolve(__dirname, 'src'),
+        '/#/': path.resolve(__dirname, 'types')
       }
     },
     server: {
