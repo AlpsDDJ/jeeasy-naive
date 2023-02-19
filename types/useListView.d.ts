@@ -1,6 +1,7 @@
 declare global {
-  type ListView<T extends IBaseModel | unknown> = {
-    records: Array<T>
+  type ListView<T extends IBaseModel> = {
+    records: T[]
+    loading: boolean
     page: Page
   }
 

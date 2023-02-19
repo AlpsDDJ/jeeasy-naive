@@ -6,11 +6,11 @@ const useModel = <T extends BaseModel>(instance: BaseModelConstructor<T>) => {
   return reactive<ModelState<T>>(cloneDeep(instance.state) as ModelState<T>)
 }
 
-type BaseModelConstructor<T> = typeof BaseModel & { new (...args: any[]): T }
+export type BaseModelConstructor<T> = typeof BaseModel & { new (...args: any[]): T }
 
 const defaultModelState = { keys: {}, labels: {}, api: '', name: '', perms: '', fields: {} }
 
-abstract class BaseModel implements IBaseModel {
+class BaseModel implements IBaseModel {
   constructor() {}
 
   @Field.Hidden()
