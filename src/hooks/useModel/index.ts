@@ -17,8 +17,9 @@ abstract class BaseModel implements IBaseModel {
   createTime?: string
   updateTime?: string
 
-  static label: ModelLabel<BaseModel>
-  static field: ModelField<BaseModel>
+  // static label: ModelLabel<BaseModel>
+  // static field: ModelField<BaseModel>
+  static state: ModelState<BaseModel>
 }
 
 export { useModel, Model, Field, BaseModel }

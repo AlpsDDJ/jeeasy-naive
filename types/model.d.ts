@@ -16,7 +16,7 @@ declare global {
 
   type FieldOption = {
     label?: string
-    field?: string
+    // field?: string
   }
 }
 
