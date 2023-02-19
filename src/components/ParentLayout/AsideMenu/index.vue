@@ -40,7 +40,7 @@
   }
 
   const createMenus = (routes: RouteRecordRaw[]): MenuMixedOption[] => {
-    return routes.filter(({ meta }) => !meta?.hideMenu).map((item) => getOption(item))
+    return routes.filter((route) => !route.meta?.hideMenu).map((item) => getOption(item))
   }
 
   onMounted(() => {

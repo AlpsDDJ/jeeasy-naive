@@ -19,5 +19,7 @@
   }
   .router_animate-leave-active {
     animation: slideOutLeft 0.3s;
+    // 防止切换过程中页面上下抖动
+    display: none;
   }
 </style>

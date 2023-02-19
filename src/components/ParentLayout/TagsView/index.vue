@@ -100,8 +100,9 @@
 
 <style lang="less" scoped>
   .tags-view {
-    padding: 6px 10px;
+    padding: @spacing-y @spacing-x;
     .tag {
+      height: @router-tag-height;
       display: inline-flex;
       border-radius: 4px;
       align-items: center;

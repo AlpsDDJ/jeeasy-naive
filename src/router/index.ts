@@ -3,7 +3,7 @@ import { createRouter, RouteRecordRaw, createWebHashHistory } from 'vue-router'
 import { ErrorPageRoute, RedirectRoute } from '@/router/base'
 import { PageEnum } from '@/enums/PageEnum'
 import { Layout } from '@/router/constant'
-// import { LaptopOutline as WorkIcon, LogOutOutline as HomeIcon } from '@vicons/ionicons5'
+import { SystemRouter } from '@/router/modules/system'
 
 export const RootRoute: RouteRecordRaw[] = [
   {
@@ -27,7 +27,7 @@ export const RootRoute: RouteRecordRaw[] = [
     },
     children: [
       {
-        path: 'console',
+        path: '/dashboard/console',
         name: 'Console',
         component: () => import('@/views/dashboard/console.vue'),
         meta: {
@@ -36,7 +36,7 @@ export const RootRoute: RouteRecordRaw[] = [
         }
       },
       {
-        path: 'workplace',
+        path: '/dashboard/workplace',
         name: 'Workplace',
         component: () => import('@/views/dashboard/workplace.vue'),
         meta: {
@@ -47,6 +47,7 @@ export const RootRoute: RouteRecordRaw[] = [
     ]
   }
 ]
+
 export const LoginRoute: RouteRecordRaw = {
   path: PageEnum.BASE_LOGIN,
   name: 'Login',
@@ -57,7 +58,7 @@ export const LoginRoute: RouteRecordRaw = {
   }
 }
 
-export const constantRouter: any[] = [LoginRoute, ...RootRoute, RedirectRoute, ErrorPageRoute]
+export const constantRouter: RouteRecordRaw[] = [LoginRoute, ...RootRoute, SystemRouter, RedirectRoute, ErrorPageRoute]
 
 const router = createRouter({
   history: createWebHashHistory(),

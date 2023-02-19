@@ -10,4 +10,4 @@
   </naive-provider>
 </template>
 
-<style></style>
+<style lang="less"></style>

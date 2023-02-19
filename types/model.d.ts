@@ -1,23 +1,34 @@
-declare global {
-  type Consturctor = { new (...args: any[]): {} }
-  type BaseModelConstructor<T> = IBaseModel & { new (...args: any[]): T }
+import { DataTableColumn } from 'naive-ui'
 
-  interface IBaseModel extends Record<string, any> {
+declare global {
+  interface IBaseModel extends InternalRowData {
     id?: string
   }
 
-  type ModelLabel<T extends IBaseModel> = { [key in keyof Required<T>]: string } | Record<string, string>
-  type ModelField<T extends IBaseModel> = { [key in keyof Required<T>]: string } | Record<string, string>
+  type ModelStateRequiredAttr<T extends IBaseModel, P> = { [key in keyof Required<T>]: P } | Record<string, P>
+  type ModelStatePartialAttr<T extends IBaseModel, P> = { [key in keyof Partial<T>]: P } | Record<string, P>
+
+  type ModelLabel<T extends IBaseModel> = ModelStateRequiredAttr<T, string>
+  type ModelField<T extends IBaseModel> = ModelStateRequiredAttr<T, string>
 
   type ModelState<T extends IBaseModel> = {
-    field: ModelField<T>
-    label: ModelLabel<T>
+    keys: ModelField<T>
+    labels: ModelLabel<T>
+    name: string
+    desc?: string
+    api: string
+    perms: string | boolean
+
+    fields: ModelStatePartialAttr<T, FieldOption<T>>
+    // columns: FieldOption<T>
   }
 
-  type FieldOption = {
+  type FieldOpt<T extends InternalRowData> = {
     label?: string
-    // field?: string
+    $type$?: T
   }
+
+  type FieldOption<T extends InternalRowData> = FieldOpt | DataTableColumn<T>
 }
 
 export default {}

@@ -1,23 +1,28 @@
-export default () => {
-  return <T extends Consturctor>(constructor: T) => {
-    // console.log('model ---> ', 111)
-    // const field = constructor.prototype.field
-    // console.log(field)
-    // const constructorTemp = constructor as BaseModel
-    // const props = constructor.prototype
-    // console.log('props = ', props)
-    // const obj = new constructor()
+type ModelParams<T extends IBaseModel> = Partial<Omit<ModelState<T>, 'labels' | 'keys'>>
 
-    // constructor['field'] = {}
-    // constructor['label'] = {}
-    // Object.keys(obj).forEach((key) => {
-    //   constructor['field'][key] = key
-    //   constructor['label'][key] = key
-    // })
-
-    // constructorTemp['field'] = Object.keys(obj).map((item) => ({ [item]: item }))
-    // constructorTemp['label'] = Object.keys(obj).map((item) => ({ [item]: item }))
-
-    return constructor
+const Model = <T extends InternalRowData>(parmas: ModelParams<T> = {}) => {
+  const classDecorator: ClassDecorator = <T extends Function>(constructor: T) => {
+    return setModelState(constructor, parmas)
   }
+  return classDecorator
 }
+
+Model.Api = (api: string) => {
+  return (<T extends Function>(constructor: T) => {
+    return setModelState(constructor, { api })
+  }) as ClassDecorator
+}
+
+Model.Perms = (perms: string) => {
+  return (<T extends Function>(constructor: T) => {
+    return setModelState(constructor, { perms })
+  }) as ClassDecorator
+}
+
+function setModelState<T extends Function>(constructor: T, state: ModelParams<T>) {
+  const modelName = state.name || constructor.name
+  constructor['state'] = { ...constructor['state'], ...state, name: modelName } as ModelState<T>
+  return constructor
+}
+
+export default Model

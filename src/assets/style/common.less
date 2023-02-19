@@ -1,3 +1,5 @@
+@import "./view/list-view.less";
+
 #app,
 body,
 html {
@@ -138,5 +140,5 @@ img, video{
 }
 .main-content{
   min-width: 100%;
-  min-height: calc(100vh - 104px);
+  min-height: calc(100vh - @header-height - @spacing-y * 2 - @router-tag-height);
 }
