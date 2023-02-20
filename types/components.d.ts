@@ -7,6 +7,7 @@ export {}
 
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
+    ActionColumn: typeof import('./../src/components/TableExt/components/ActionColumn.vue')['default']
     AsideMenu: typeof import('./../src/components/ParentLayout/AsideMenu/index.vue')['default']
     Content: typeof import('./../src/components/NaiveProvider/content/index.vue')['default']
     DialogContent: typeof import('./../src/components/NaiveProvider/content/DialogContent.vue')['default']

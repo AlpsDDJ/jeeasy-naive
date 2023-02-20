@@ -19,7 +19,7 @@ export const RootRoute: RouteRecordRaw[] = [
     component: Layout,
     name: 'Dashboard',
     redirect: {
-      name: 'Workplace'
+      name: 'Console'
     },
     meta: {
       title: 'Dashboard',

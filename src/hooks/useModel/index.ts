@@ -3,7 +3,7 @@ import Field from './decorator/field'
 import { cloneDeep } from 'lodash'
 
 const useModel = <T extends BaseModel>(instance: BaseModelConstructor<T>) => {
-  return reactive<ModelState<T>>(cloneDeep(instance.state) as ModelState<T>)
+  return cloneDeep(instance.state) as ModelState<T>
 }
 
 export type BaseModelConstructor<T> = typeof BaseModel & { new (...args: any[]): T }
