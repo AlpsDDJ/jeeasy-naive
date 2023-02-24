@@ -1,6 +1,7 @@
 import { BaseModel, BaseModelConstructor } from '@/hooks/useModel'
-import { DataTableColumn } from 'naive-ui'
-import { renderActions } from '@/hooks/useListView/render/renderActions'
+import { DataTableColumn, DataTableInst } from 'naive-ui'
+import ActionColumn from '@/components/TableExt/components/ActionColumn.vue'
+import { h } from 'vue'
 
 const defaultPage: Page = {
   pageNo: 1,
@@ -8,13 +9,15 @@ const defaultPage: Page = {
   pages: 0,
   total: 0
 }
-const createDefaultState = <T extends IBaseModel>(): ListView<T> => ({
-  records: [],
-  loading: false,
-  page: defaultPage
-})
 
 export const useListView = <T extends BaseModel>(instance: BaseModelConstructor<T>, option: Record<any, any> = {}) => {
+  const createDefaultState = <T extends IBaseModel>(): ListView<T> => ({
+    records: [],
+    loading: false,
+    page: defaultPage
+  })
+  const tableRef = ref<DataTableInst>()
+
   const modelState: ModelState<T> = useModel<T>(instance)
   const { actions } = option
   // const { fields } = modelState
@@ -22,12 +25,33 @@ export const useListView = <T extends BaseModel>(instance: BaseModelConstructor<
   // const columns = computed(() => {
   //   return Object.values(fields) as DataTableColumn[]
   // })
+  const handleDelete = (row, index) => {
+    console.log(`删除第${index} 行，id = ${row.id}`)
+  }
+  const handleEdit = (row, index) => {
+    console.log(`编辑第${index} 行，id = ${row.id}`)
+  }
+  // const actionHandles = {
+  //   'action:delete': handleDelete,
+  //   'action:edit': handleEdit
+  // }
 
   if (actions !== false) {
     modelState.fields['acions'] = {
       title: '操作',
-      render: (row, index) => renderActions(actions, row, index)
+      key: 'action'
     } as DataTableColumn
+    if (actions === 'default') {
+      modelState.fields['actions'].render = (row, index) => (
+        <ActionColumn
+          actions={actions}
+          row={row}
+          index={index}
+          onAction:edit={handleEdit}
+          onAction:delete={handleDelete}
+        ></ActionColumn>
+      )
+    }
   }
 
   const fields = reactive(modelState.fields)
@@ -69,6 +93,12 @@ export const useListView = <T extends BaseModel>(instance: BaseModelConstructor<
     }, 500)
   }
 
+  const formRef = ref()
+
+  const formState = reactive({
+    showForm: false
+  })
+
   onMounted(() => {
     loadData()
     setTimeout(() => {
@@ -82,8 +112,11 @@ export const useListView = <T extends BaseModel>(instance: BaseModelConstructor<
 
   return {
     listState,
+    tableRef,
     loadData,
-    columns
+    columns,
+    formState,
+    formRef
     // dataTabelProps
   }
 }

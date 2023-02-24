@@ -1,32 +1,49 @@
 <template>
   <n-space>
-    <n-button
-      v-for="{ action, btnStyle = 'button', btnType = 'default', text, handle } in actionOption"
-      :key="action"
-      :text="btnStyle === 'button'"
-      :type="btnType"
-      @click="handle ? handle(row, index) : $emit(`action:${action}`, row, index)"
-    >
-      {{ text }}
-    </n-button>
+    <template v-for="opt in actionOptions" :key="opt.action">
+      <n-button
+        v-if="opt.show"
+        :text="(opt.btnStyle || 'link') !== 'button'"
+        :type="opt.btnType"
+        size="small"
+        :secondary="opt.btnStyle === 'button'"
+        :disabled="typeof opt.disabled === 'boolean' ? opt.disabled : opt.disabled(row, index)"
+        @click="opt.handle ? opt.handle(row, index) : $emit(`action:${opt.action}`, row, index)"
+      >
+        {{ opt.text }}
+      </n-button>
+    </template>
   </n-space>
 </template>
 
 <script lang="ts" setup name="ActionColumn">
   import { isNotNull } from '@/utils/tools'
-  import { indexOf } from 'lodash'
 
   type ButonType = 'default' | 'tertiary' | 'primary' | 'success' | 'info' | 'warning' | 'error'
   type ActionType = 'edit' | 'delete' | 'view' | 'add' | string
 
+  type ColAttrFn<T> =
+    | T
+    | {
+        (row: any, index: number): T
+      }
+
   type ActionOption = {
     action: ActionType
+    text: string
+    handle?: (row: any, index: number) => void
     btnType?: ButonType
     btnStyle?: 'button' | 'link'
     icon?: string
     autoShow?: boolean
-    text: string
-    handle?: (row: any, index: number) => void
+    disabled?: ColAttrFn<boolean>
+    show?: ColAttrFn<boolean>
+  }
+
+  type ActionColumnProps = {
+    actions?: ActionOption[] | ActionType[] | boolean
+    row: any
+    index: number
   }
 
   // function actionHandle(action, row, index) {}
@@ -36,10 +53,10 @@
       action: 'view',
       text: '查看',
       // btnType: 'primary',
-      autoShow: true,
-      handle: (row, index) => {
-        console.log(`action edit row${index}:`, row)
-      }
+      autoShow: false
+      // handle: (row, index) => {
+      //   console.log(`action edit row${index}:`, row)
+      // }
     },
     {
       action: 'edit',
@@ -54,40 +71,39 @@
       action: 'delete',
       text: '删除',
       btnType: 'error',
-      autoShow: true,
-      handle: (row, index) => {
-        console.log(`action delete row${index}:`, row)
-      }
+      autoShow: true
+      // handle: (row, index) => {
+      //   console.log(`action delete row${index}:`, row)
+      // }
     }
   ]
 
-  type ActionColumnProps = {
-    actions?: ActionOption[] | ActionType[] | boolean
-    row: any
-    index: number
-  }
   const props = defineProps<ActionColumnProps>()
   const { actions = ref(true), row, index } = toRefs(props)
-  console.log('actions ---> ', actions.value)
-  const actionOption = computed(() => {
-    // const options: ActionOption[] = []
 
+  const actionOptions = computed<ActionOption[]>(() => {
+    const options: ActionOption[] = []
     switch (typeof actions.value) {
       case 'object':
         if (isNotNull(actions.value)) {
           if (typeof actions.value[0] === 'string') {
-            return defauleActions.filter(({ action }) => indexOf(actions.value as ActionType[], action))
+            actions.value.forEach((act) => {
+              const option = defauleActions.find(({ action }) => act == action) || { action: act, text: act }
+              if (option) {
+                options.push(option)
+              }
+            })
           } else {
-            return actions.value
+            options.push(...(actions.value as ActionOption[]))
           }
         }
         break
       default:
         if (actions.value !== false) {
-          return defauleActions.filter(({ autoShow = false }) => autoShow)
+          options.push(...defauleActions.filter(({ autoShow = false }) => autoShow))
         }
     }
-    return []
+    return options.map(({ disabled = false, show = true, ...opt }) => ({ ...opt, disabled, show }))
   })
 
   // const emit = defineEmits(actions!.value!.map(({ action }) => action))
