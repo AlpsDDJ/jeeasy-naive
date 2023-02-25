@@ -7,10 +7,11 @@ export {}
 
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
-    ActionColumn: typeof import('./../src/components/TableExt/components/ActionColumn.vue')['default']
+    ActionColumn: typeof import('./../src/components/ExtTable/components/ActionColumn.vue')['default']
     AsideMenu: typeof import('./../src/components/ParentLayout/AsideMenu/index.vue')['default']
     Content: typeof import('./../src/components/NaiveProvider/content/index.vue')['default']
     DialogContent: typeof import('./../src/components/NaiveProvider/content/DialogContent.vue')['default']
+    ExtTable: typeof import('./../src/components/ExtTable/index.vue')['default']
     Icon: typeof import('./../src/components/Icon/index.vue')['default']
     LayoutHeader: typeof import('./../src/components/ParentLayout/LayoutHeader/index.vue')['default']
     LayoutLogo: typeof import('./../src/components/ParentLayout/LayoutLogo/index.vue')['default']

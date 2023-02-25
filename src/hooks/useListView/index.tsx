@@ -1,7 +1,7 @@
+import { h } from 'vue'
 import { BaseModel, BaseModelConstructor } from '@/hooks/useModel'
 import { DataTableColumn, DataTableInst } from 'naive-ui'
-import ActionColumn from '@/components/TableExt/components/ActionColumn.vue'
-import { h } from 'vue'
+import ActionColumn from '@/components/ExtTable/components/ActionColumn.vue'
 
 const defaultPage: Page = {
   pageNo: 1,
@@ -17,9 +17,10 @@ export const useListView = <T extends BaseModel>(instance: BaseModelConstructor<
     page: defaultPage
   })
   const tableRef = ref<DataTableInst>()
+  const extRef = ref()
 
   const modelState: ModelState<T> = useModel<T>(instance)
-  const { actions } = option
+  const { actions = 'default' } = option
   // const { fields } = modelState
 
   // const columns = computed(() => {
@@ -30,6 +31,30 @@ export const useListView = <T extends BaseModel>(instance: BaseModelConstructor<
   }
   const handleEdit = (row, index) => {
     console.log(`编辑第${index} 行，id = ${row.id}`)
+    showForm(row, FormType.EDIT)
+  }
+
+  enum FormType {
+    // EDIT = 'edit',
+    // ADD = 'add',
+    // VIEW = 'view'
+    ADD,
+    EDIT,
+    VIEW
+  }
+
+  // interface PropertyInterface<T> extends Record<T, boolean> {}
+  type EnumTypes<T extends string | number> = keyof { [k in T]: unknown }
+
+  // type FormShowType = EnumTypes<FormShowTypeEnum>
+
+  // const formActive = ref(false)
+
+  const showForm = (formData: any, type: EnumTypes<FormType>) => {
+    formState.active = true
+    // console.log(formData)
+    console.log('FormShowType ---> ', type)
+    console.log('FormShowType ---> ', type === FormType.ADD)
   }
   // const actionHandles = {
   //   'action:delete': handleDelete,
@@ -39,19 +64,34 @@ export const useListView = <T extends BaseModel>(instance: BaseModelConstructor<
   if (actions !== false) {
     modelState.fields['acions'] = {
       title: '操作',
-      key: 'action'
+      key: 'action',
+      fixed: 'right',
+      width: 100,
+      render:
+        actions === 'default'
+          ? (row, index) => (
+              <ActionColumn
+                actions={actions}
+                row={row}
+                index={index}
+                onAction:edit={handleEdit}
+                onAction:delete={handleDelete}
+              ></ActionColumn>
+            )
+          : undefined
     } as DataTableColumn
-    if (actions === 'default') {
-      modelState.fields['actions'].render = (row, index) => (
-        <ActionColumn
-          actions={actions}
-          row={row}
-          index={index}
-          onAction:edit={handleEdit}
-          onAction:delete={handleDelete}
-        ></ActionColumn>
-      )
-    }
+    // console.log('modelState.fields.actions ----> ', modelState.fields['actions'])
+    // if (actions === 'default') {
+    //   modelState.fields['actions'].render = (row, index) => (
+    //     <ActionColumn
+    //       actions={actions}
+    //       row={row}
+    //       index={index}
+    //       onAction:edit={handleEdit}
+    //       onAction:delete={handleDelete}
+    //     ></ActionColumn>
+    //   )
+    // }
   }
 
   const fields = reactive(modelState.fields)
@@ -90,16 +130,18 @@ export const useListView = <T extends BaseModel>(instance: BaseModelConstructor<
         listState.records.push(record)
       }
       listState.loading = false
-    }, 500)
+    }, 1500)
   }
 
   const formRef = ref()
 
   const formState = reactive({
-    showForm: false
+    active: false
   })
 
   onMounted(() => {
+    // showForm({}, FormType.ADD)
+    tableRef.value = extRef.value!.tableRef
     loadData()
     setTimeout(() => {
       // columns[0].username = 'new username'
@@ -113,10 +155,12 @@ export const useListView = <T extends BaseModel>(instance: BaseModelConstructor<
   return {
     listState,
     tableRef,
+    extRef,
     loadData,
     columns,
     formState,
-    formRef
+    formRef,
+    showForm
     // dataTabelProps
   }
 }

@@ -1,5 +1,5 @@
 import { h } from 'vue'
-import ActionColumn from '@/components/TableExt/components/ActionColumn.vue'
+import ActionColumn from '@/components/ExtTable/components/ActionColumn.vue'
 // import { NButton, NSpace } from 'naive-ui'
 
 export function renderActions(actions = true, row: any, index: number) {

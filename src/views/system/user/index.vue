@@ -2,27 +2,28 @@
   <div class="list-view">
     <div class="data-table-query"></div>
     <div class="data-table-content">
-      <n-data-table ref="tableRef" :columns="columns" :data="records" :loading="loading" min-height="200">
-        <template #loading>
+      <ext-table ref="extRef" :columns="columns" :data="records" :loading="loading" min-height="200">
+        <!--        <template ##action="row, index">
           <ActionColumn
-            :row="{ id: '1' }"
-            :index="0"
-            :actions="['add', 'delete']"
+            :row="row"
+            :index="index"
+            :actions="['view', 'delete']"
             @action:delete="editHandle"
-            @action:add="addHandle"
+            @action:view="addHandle"
           />
         </template>
-      </n-data-table>
+        <template ##age> 00000 </template>-->
+      </ext-table>
     </div>
     <div class="data-form">
-      <n-drawer v-model:show="showForm">
-        <n-form ref="formRef">
+      <n-drawer v-model:show="formState.active">
+        <!--        <n-form ref="formRef">
           <n-form-item-row span="4">
             <n-form-item-gi span="2">123</n-form-item-gi>
             <n-form-item-gi span="2">321</n-form-item-gi>
             <n-form-item-gi span="2">333</n-form-item-gi>
           </n-form-item-row>
-        </n-form>
+        </n-form>-->
       </n-drawer>
     </div>
   </div>
@@ -32,25 +33,14 @@
   import { User } from '@/views/system/user/user'
 
   // const { fields } = useModel(User)
-  const { listState, tableRef, columns, formState, formRef } = useListView(User)
+  const { listState, tableRef, extRef, columns, formState } = useListView(User)
 
   // const { tableRef } = listState
 
   const { loading, records } = toRefs(listState)
 
-  const { showForm } = toRefs(formState)
-
-  function editHandle(row) {
-    console.log('row ---> ', row)
-  }
-
-  function addHandle(row) {
-    console.log('add row ---> ', row)
-  }
-
   onMounted(() => {
-    tableRef.value!.sort('age', 'descend')
-    // listState.tableRef.value =
+    tableRef.value!.page(1)
   })
 
   // const columns = computed(() => {

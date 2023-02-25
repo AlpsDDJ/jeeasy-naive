@@ -41,7 +41,7 @@
   }
 
   type ActionColumnProps = {
-    actions?: ActionOption[] | ActionType[] | boolean
+    actions?: ActionOption[] | ActionType[] | boolean | 'default'
     row: any
     index: number
   }
