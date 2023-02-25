@@ -11,9 +11,18 @@
   </div>
 </template>
 
-<script lang="ts" setup name="LayoutMain"></script>
+<script lang="ts" setup name="LayoutMain">
+  import { useAppStore } from '@/store/modules/app'
+  const appStore = useAppStore()
+  const layoutBackgroundColor = computed(() => {
+    return appStore.darkTheme ? 'auto' : '#F5F7F9'
+  })
+</script>
 
 <style lang="less" scoped>
+  .main-content {
+    background-color: v-bind(layoutBackgroundColor);
+  }
   .router_animate-enter-active {
     animation: slideInLeft 0.5s;
   }

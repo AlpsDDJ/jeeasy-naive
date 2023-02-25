@@ -1,30 +1,32 @@
 <template>
-  <n-grid class="header-row">
-    <n-gi class="header-col" item-responsive>
-      <n-button
-        text
-        style="font-size: 24px"
-        @click="
-          () => {
-            appStore.toggleCollapsed()
-          }
-        "
-      >
+  <div class="header-row">
+    <div class="header-col">
+      <n-button text style="font-size: 24px" @click="appStore.toggleCollapsed()">
         <icon :icon-name="appStore.getCollapsed ? 'MenuUnfoldOutlined' : 'MenuFoldOutlined'" type="antd"></icon>
       </n-button>
-    </n-gi>
-    <n-gi>
       <n-breadcrumb>
         <n-breadcrumb-item v-for="{ name, meta } in routers" :key="name">
           <icon v-if="meta?.icon" :icon-name="meta?.icon" />
           {{ meta.title }}
         </n-breadcrumb-item>
       </n-breadcrumb>
-    </n-gi>
-    <n-gi suffix class="header-col suffix-col">
-      <icon icon-name="PersonCircleOutline" :size="28" />
-    </n-gi>
-  </n-grid>
+    </div>
+    <div class="header-col">
+      <n-switch :value="appStore.darkTheme" @change="appStore.toggleTheme">
+        <template #icon>
+          <icon :icon-name="appStore.darkTheme ? 'Sunny' : 'Moon'" />
+        </template>
+      </n-switch>
+      <n-button quaternary circle @click="toggle">
+        <template #icon>
+          <icon :icon-name="isFullscreen ? 'Contract' : 'Expand'" />
+        </template>
+      </n-button>
+      <n-avatar size="medium" round>
+        <icon icon-name="PersonCircleOutline" />
+      </n-avatar>
+    </div>
+  </div>
 </template>
 
 <script lang="ts" setup name="LayoutHeader">
@@ -32,20 +34,26 @@
   import { useAppStore } from '@/store/modules/app'
   const appStore = useAppStore()
 
+  const { isFullscreen, toggle } = useFullscreen()
+
   const router = useRouter()
   const routers = computed(() => router.currentRoute.value.matched)
 </script>
 
 <style scoped lang="less">
   .header-row {
+    display: flex;
     padding: 0 10px;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
     .header-col {
       display: flex;
+      justify-content: space-between;
       align-items: center;
-    }
-    .suffix-col {
-      display: flex;
-      justify-content: right;
+      & > * {
+        margin-left: 8px;
+      }
     }
   }
 </style>

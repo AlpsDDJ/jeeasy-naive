@@ -3,6 +3,7 @@
     :collapsed="appStore.getCollapsed"
     :value="route.name || ''"
     :accordion="appStore.getAccordion"
+    inverted
     :options="menuState.menus"
     :collapsed-width="appStore.layout.menuMinWidth"
     :default-expanded-keys="route.matched.map(({ name }) => name)"

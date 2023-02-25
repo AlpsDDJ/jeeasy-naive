@@ -7,6 +7,7 @@
       :collapsed="appStore.getCollapsed"
       :native-scrollbar="false"
       bordered
+      inverted
       class="layout-sider"
     >
       <layout-logo :collapsed="appStore.getCollapsed" />

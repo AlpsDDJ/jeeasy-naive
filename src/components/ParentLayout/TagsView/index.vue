@@ -26,6 +26,9 @@
 
   const router = useRouter()
 
+  import { useAppStore } from '@/store/modules/app'
+  const appStore = useAppStore()
+
   type Tag = {
     key: string
     title: string
@@ -96,10 +99,15 @@
   const scrollHandle = (e) => {
     scrollRef.value!.scrollBy(e.deltaY, 0)
   }
+
+  const layoutBackgroundColor = computed(() => {
+    return appStore.darkTheme ? 'auto' : '#F5F7F9'
+  })
 </script>
 
 <style lang="less" scoped>
   .tags-view {
+    background-color: v-bind(layoutBackgroundColor);
     padding: @spacing-y @spacing-x;
     .tag {
       height: @router-tag-height;

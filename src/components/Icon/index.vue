@@ -13,7 +13,6 @@
     },
     render() {
       const { iconName, type } = this.$props
-      const attrs = toRefs(this.$attrs)
       const IconComp = defineAsyncComponent(async () => {
         // @ts-ignore
         const { [iconName]: comp } =
@@ -21,7 +20,7 @@
         return comp
       })
       return (
-        <n-icon {...attrs}>
+        <n-icon {...this.$attrs}>
           <IconComp />
         </n-icon>
       )

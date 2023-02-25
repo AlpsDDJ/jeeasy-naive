@@ -7,8 +7,12 @@ export const useAppStore = defineStore('app', {
     ...appConfig
   }),
   actions: {
-    toggleTheme() {
-      this.darkTheme = !this.darkTheme
+    toggleTheme(darkTheme?: boolean) {
+      if (darkTheme === undefined) {
+        this.darkTheme = !this.darkTheme
+      } else {
+        this.darkTheme !== darkTheme && (this.darkTheme = darkTheme)
+      }
     },
     toggleCollapsed(collapsed?: boolean) {
       if (collapsed === undefined) {
