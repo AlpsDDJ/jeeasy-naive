@@ -43,31 +43,28 @@
     return routes.filter((route) => !route.meta?.hideMenu).map((item) => getOption(item))
   }
 
+  const { width } = useWindowSize()
+  appStore.toggleCollapsed(width.value < 720)
+
+  const toggleCollapsedTimer = ref()
+
+  watchEffect(() => {
+    if (width.value < 720) {
+      clearTimeout(toggleCollapsedTimer.value)
+      toggleCollapsedTimer.value = setTimeout(() => {
+        appStore.toggleCollapsed(true)
+      }, 100)
+    } else {
+      clearTimeout(toggleCollapsedTimer.value)
+      toggleCollapsedTimer.value = setTimeout(() => {
+        appStore.toggleCollapsed(false)
+      }, 100)
+    }
+  })
+
   onMounted(() => {
     const routes = router.options.routes.map((item) => item)
     menuState.menus = createMenus(routes)
-    // const menus1 = createMenus(routes)
-    // menus.value = menus1
-    // menus.value = createMenus(routes)
-    // @ts-ignore
-    // menus.value = await Promise.all(
-    //   // generateMenus(routes)
-    //   routes
-    //     .filter(({ meta }) => !meta?.hideMenu)
-    //     .map(async (m) => {
-    //       if (m.children && m.children.length > 0) {
-    //         const children = await Promise.all(
-    //           m.children.filter(({ meta }) => !meta?.hideMenu).map(async (child) => await getOption(child))
-    //         )
-    //         const menu = await getOption(m)
-    //         // @ts-ignore
-    //         menu.children = children
-    //         return menu
-    //       } else {
-    //         return await getOption(m)
-    //       }
-    //     })
-    // )
   })
 </script>
 

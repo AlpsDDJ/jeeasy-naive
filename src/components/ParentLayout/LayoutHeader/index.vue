@@ -1,7 +1,15 @@
 <template>
   <n-grid class="header-row">
     <n-gi class="header-col" item-responsive>
-      <n-button text style="font-size: 24px" @click="appStore.toggleCollapsed">
+      <n-button
+        text
+        style="font-size: 24px"
+        @click="
+          () => {
+            appStore.toggleCollapsed()
+          }
+        "
+      >
         <icon :icon-name="appStore.getCollapsed ? 'MenuUnfoldOutlined' : 'MenuFoldOutlined'" type="antd"></icon>
       </n-button>
     </n-gi>

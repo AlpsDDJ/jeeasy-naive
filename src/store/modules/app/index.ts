@@ -10,8 +10,12 @@ export const useAppStore = defineStore('app', {
     toggleTheme() {
       this.darkTheme = !this.darkTheme
     },
-    toggleCollapsed() {
-      this.layout.collapsed = !this.layout.collapsed
+    toggleCollapsed(collapsed?: boolean) {
+      if (collapsed === undefined) {
+        this.layout.collapsed = !this.layout.collapsed
+      } else {
+        this.layout.collapsed !== collapsed && (this.layout.collapsed = collapsed)
+      }
     }
   },
   getters: {
