@@ -7,6 +7,11 @@
             <n-form-item-gi label="用户名">
               <n-input placeholder="" />
             </n-form-item-gi>
+            <n-form-item-gi suffix class="query-action">
+              <action-button :actions="['query', 'reset']" @action:query="loadData" @action:reset="loadData">
+                <n-button text type="primary">展开</n-button>
+              </action-button>
+            </n-form-item-gi>
           </n-grid>
         </n-form>
       </n-card>
@@ -30,7 +35,7 @@
 <script lang="ts" setup name="SysUserList">
   import { User } from '@/views/system/user/user'
 
-  const { tableProps, tableRef, extRef, formState } = useListView(User)
+  const { tableProps, tableRef, extRef, loadData, formState } = useListView(User)
 
   onMounted(() => {
     tableRef.value!.page(2)

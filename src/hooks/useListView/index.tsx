@@ -1,7 +1,7 @@
 import { h } from 'vue'
 import { BaseModel, BaseModelConstructor } from '@/hooks/useModel'
 import { DataTableColumn, DataTableInst, DataTableProps, PaginationProps } from 'naive-ui'
-import ActionColumn from '@/components/ExtTable/components/ActionColumn.vue'
+import ActionButton from '@/components/ActionButton/index.vue'
 
 export const useListView = <T extends BaseModel>(instance: BaseModelConstructor<T>, option: Record<any, any> = {}) => {
   const tableRef = ref<DataTableInst>()
@@ -45,13 +45,12 @@ export const useListView = <T extends BaseModel>(instance: BaseModelConstructor<
       render:
         actions === 'default'
           ? (row, index) => (
-              <ActionColumn
+              <ActionButton
                 actions={actions}
-                row={row}
-                index={index}
+                data={{ row, index }}
                 onAction:edit={handleEdit}
                 onAction:delete={handleDelete}
-              ></ActionColumn>
+              ></ActionButton>
             )
           : undefined
     } as DataTableColumn

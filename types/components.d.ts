@@ -7,7 +7,7 @@ export {}
 
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
-    ActionColumn: typeof import('./../src/components/ExtTable/components/ActionColumn.vue')['default']
+    ActionButton: typeof import('./../src/components/ActionButton/index.vue')['default']
     AsideMenu: typeof import('./../src/components/ParentLayout/AsideMenu/index.vue')['default']
     Content: typeof import('./../src/components/NaiveProvider/content/index.vue')['default']
     DialogContent: typeof import('./../src/components/NaiveProvider/content/DialogContent.vue')['default']
@@ -29,10 +29,7 @@ declare module '@vue/runtime-core' {
     NDialogProvider: typeof import('naive-ui')['NDialogProvider']
     NDrawer: typeof import('naive-ui')['NDrawer']
     NForm: typeof import('naive-ui')['NForm']
-    NFormItem: typeof import('naive-ui')['NFormItem']
     NFormItemGi: typeof import('naive-ui')['NFormItemGi']
-    NFormItemRow: typeof import('naive-ui')['NFormItemRow']
-    NGi: typeof import('naive-ui')['NGi']
     NGrid: typeof import('naive-ui')['NGrid']
     NIcon: typeof import('naive-ui')['NIcon']
     NInput: typeof import('naive-ui')['NInput']
