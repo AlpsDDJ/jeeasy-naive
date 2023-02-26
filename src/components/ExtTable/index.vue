@@ -2,7 +2,7 @@
   <n-data-table
     ref="tableRef"
     v-bind="{ ...props }"
-    :pagination="pageOption"
+    :pagination="pageValue"
     :remote="false"
     @update:page="
       (page) => {
@@ -31,19 +31,10 @@
   const attrs = useAttrs()
 
   const columns = ref<DataTableColumn[]>(attrs.columns as DataTableColumn[])
-  // const defaultTableProps: DataTableProps = {
-  //   minHeight: '200'
-  // }
 
   const props = defineProps({
     ...dataTableProps
-    // pagination: {
-    //   type: Object as PropType<PaginationProps>,
-    //   default: () => ({ page: 1, pageSize: 10 })
-    // }
   })
-
-  // const tableProps = { ...props, ...defaultTableProps }
 
   const slots = useSlots()
   onMounted(() => {
@@ -59,23 +50,14 @@
     })
   })
 
-  const pageChangeHandle = (pagination) => {
-    // emit('page-change', pagination)
-    console.log('pagination ==========> ', pagination)
-    pageOption.value = { ...pageOption.value, ...pagination }
-  }
-  // const pagination = props.pagination as PaginationProps
-  const emit = defineEmits(['update:pagination'])
-  // watch(
-  //   pagination,
-  //   () => {
-  //     emit('page-change', pagination)
-  //   },
-  //   { deep: true }
-  // )
+  const pageValue = ref(props.pagination)
+  const emit = defineEmits(['update:pagination', 'page'])
 
-  const pageOption = useVModel(props, 'pagination', emit)
-  // console.log('pageValue ----> ', pageValue)
+  const pageChangeHandle = (pagination) => {
+    pageValue.value = { ...pageValue.value, ...pagination }
+    emit('update:pagination', pageValue.value)
+    emit('page', pageValue.value)
+  }
 
   const tableRef = ref<DataTableInst>()
   defineExpose({

@@ -13,7 +13,12 @@
     </div>
     <div class="data-table-content">
       <n-card>
-        <ext-table ref="extRef" v-bind="tableProps" :columns="columns" />
+        <ext-table
+          ref="extRef"
+          v-bind="tableProps"
+          v-model:pagination="tableProps.pagination"
+          @page="tableProps.pageHandle"
+        />
       </n-card>
     </div>
     <div class="data-form">
@@ -25,16 +30,10 @@
 <script lang="ts" setup name="SysUserList">
   import { User } from '@/views/system/user/user'
 
-  const { tableProps, columns, tableRef, extRef, formState } = useListView(User)
+  const { tableProps, tableRef, extRef, formState } = useListView(User)
 
-  // watchEffect(() => {
-  //   console.log('listState.page ==================>>>> ', listState.page)
-  // })
-
-  // const { loading, records, page } = listState
   onMounted(() => {
-    console.log('tableProps ========> ', tableProps.data)
-    tableRef.value!.page(1)
+    tableRef.value!.page(2)
   })
 </script>
 
