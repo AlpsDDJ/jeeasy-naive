@@ -12,7 +12,7 @@
       </n-breadcrumb>
     </div>
     <div class="header-col">
-      <n-switch :value="appStore.darkTheme" @change="appStore.toggleTheme">
+      <n-switch :value="appStore.darkTheme" @update:value="appStore.toggleTheme">
         <template #icon>
           <icon :icon-name="appStore.darkTheme ? 'Sunny' : 'Moon'" />
         </template>

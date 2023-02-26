@@ -1,20 +1,23 @@
 import { h } from 'vue'
 import { BaseModel, BaseModelConstructor } from '@/hooks/useModel'
-import { DataTableColumn, DataTableInst } from 'naive-ui'
+import { DataTableColumn, DataTableInst, PaginationProps } from 'naive-ui'
 import ActionColumn from '@/components/ExtTable/components/ActionColumn.vue'
 
-const defaultPage: Page = {
-  pageNo: 1,
-  pageSize: 10,
-  pages: 0,
-  total: 0
-}
-
 export const useListView = <T extends BaseModel>(instance: BaseModelConstructor<T>, option: Record<any, any> = {}) => {
+  const defaultPage: PaginationProps = {
+    page: 1,
+    pageSize: 10,
+    pageCount: 0,
+    itemCount: 0
+  }
   const createDefaultState = <T extends IBaseModel>(): ListView<T> => ({
     records: [],
     loading: false,
-    page: defaultPage
+    pagination: { ...defaultPage },
+    onUpdatePagination: (page) => {
+      console.log('page -------------- ', page)
+      loadData()
+    }
   })
   const tableRef = ref<DataTableInst>()
   const extRef = ref()
@@ -80,47 +83,40 @@ export const useListView = <T extends BaseModel>(instance: BaseModelConstructor<
             )
           : undefined
     } as DataTableColumn
-    // console.log('modelState.fields.actions ----> ', modelState.fields['actions'])
-    // if (actions === 'default') {
-    //   modelState.fields['actions'].render = (row, index) => (
-    //     <ActionColumn
-    //       actions={actions}
-    //       row={row}
-    //       index={index}
-    //       onAction:edit={handleEdit}
-    //       onAction:delete={handleDelete}
-    //     ></ActionColumn>
-    //   )
-    // }
   }
 
   const fields = reactive(modelState.fields)
 
-  // function updateField(newFields: { [key: string]: FieldOption<T> | () => FieldOption<T> }) {
-  //
-  // }
-  // // console.log('fields uname ---> ', toRaw(fields.username))
-  // fields['username'].label = 'UName'
-  // console.log('fields uname  222 ---> ', toRaw(fields.username))
-
   const columns = computed(() => Object.values(fields).filter(({ hidden }) => !hidden))
-
-  // const dataTabelProps = {
-  //   columns
-  // }
 
   const defaultState = createDefaultState()
 
   const listState = reactive(defaultState)
 
+  watch(listState.pagination, () => {
+    console.log('listState.page ---> ', listState.pagination)
+    loadData()
+  })
+
+  // const columns = computed(() => Object.values(fields).filter(({ hidden }) => !hidden))
+
+  const tableProps = {
+    // columns: Object.values(fields).filter(({ hidden }) => !hidden),
+    pagination: listState.pagination,
+    data: listState.records,
+    loading: listState.loading,
+    onUpdatePagination: listState.onUpdatePagination
+  }
+
   function loadData() {
+    console.log('loadData ==> ', listState.pagination)
     listState.loading = true
     setTimeout(() => {
-      const total = 7
-      listState.page = { ...listState.page, total, pages: 1 }
+      const itemCount = 17
+      listState.pagination = { ...listState.pagination, itemCount }
       listState.records = []
       let index = 0
-      while (index++ < total) {
+      while (index++ < itemCount) {
         const record = reactive({
           id: `${index}`,
           username: `user ${index}`,
@@ -129,6 +125,7 @@ export const useListView = <T extends BaseModel>(instance: BaseModelConstructor<
         } as BaseModel)
         listState.records.push(record)
       }
+      console.log('listState.records --- ', listState.records)
       listState.loading = false
     }, 1500)
   }
@@ -153,11 +150,11 @@ export const useListView = <T extends BaseModel>(instance: BaseModelConstructor<
   })
 
   return {
-    listState,
+    tableProps,
     tableRef,
+    columns,
     extRef,
     loadData,
-    columns,
     formState,
     formRef,
     showForm

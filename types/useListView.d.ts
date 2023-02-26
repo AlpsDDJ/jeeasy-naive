@@ -1,17 +1,20 @@
+import { PaginationProps } from 'naive-ui'
+
 declare global {
   type ListView<T extends IBaseModel> = {
     records: T[]
     loading: boolean
-    page: Page
+    pagination: PaginationProps
+    onUpdatePagination: (page: PaginationProps) => void
   }
 
-  type Page = {
-    pageNo: number
-    pageSize: number
-    total: number
-    pages: number
-    orders?: Array<QueryOrder>
-  }
+  // type Page = {
+  //   pageNo: number
+  //   pageSize: number
+  //   total: number
+  //   pages: number
+  //   orders?: Array<QueryOrder>
+  // }
 
   type OrderType = 'desc' | 'asc' | 'DESC' | 'ASC'
 
