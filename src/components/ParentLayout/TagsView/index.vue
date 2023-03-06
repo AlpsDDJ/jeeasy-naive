@@ -22,7 +22,7 @@
 
 <script lang="ts" setup name="TagsView">
   import type { ScrollbarInst } from 'naive-ui'
-  import { remove, sortBy } from 'lodash'
+  import { remove, sortBy } from 'lodash-es'
 
   const router = useRouter()
 

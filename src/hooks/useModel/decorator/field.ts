@@ -1,4 +1,4 @@
-import { cloneDeep } from 'lodash'
+import { cloneDeep } from 'lodash-es'
 
 // type FieldOptionTemp<T extends InternalRowData> = [string | FieldOption<T> | any, FieldOption<T> | unknown]
 

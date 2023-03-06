@@ -1,6 +1,6 @@
 import Model from './decorator/model'
 import Field from './decorator/field'
-import { cloneDeep } from 'lodash'
+import { cloneDeep } from 'lodash-es'
 
 const useModel = <T extends BaseModel>(instance: BaseModelConstructor<T>) => {
   return cloneDeep(instance.state) as ModelState<T>
