@@ -2,6 +2,7 @@ import { h } from 'vue'
 import { BaseModel, BaseModelConstructor } from '@/hooks/useModel'
 import { DataTableColumn, DataTableInst, DataTableProps, PaginationProps } from 'naive-ui'
 import ActionButton from '@/components/ActionButton/index.vue'
+import http from '@/utils/http'
 
 export const useListView = <T extends BaseModel>(instance: BaseModelConstructor<T>, option: Record<any, any> = {}) => {
   const tableRef = ref<DataTableInst>()
@@ -98,23 +99,44 @@ export const useListView = <T extends BaseModel>(instance: BaseModelConstructor<
 
   const tableProps = ref<ExtTableProps>(defaultTableProps)
 
-  function loadData(param?: any) {
+  async function loadData(param?: any) {
     param && console.log(param)
     tableProps.value.loading = true
-    setTimeout(() => {
-      const itemCount = 17
-      tableProps.value.data = []
-      let index = 0
-      while (index++ < itemCount) {
-        tableProps.value.data.push({
-          id: `${index}`,
-          username: `user ${index}`,
-          userNo: `NO.${index}`,
-          age: 20 + index * 2
-        } as BaseModel)
-      }
-      tableProps.value.loading = false
-    }, 1500)
+    const { api } = modelState
+    const { pageSize, page } = tableProps.value.pagination as PaginationProps
+    const params = {
+      size: pageSize,
+      current: page
+    }
+    const resp = await http.get(api, { params })
+    const {
+      data: { records, size, current, total, pages }
+    } = resp
+    // console.log('data ---> ', resp.data)
+    tableProps.value.data = records
+    tableProps.value.loading = false
+    tableProps.value.pagination = {
+      ...tableProps.value.pagination,
+      page: current,
+      pageSize: size,
+      itemCount: total,
+      pageCount: pages
+    }
+
+    // setTimeout(() => {
+    //   const itemCount = 17
+    //   tableProps.value.data = []
+    //   let index = 0
+    //   while (index++ < itemCount) {
+    //     tableProps.value.data.push({
+    //       id: `${index}`,
+    //       username: `user ${index}`,
+    //       userNo: `NO.${index}`,
+    //       age: 20 + index * 2
+    //     } as BaseModel)
+    //   }
+    //   tableProps.value.loading = false
+    // }, 1500)
   }
 
   return {

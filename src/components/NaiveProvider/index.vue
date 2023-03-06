@@ -3,7 +3,9 @@
     <dialog-content>
       <loading-content>
         <message-content>
-          <content />
+          <notification-content>
+            <content />
+          </notification-content>
         </message-content>
       </loading-content>
     </dialog-content>
@@ -13,6 +15,7 @@
 
 <script lang="ts" setup name="NaiveProvider">
   import { useAppStore } from '@/store/modules/app'
+  import NotificationContent from '@/components/NaiveProvider/content/NotificationContent.vue'
 
   const appStore = useAppStore()
 </script>

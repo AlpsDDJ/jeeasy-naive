@@ -58,10 +58,10 @@ export default () =>
       },
       // 设置 https 代理
       proxy: {
-        '/api': {
-          target: 'your https address',
+        '/jeeasy-api': {
+          target: 'http://localhost:6666',
           changeOrigin: true,
-          rewrite: (path: string) => path.replace(/^\/api/, '')
+          rewrite: (path: string) => path.replace(/^\/jeeasy-api/, '')
         }
       }
     }

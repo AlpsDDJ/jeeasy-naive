@@ -3,7 +3,7 @@
     ref="tableRef"
     v-bind="{ ...props }"
     :pagination="pageValue"
-    :remote="false"
+    :remote="true"
     @update:page="
       (page) => {
         pageChangeHandle({ page })
@@ -50,7 +50,12 @@
     })
   })
 
-  const pageValue = ref(props.pagination)
+  const pageValue = ref()
+
+  watchEffect(() => {
+    pageValue.value = props.pagination
+  })
+
   const emit = defineEmits(['update:pagination', 'page'])
 
   const pageChangeHandle = (pagination) => {

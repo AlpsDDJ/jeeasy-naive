@@ -1,5 +1,5 @@
 <template>
-  <n-space>
+  <n-space :align="props.align || 'end'">
     <template v-for="opt in actionOptions" :key="opt.action">
       <n-button
         v-if="opt.show"
@@ -42,6 +42,7 @@
   type ActionButtonProps = {
     actions?: ActionOption[] | ActionType[] | boolean | 'default'
     data?: any
+    align?: 'stretch' | 'baseline' | 'start' | 'end' | 'center' | 'flex-end' | 'flex-start'
     // index: number
   }
 

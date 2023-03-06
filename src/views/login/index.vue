@@ -44,7 +44,7 @@
             </div>
           </n-form-item>
           <n-form-item>
-            <n-button type="primary" size="large" block> 登录 </n-button>
+            <n-button type="primary" size="large" block @click="loginHandle"> 登录 </n-button>
           </n-form-item>
           <n-form-item class="default-color">
             <div class="flex view-account-other">
@@ -78,10 +78,19 @@
 <script lang="ts" setup name="Login">
   // import Logo from '@/assets/image/logo.png'
   import LoginImg from '@/assets/image/login/img.png'
-  const loginModel = reactive({
-    username: '',
-    password: ''
+  import { LoginForm } from '@/store/modules/user/type'
+  import { useUserStore } from '@/store/modules/user'
+  const loginModel: LoginForm = reactive({
+    username: 'admin',
+    password: '123456'
   })
+  const userStore = useUserStore()
+  const router = useRouter()
+
+  const loginHandle = async () => {
+    await userStore.doLogin(loginModel)
+    await router.push('/')
+  }
 </script>
 <style scoped lang="less">
   .view-account {
