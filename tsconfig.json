@@ -23,7 +23,8 @@
       "dom"
     ],
     "types": [
-      "vite/client"
+      "vite/client",
+      "pinia-plugin-persist"
     ],
     "noImplicitAny": false,
     "skipLibCheck": true,

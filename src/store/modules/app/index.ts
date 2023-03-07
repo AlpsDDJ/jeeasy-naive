@@ -30,5 +30,15 @@ export const useAppStore = defineStore('app', {
     },
     getAccordion: (state): boolean => state.layout.accordion,
     getMenus: (state) => state.menus
+  },
+  persist: {
+    enabled: true,
+    strategies: [
+      {
+        key: 'appSetting', // 修改存在缓存中的key值
+        storage: localStorage, /// 修改存储方式为localStorage，默认sessionStorage
+        paths: ['darkTheme'] // 只持久化'curTheme'，此时刷新页面curTheme数据会被保留，其他state将会重置
+      }
+    ]
   }
 })

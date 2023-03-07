@@ -22,7 +22,7 @@
           <icon :icon-name="isFullscreen ? 'Contract' : 'Expand'" />
         </template>
       </n-button>
-      <n-avatar size="medium" round>
+      <n-avatar size="medium" round @click="logoutHandle">
         <icon icon-name="PersonCircleOutline" />
       </n-avatar>
     </div>
@@ -32,12 +32,19 @@
 <script lang="ts" setup name="LayoutHeader">
   // LayoutHeader
   import { useAppStore } from '@/store/modules/app'
+  import { useUserStore } from '@/store/modules/user'
+
   const appStore = useAppStore()
+  const userStore = useUserStore()
 
   const { isFullscreen, toggle } = useFullscreen()
 
   const router = useRouter()
   const routers = computed(() => router.currentRoute.value.matched)
+
+  const logoutHandle = () => {
+    userStore.doLogout()
+  }
 </script>
 
 <style scoped lang="less">

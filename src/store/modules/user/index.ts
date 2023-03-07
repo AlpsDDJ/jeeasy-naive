@@ -1,15 +1,17 @@
 import { LoginForm, UserState } from '@/store/modules/user/type'
 import { getLoginUser, login } from '@/api/common'
-import { getToken, setToken, clearToken } from '@/utils/tokenUtil'
 import { PageEnum } from '@/enums/PageEnum'
 import { router } from '@/router'
+import { cloneDeep } from 'lodash-es'
+
+const nullState: UserState = {
+  token: null,
+  roles: [],
+  permissions: []
+}
 
 export const useUserStore = defineStore('user', {
-  state: (): UserState => ({
-    token: getToken(),
-    roles: [],
-    permissions: []
-  }),
+  state: (): UserState => cloneDeep(nullState),
   actions: {
     async doLogin(loginForm: LoginForm) {
       try {
@@ -50,7 +52,7 @@ export const useUserStore = defineStore('user', {
       this.user = undefined
       this.roles = []
       this.permissions = []
-      clearToken()
+      this.clearAll()
       await router.push({
         path: PageEnum.BASE_LOGIN,
         query: {
@@ -60,8 +62,20 @@ export const useUserStore = defineStore('user', {
     },
     setToken(token: string) {
       this.token = token
-      setToken(token)
+    },
+    clearAll() {
+      this.$reset()
     }
   },
-  getters: {}
+  getters: {},
+  persist: {
+    enabled: true,
+    strategies: [
+      {
+        key: 'auth', // 修改存在缓存中的key值
+        storage: localStorage, /// 修改存储方式为localStorage，默认sessionStorage
+        paths: ['token'] // 只持久化'curTheme'，此时刷新页面curTheme数据会被保留，其他state将会重置
+      }
+    ]
+  }
 })
