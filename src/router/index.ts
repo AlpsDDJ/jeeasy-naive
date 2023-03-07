@@ -50,17 +50,18 @@ export const RootRoute: RouteRecordRaw[] = [
 
 export const LoginRoute: RouteRecordRaw = {
   path: PageEnum.BASE_LOGIN,
-  name: 'Login',
+  name: PageEnum.BASE_LOGIN_NAME,
   component: () => import('@/views/login/index.vue'),
   meta: {
     title: '登录',
-    hideMenu: true
+    hideMenu: true,
+    noAuth: true
   }
 }
 
 export const constantRouter: RouteRecordRaw[] = [LoginRoute, ...RootRoute, SystemRouter, RedirectRoute, ErrorPageRoute]
 
-const router = createRouter({
+export const router = createRouter({
   history: createWebHashHistory(),
   routes: constantRouter,
   strict: true,
@@ -73,4 +74,4 @@ export async function setupRouter(app: App) {
   // createRouterGuards(router)
 }
 
-export default router
+// export default router

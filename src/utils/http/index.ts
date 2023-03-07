@@ -13,3 +13,23 @@ setupRequest(http)
 setupResponse(http)
 
 export default http
+
+export const httpGet = <T = any, P = any>(url: string, params?: P): Promise<R<T>> => {
+  return http.get<any, R<T>>(url, {
+    params
+  })
+}
+
+export const httpPost = <T = any, P = any>(url: string, data?: P): Promise<R<T>> => {
+  return http.post<P, R<T>>(url, data)
+}
+
+export const httpPut = <T = any, P = any>(url: string, data?: P): Promise<R<T>> => {
+  return http.put<P, R<T>>(url, data)
+}
+
+export const httpDelete = <T = any, P = any>(url: string, params?: P): Promise<R<T>> => {
+  return http.delete<P, R<T>>(url, {
+    params
+  })
+}

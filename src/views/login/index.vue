@@ -44,12 +44,12 @@
             </div>
           </n-form-item>
           <n-form-item>
-            <n-button type="primary" size="large" block @click="loginHandle"> 登录 </n-button>
+            <n-button type="primary" size="large" block :loading="loginLoading" @click="loginHandle"> 登录 </n-button>
           </n-form-item>
           <n-form-item class="default-color">
             <div class="flex view-account-other">
               <div class="flex-initial">
-                <span>其它登录方式</span>
+                <!--                <span>其它登录方式</span>-->
               </div>
               <div class="flex-initial mx-2">
                 <a href="javascript:">
@@ -80,16 +80,25 @@
   import LoginImg from '@/assets/image/login/img.png'
   import { LoginForm } from '@/store/modules/user/type'
   import { useUserStore } from '@/store/modules/user'
+  import { PageEnum } from '@/enums/PageEnum'
+
+  const userStore = useUserStore()
+  const router = useRouter()
+
   const loginModel: LoginForm = reactive({
     username: 'admin',
     password: '123456'
   })
-  const userStore = useUserStore()
-  const router = useRouter()
+  const loginLoading = ref(false)
 
   const loginHandle = async () => {
-    await userStore.doLogin(loginModel)
-    await router.push('/')
+    loginLoading.value = true
+    const success = await userStore.doLogin(loginModel)
+    loginLoading.value = false
+    if (success) {
+      const { redirect = PageEnum.BASE_HOME } = router.currentRoute.value.query
+      await router.push({ path: redirect as string })
+    }
   }
 </script>
 <style scoped lang="less">

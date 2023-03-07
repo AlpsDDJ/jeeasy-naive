@@ -24,10 +24,10 @@
     background-color: v-bind(layoutBackgroundColor);
   }
   .router_animate-enter-active {
-    animation: slideInLeft 0.5s;
+    animation: slideInRight 0.3s;
   }
   .router_animate-leave-active {
-    animation: slideOutLeft 0.3s;
+    animation: slideOutLeft 0.2s;
     // 防止切换过程中页面上下抖动
     display: none;
   }

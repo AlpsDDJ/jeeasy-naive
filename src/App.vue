@@ -1,13 +1,13 @@
-<script setup lang="ts" name="App">
-  // This starter template is using Vue 3 <script setup> SFCs
-  // Check out https://vuejs.org/api/sfc-script-setup.html#script-setup
-  // import NaiveProvider from './components/NaiveProvider/index.vue'
-</script>
-
 <template>
   <naive-provider>
     <router-view />
   </naive-provider>
 </template>
 
-<style lang="less"></style>
+<script setup lang="ts" name="App">
+  // import { useAppStore } from '@/store/modules/app'
+  // const appStore = useAppStore()
+  // const layoutBackgroundColor = computed(() => {
+  //   return appStore.darkTheme ? 'auto' : '#F5F7F9'
+  // })
+</script>

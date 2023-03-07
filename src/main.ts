@@ -1,8 +1,9 @@
 import 'vue-global-api'
 import { createApp } from 'vue'
 import App from './App.vue'
-import router, { setupRouter } from '@/router'
+import { router, setupRouter } from '@/router'
 import { setupStore } from '@/store'
+import '@/config/permissions'
 
 import '@/assets/style/tailwind.css'
 import 'animate.css/animate.min.css'

@@ -21,6 +21,7 @@
     "pinia": "^2.0.30",
     "vfonts": "^0.0.3",
     "vue": "^3.2.47",
+    "vue-request": "^2.0.0-rc.4",
     "vue-router": "^4.0.15"
   },
   "devDependencies": {

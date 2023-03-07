@@ -10,4 +10,6 @@ export type LoginUser = {
 export type UserState = {
   token?: string | null
   user?: LoginUser
+  roles?: string[]
+  permissions?: string[]
 }

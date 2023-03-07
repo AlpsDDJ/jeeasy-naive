@@ -1,4 +1,5 @@
 import type { AxiosInstance, AxiosResponse, AxiosError } from 'axios'
+import { useUserStore } from '@/store/modules/user'
 
 export const setupResponse = (http: AxiosInstance) => {
   http.interceptors.response.use(
@@ -12,7 +13,7 @@ export const setupResponse = (http: AxiosInstance) => {
       }
     },
     (error: AxiosError) => {
-      let msg = ''
+      let msg: string
       // HTTP 状态码
       const status = error.response?.status
       // @ts-ignore
@@ -21,6 +22,8 @@ export const setupResponse = (http: AxiosInstance) => {
         case 401:
           msg = 'token失效，请重新登录'
           // 这里可以触发退出的 action
+          console.log('请重新登录')
+          useUserStore().doLogout(false)
           break
         case 403:
           msg = '没有权限,请获取权限后登录'

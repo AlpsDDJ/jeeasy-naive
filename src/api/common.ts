@@ -1,9 +1,9 @@
-import http from '@/utils/http'
+import { httpGet, httpPost } from '@/utils/http'
 
 export const login = (params) => {
-  return http.post('/sys/sso/doLogin', params)
+  return httpPost<string>('/sys/sso/doLogin', params)
 }
 
 export const getLoginUser = () => {
-  return http.get('/sys/sso/userinfo')
+  return httpGet('/sys/sso/userinfo')
 }
