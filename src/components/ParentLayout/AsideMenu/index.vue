@@ -15,7 +15,10 @@
   import { MenuMixedOption } from 'naive-ui/es/menu/src/interface'
   import { RouteRecordRaw } from 'vue-router'
   import { isNotNull } from '@/utils/tools'
+  import { useUserStore } from '@/store/modules/user'
+  import { menuToRouter } from '@/router'
   const appStore = useAppStore()
+  const userStore = useUserStore()
   const router = useRouter()
   const route = useRoute()
 
@@ -28,7 +31,7 @@
         isNotNull(route.children) ? (
           <span class="no-select">{route.meta?.title}</span>
         ) : (
-          <router-link to={route.path}>
+          <router-link to={{ name: route.name }}>
             <span class="no-select">{route.meta?.title}</span>
           </router-link>
         ),
@@ -62,11 +65,13 @@
       }, 100)
     }
   })
-
-  onMounted(() => {
-    const routes = router.options.routes.map((item) => item)
+  watchEffect(async () => {
+    const dynamicRouter = (await menuToRouter(userStore.menus)) || []
+    const routes = [...router.options.routes, ...dynamicRouter]
     menuState.menus = createMenus(routes)
   })
+
+  onMounted(async () => {})
 </script>
 
 <style scoped lang="less"></style>

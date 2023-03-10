@@ -1,5 +1,5 @@
 import { LoginForm, UserState } from '@/store/modules/user/type'
-import { getLoginUser, login } from '@/api/common'
+import { CommonApi } from '@/api/common'
 import { PageEnum } from '@/enums/PageEnum'
 import { router } from '@/router'
 import { cloneDeep } from 'lodash-es'
@@ -7,7 +7,8 @@ import { cloneDeep } from 'lodash-es'
 const nullState: UserState = {
   token: null,
   roles: [],
-  permissions: []
+  permissions: [],
+  menus: []
 }
 
 export const useUserStore = defineStore('user', {
@@ -15,7 +16,7 @@ export const useUserStore = defineStore('user', {
   actions: {
     async doLogin(loginForm: LoginForm) {
       try {
-        const resp = await login({
+        const resp = await CommonApi.login({
           name: loginForm.username,
           pwd: loginForm.password
         })
@@ -35,11 +36,23 @@ export const useUserStore = defineStore('user', {
       try {
         const {
           data: { roleSet, permissionSet, ...user }
-        } = await getLoginUser()
+        } = await CommonApi.getLoginUser()
         this.user = user
         this.roles = roleSet
         this.permissions = permissionSet
         return this.user
+      } catch (error) {
+        return null
+      }
+    },
+    async getUserMenus() {
+      if (this.menus && this.menus.length) {
+        return this.menus
+      }
+      try {
+        const { data: menus } = await CommonApi.getUserMenus()
+        this.menus = menus
+        return menus
       } catch (error) {
         return null
       }
@@ -79,3 +92,7 @@ export const useUserStore = defineStore('user', {
     ]
   }
 })
+
+export const getToken = () => {
+  return useUserStore && useUserStore().token
+}

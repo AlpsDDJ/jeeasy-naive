@@ -1,4 +1,4 @@
-import axios from 'axios'
+import axios, { AxiosRequestConfig } from 'axios'
 import type { AxiosInstance } from 'axios'
 import { BASE_URL, TIME_OUT } from '@/utils/http/config'
 import { setupRequest } from '@/utils/http/interceptors/request'
@@ -14,8 +14,12 @@ setupResponse(http)
 
 export default http
 
+export const httpRequest = <T = any, P = any>(data?: P, option?: AxiosRequestConfig<P>): Promise<R<T>> => {
+  return http<P, R<T>>(option || {})
+}
+
 export const httpGet = <T = any, P = any>(url: string, params?: P): Promise<R<T>> => {
-  return http.get<any, R<T>>(url, {
+  return http.get<P, R<T>>(url, {
     params
   })
 }

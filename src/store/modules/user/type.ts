@@ -12,4 +12,5 @@ export type UserState = {
   user?: LoginUser
   roles?: string[]
   permissions?: string[]
+  menus?: any[]
 }

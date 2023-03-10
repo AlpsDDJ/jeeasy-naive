@@ -1,5 +1,5 @@
 import type { AxiosInstance, InternalAxiosRequestConfig, AxiosError } from 'axios'
-import { getToken } from '@/utils/tokenUtil'
+import { getToken } from '@/store/modules/user'
 
 export const setupRequest = (http: AxiosInstance) => {
   http.interceptors.request.use(

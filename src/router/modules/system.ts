@@ -11,7 +11,7 @@ export const SystemRouter: RouteRecordRaw = {
   },
   children: [
     {
-      path: '/sys/user',
+      path: 'user',
       name: 'SysUser',
       component: () => import('@/views/system/user/index.vue'),
       meta: {
@@ -20,7 +20,7 @@ export const SystemRouter: RouteRecordRaw = {
       }
     },
     {
-      path: '/sys/role',
+      path: 'role',
       name: 'SysRole',
       component: () => import('@/views/system/role/index.vue'),
       meta: {

@@ -2,7 +2,7 @@
   <div class="list-view"></div>
 </template>
 
-<script lang="ts" setup name="SysUserList">
+<script lang="ts" setup name="SysRoleList">
   // import { Role } from '@/views/system/role/role'
   //
   // const listState = reactive<Role>({})
