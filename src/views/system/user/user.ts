@@ -1,4 +1,4 @@
-import { BaseModel, Model, Field } from '@/hooks/useModel'
+import { BaseModel } from '@/hooks/useModel'
 
 // @Model({
 //   api: 'sys/user',

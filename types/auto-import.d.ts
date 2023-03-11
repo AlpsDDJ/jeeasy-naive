@@ -6,7 +6,6 @@ declare global {
   const BaseModel: typeof import('../src/hooks/useModel/index')['BaseModel']
   const EffectScope: typeof import('vue')['EffectScope']
   const Field: typeof import('../src/hooks/useModel/index')['Field']
-  const HTTP: typeof import('../src/hooks/useHttp/index')['HTTP']
   const Model: typeof import('../src/hooks/useModel/index')['Model']
   const acceptHMRUpdate: typeof import('pinia')['acceptHMRUpdate']
   const asyncComputed: typeof import('@vueuse/core')['asyncComputed']

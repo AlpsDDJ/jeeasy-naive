@@ -20,7 +20,7 @@ router.beforeEach(async (to) => {
   if (to.name === PageEnum.BASE_LOGIN_NAME) {
     const user = await userStore.getLoginUser()
     if (user) {
-      return PageEnum.BASE_HOME
+      return { path: to.query.redirect || PageEnum.BASE_HOME }
     }
     return
   }

@@ -1,3 +1,5 @@
+import { AxiosRequestConfig } from 'axios'
+
 declare global {
   type InternalRowData = Record<string, any | unknown>
 
@@ -7,6 +9,9 @@ declare global {
     success: boolean
     message?: string
     timestamp?: number
+  }
+  export type HttpRequest<T = any, P = any> = {
+    (data?: P, config?: AxiosRequestConfig<P>): Promise<R<T>>
   }
 }
 

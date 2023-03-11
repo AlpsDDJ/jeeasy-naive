@@ -1,4 +1,4 @@
-import axios, { AxiosRequestConfig } from 'axios'
+import axios from 'axios'
 import type { AxiosInstance } from 'axios'
 import { BASE_URL, TIME_OUT } from '@/utils/http/config'
 import { setupRequest } from '@/utils/http/interceptors/request'
@@ -13,9 +13,15 @@ setupRequest(http)
 setupResponse(http)
 
 export default http
+type HttpRequestParam<T = any, P = any> = Parameters<HttpRequest<T, P>>
 
-export const httpRequest = <T = any, P = any>(data?: P, option?: AxiosRequestConfig<P>): Promise<R<T>> => {
-  return http<P, R<T>>(option || {})
+export function httpRequest<T = any, P = any>(
+  ...[data, config = {}]: HttpRequestParam<T, P>
+): ReturnType<HttpRequest<T, P>> {
+  const method = config.method?.toUpperCase() || 'GET'
+  data && (config[['DELETE', 'GET'].some((key) => key === method) ? 'params' : 'data'] = data)
+  config.method = method
+  return http<P, R<T>>(config || {})
 }
 
 export const httpGet = <T = any, P = any>(url: string, params?: P): Promise<R<T>> => {
