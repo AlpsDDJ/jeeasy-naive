@@ -24,18 +24,19 @@ const Api = (module?: string | ApiModule, params?: ApiModule) => {
       }
     }
     constructor['module'] = module_
-    return class extends constructor {
-      constructor(...args) {
-        super(args)
-        Object.keys(constructor.prototype).forEach((key) => {
-          const prop = constructor.prototype[key]
-          if (prop && prop.name === '__http') {
-            this[key.slice(2)] = constructor.prototype[key]
-            delete constructor.prototype[key]
-          }
-        })
-      }
-    }
+    return constructor
+    // return class extends constructor {
+    //   constructor(...args) {
+    //     super(args)
+    //     Object.keys(constructor.prototype).forEach((key) => {
+    //       const prop = constructor.prototype[key]
+    //       if (prop && prop.name === '__http') {
+    //         this[key.slice(2)] = constructor.prototype[key]
+    //         delete constructor.prototype[key]
+    //       }
+    //     })
+    //   }
+    // }
   }
 }
 
@@ -43,7 +44,7 @@ Api.Http = (config: AxiosRequestConfig) => {
   const propertyDecorator: PropertyDecorator = (target, propertyKey): any => {
     const isStatic = typeof target === 'function'
 
-    const __http: HttpRequest = (data, _conf = {}) => {
+    let __http: HttpRequest = (data, _conf = {}) => {
       const httpConfig = cloneDeep({ ...config, ..._conf })
       const module = isStatic ? target['module'] : target.constructor['module']
       httpConfig.url = module + httpConfig.url
@@ -53,7 +54,14 @@ Api.Http = (config: AxiosRequestConfig) => {
     if (isStatic) {
       target[propertyKey] = __http
     } else {
-      target[`__${propertyKey.toString()}`] = __http
+      Object.defineProperty(target, propertyKey, {
+        get: () => {
+          return __http
+        },
+        set(v: any) {
+          __http = v
+        }
+      })
     }
   }
   return propertyDecorator
