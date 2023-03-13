@@ -14,13 +14,15 @@ class BaseModel implements IBaseModel {
   constructor() {}
 
   @Field.Hidden()
-  @Field(['ID'])
+  @Field('ID')
   id?: string
+
   @Field.Hidden()
-  @Field(['创建时间'])
+  @Field('创建时间')
   createTime?: string
+
   @Field.Hidden()
-  @Field(['更新时间'])
+  @Field('更新时间')
   updateTime?: string
 
   static state: ModelState<BaseModel> = cloneDeep(defaultModelState)

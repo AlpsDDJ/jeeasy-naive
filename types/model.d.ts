@@ -8,12 +8,12 @@ declare global {
   type ModelStateRequiredAttr<T extends IBaseModel, P> = { [key in keyof Required<T>]: P } | Record<string, P>
   type ModelStatePartialAttr<T extends IBaseModel, P> = { [key in keyof Partial<T>]: P } | Record<string, P>
 
-  type ModelLabel<T extends IBaseModel> = ModelStateRequiredAttr<T, string>
+  // type ModelLabel<T extends IBaseModel> = ModelStateRequiredAttr<T, string>
   type ModelField<T extends IBaseModel> = ModelStateRequiredAttr<T, string>
 
   type ModelState<T extends IBaseModel> = {
     keys: ModelField<T>
-    labels: ModelLabel<T>
+    // labels: ModelLabel<T>
     name: string
     desc?: string
     api: string

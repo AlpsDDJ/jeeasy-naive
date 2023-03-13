@@ -8,7 +8,7 @@ class BaseApi {
   constructor() {}
 }
 
-export type ApiModule = {
+type ApiModule = {
   module?: string
 }
 

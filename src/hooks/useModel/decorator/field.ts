@@ -1,46 +1,57 @@
 import { cloneDeep } from 'lodash-es'
+import { BaseModel } from '@/hooks/useModel'
 
-// type FieldOptionTemp<T extends InternalRowData> = [string | FieldOption<T> | any, FieldOption<T> | unknown]
-
-type FieldParams<T extends InternalRowData> = Parameters<
-  (label: string | FieldOption<T>, option?: FieldOption<T>) => void
->
-// | Parameters<(label: string) => void>
-// | Parameters<(option: FieldOption<T>) => void>
-// | Parameters<() => void>
-
-const Field = <T extends InternalRowData>([arg1, arg2]: FieldParams<T> = ['']) => {
-  let option = cloneDeep(arg2 || {}) as FieldOption<T>
-  if (typeof arg1 === 'string') {
-    option.label = arg1 as string
-  } else if (arg1) {
-    option = cloneDeep(arg1) as FieldOption<T>
+const Field = <T extends InternalRowData>(label: string | FieldOption<T> = '', option?: FieldOption<T>) => {
+  let optionTemp = cloneDeep(option || {}) as FieldOption<T>
+  if (typeof label === 'string') {
+    optionTemp.label = label as string
+  } else if (label) {
+    optionTemp = cloneDeep(label) as FieldOption<T>
   }
 
   const propertyDecorator: PropertyDecorator = (target, propertyKey) => {
-    const constructor = target.constructor
-    const key = propertyKey as string
-    const { label = propertyKey } = option
-    constructor['state']['keys'][key] = key
-    constructor['state']['labels'][key] = label
-    constructor['state']['fields'][key] = createColunm(key, option)
+    const state = getState(target)
+    state['keys'][propertyKey] = propertyKey
+    // state['labels'][propertyKey] = label
+    // state['fields'][propertyKey] = createColunm(propertyKey, optionTemp)
+    setFieldProperty(state, propertyKey, createColunm(propertyKey, optionTemp))
   }
   return propertyDecorator
 }
 
 Field.Hidden = () => {
   const propertyDecorator: PropertyDecorator = (target, propertyKey) => {
-    target.constructor['state']['fields'][propertyKey].hidden = true
+    const state = getState(target)
+    // state['fields'][propertyKey].hidden = true
+    setFieldProperty(state, propertyKey, { hidden: true })
   }
   return propertyDecorator
 }
 
 export default Field
 
-function createColunm<T extends InternalRowData>(key: string, option: FieldOption<T>): FieldOption<T> {
-  const { label } = option
+function createColunm<T extends InternalRowData>(key: string | symbol, optionTemp: FieldOption<T>): FieldOption<T> {
+  const { label, ...option } = optionTemp
   return {
+    ...option,
     key,
     title: label
   }
+}
+
+function getState(target: Object): ModelState<BaseModel> {
+  const constructor = target.constructor
+  const state = Object.getOwnPropertyDescriptor(constructor, 'state')
+  if (state) {
+    return target.constructor['state']
+  } else {
+    const parentTarget = Object.getPrototypeOf(target.constructor)
+    target.constructor['state'] = cloneDeep(parentTarget['state'])
+    return target.constructor['state']
+  }
+}
+
+function setFieldProperty(state: ModelState<BaseModel>, key: string | symbol, property: InternalRowData): void {
+  const props = state['fields'][key] || {}
+  state['fields'][key] = { ...props, ...property }
 }

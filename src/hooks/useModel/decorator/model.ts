@@ -1,4 +1,6 @@
-type ModelParams<T extends IBaseModel> = Partial<Omit<ModelState<T>, 'labels' | 'keys'>>
+import { cloneDeep } from 'lodash-es'
+
+type ModelParams<T extends IBaseModel> = Partial<Omit<ModelState<T>, 'keys'>>
 
 const Model = <T extends InternalRowData>(parmas: ModelParams<T> = {}) => {
   const classDecorator: ClassDecorator = <T extends Function>(constructor: T) => {
@@ -21,7 +23,7 @@ Model.Perms = (perms: string) => {
 
 function setModelState<T extends Function>(constructor: T, state: ModelParams<T>) {
   const modelName = state.name || constructor.name
-  constructor['state'] = { ...constructor['state'], ...state, name: modelName } as ModelState<T>
+  constructor['state'] = cloneDeep({ ...constructor['state'], ...state, name: modelName }) as ModelState<T>
   return constructor
 }
 
