@@ -29,7 +29,7 @@ export const setupResponse = (http: AxiosInstance) => {
           msg = '没有权限,请获取权限后登录'
           break
         case 404:
-          msg = '页面不存在'
+          msg = '资源走丢了'
           break
         case 500:
           msg = '服务器故障'

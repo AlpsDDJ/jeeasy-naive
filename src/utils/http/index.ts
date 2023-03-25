@@ -19,8 +19,21 @@ export function httpRequest<T = any, P = any>(
   ...[data, config = {}]: HttpRequestParam<T, P>
 ): ReturnType<HttpRequest<T, P>> {
   const method = config.method?.toUpperCase() || 'GET'
-  data && (config[['DELETE', 'GET'].some((key) => key === method) ? 'params' : 'data'] = data)
   config.method = method
+  if (data) {
+    config[['DELETE', 'GET'].some((key) => key === method) ? 'params' : 'data'] = data
+    config.url &&
+      (config.url = config.url.replace(/{\s*(.*?)\s*}/g, (context, objKey) => {
+        const val = data[objKey]
+        if (val === undefined) {
+          throw new Error(`${config.url} 缺少参数: [${objKey}]`)
+        }
+        // 删除URL中匹配的参数
+        delete data[objKey]
+        return val
+      }))
+  }
+
   return http<P, R<T>>(config || {})
 }
 

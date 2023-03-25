@@ -5,7 +5,7 @@ import { BaseModel } from '@/hooks/useModel'
 //   name: 'SysUser',
 //   perms: 'sys:user'
 // })
-@Model.Api('sys/sys/user')
+@Model.Api('sys/user')
 @Model.Perms('sys:user')
 export class User extends BaseModel {
   @Field<User>('用户名', { sorter: 'default' })

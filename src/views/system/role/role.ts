@@ -1,6 +1,6 @@
 import { BaseModel } from '@/hooks/useModel'
 
-@Model.Api('sys/sys/role')
+@Model.Api('sys/role')
 @Model.Perms('sys:role')
 export class Role extends BaseModel {
   @Field('角色名称')

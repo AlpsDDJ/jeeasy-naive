@@ -3,6 +3,7 @@ import { BaseModel, BaseModelConstructor } from '@/hooks/useModel'
 import { DataTableColumn, DataTableInst, DataTableProps, PaginationProps } from 'naive-ui'
 import ActionButton from '@/components/ActionButton/index.vue'
 import http from '@/utils/http'
+import { useModelApi } from '@/hooks/useApi'
 
 export const useListView = <T extends BaseModel>(instance: BaseModelConstructor<T>, option: Record<any, any> = {}) => {
   const tableRef = ref<DataTableInst>()
@@ -99,16 +100,19 @@ export const useListView = <T extends BaseModel>(instance: BaseModelConstructor<
 
   const tableProps = ref<ExtTableProps>(defaultTableProps)
 
+  // console.log('modelState.api = ', modelState.api)
+  const { page: loadPage } = useModelApi(modelState.api)
+
   async function loadData(param?: any) {
     param && console.log(param)
     tableProps.value.loading = true
-    const { api } = modelState
+    // const { api } = modelState
     const { pageSize, page } = tableProps.value.pagination as PaginationProps
     const params = {
       size: pageSize,
       current: page
     }
-    const resp = await http.get(api, { params })
+    const resp = await loadPage(params)
     const {
       data: { records, size, current, total, pages }
     } = resp

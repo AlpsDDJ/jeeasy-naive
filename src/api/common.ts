@@ -1,6 +1,6 @@
-import { BaseApi } from '@/hooks/useHttp'
+import { BaseApi } from '@/hooks/useApi'
 
-@Api('sys')
+// @Api('sys')
 export class CommonApi extends BaseApi {
   /**
    * 静态属性调用：
@@ -18,8 +18,8 @@ export class CommonApi extends BaseApi {
   /**
    * 由于 tsconig 配置了 useDefineForClassFields = true, 所以 declare 必须声明，不然装饰器配置默认值无效
    * 调用方式：
-   * new CommonApi().test!()
+   * new CommonApi().test()
    */
   @Api.Get('/sys/user/menus')
-  declare test?: HttpRequest
+  declare test: HttpRequest
 }
