@@ -1,4 +1,5 @@
 import { BaseModel } from '@/hooks/useModel'
+// import Field from '../../../hooks/useModel/decorator/field'
 
 @Model.Api('sys/role')
 @Model.Perms('sys:role')
@@ -18,6 +19,7 @@ export class Role extends BaseModel {
   @Field('备注')
   remark?: string
 
-  @Field('排序')
+  @Field('排序', { hidden: true })
+  @Field.Hidden()
   sortNo?: string
 }

@@ -2,7 +2,6 @@ import { h } from 'vue'
 import { BaseModel, BaseModelConstructor } from '@/hooks/useModel'
 import { DataTableColumn, DataTableInst, DataTableProps, PaginationProps } from 'naive-ui'
 import ActionButton from '@/components/ActionButton/index.vue'
-import http from '@/utils/http'
 import { useModelApi } from '@/hooks/useApi'
 
 export const useListView = <T extends BaseModel>(instance: BaseModelConstructor<T>, option: Record<any, any> = {}) => {
@@ -11,10 +10,10 @@ export const useListView = <T extends BaseModel>(instance: BaseModelConstructor<
 
   const modelState: ModelState<T> = useModel<T>(instance)
   const { actions = 'default' } = option
-  const handleDelete = (row, index) => {
+  const handleDelete = ({ row, index }) => {
     console.log(`删除第${index} 行，id = ${row.id}`)
   }
-  const handleEdit = (row, index) => {
+  const handleEdit = ({ row, index }) => {
     console.log(`编辑第${index} 行，id = ${row.id}`)
     showForm(row, FormType.EDIT)
   }
@@ -35,11 +34,11 @@ export const useListView = <T extends BaseModel>(instance: BaseModelConstructor<
     formState.active = true
     // console.log(formData)
     console.log('FormShowType ---> ', type)
-    console.log('FormShowType ---> ', type === FormType.ADD)
+    // console.log('FormShowType ---> ', type === FormType.ADD)
   }
 
   if (actions !== false) {
-    modelState.fields['acions'] = {
+    modelState.fields['actions'] = {
       title: '操作',
       key: 'action',
       fixed: 'right',
@@ -82,8 +81,8 @@ export const useListView = <T extends BaseModel>(instance: BaseModelConstructor<
   /**
    * @param page 分页参数
    */
-  const pageHandle: PageHandle = (page: PaginationProps) => {
-    loadData(page)
+  const pageHandle: PageHandle = async (page: PaginationProps) => {
+    await loadData(page)
   }
 
   const defaultTableProps = {

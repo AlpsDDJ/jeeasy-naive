@@ -43,12 +43,13 @@
 </template>
 
 <script lang="ts" setup name="SysRoleList">
-  import { Role } from '@/views/system/role/role'
+  import { Role } from './role'
 
   const { tableProps, extRef, loadData, formState } = useListView(Role)
   const queryCollapsed = ref(true)
 
   onMounted(() => {
+    console.log(111)
     // tableRef.value!.page(2)
   })
 </script>
