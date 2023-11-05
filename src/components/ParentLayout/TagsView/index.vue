@@ -6,13 +6,17 @@
           v-for="tag in showTags"
           :key="tag.key"
           :closable="tagClosable"
-          :bordered="false"
-          :type="activeTagKey(tag.key) ? 'success' : ''"
+          :bordered="true"
+          :type="activeTagKey(tag.key) ? 'success' : 'default'"
           class="tag no-select"
+          :theme-overrides="{ color: themeVars.bodyColor }"
           @click="tagClickHandle(tag.key)"
           @close="tagCloseHandle(tag.key)"
           @mousedown="({ button: type }) => mousedownHandle(type, tag.key)"
         >
+          <template v-if="tag.icon" #icon>
+            <icon :icon-name="tag.icon" />
+          </template>
           <span>{{ tag.title }}</span>
         </n-tag>
       </n-space>
@@ -22,17 +26,20 @@
 
 <script lang="ts" setup name="TagsView">
   import type { ScrollbarInst } from 'naive-ui'
+  import { useThemeVars } from 'naive-ui'
   import { remove, sortBy } from 'lodash-es'
 
   const router = useRouter()
 
   import { useAppStore } from '@/store/modules/app'
   const appStore = useAppStore()
+  const themeVars = useThemeVars()
 
   type Tag = {
     key: string
     title: string
     index: number
+    icon?: string | undefined
     // closable?: boolean
   }
 
@@ -42,6 +49,7 @@
 
   // 展示标签 (排序后)
   const showTags = computed(() => sortBy(tags.value, 'index'))
+  console.log('showTags --> ', showTags)
   // 是否为当前标签
   const activeTagKey = computed(() => (key) => currTagKey.value === key)
   // 标签是否可关闭
@@ -53,11 +61,12 @@
     const tag = tags.value.find(({ key }) => key === fullPath)
 
     if (!tag) {
-      const { title = '' } = meta
+      const { title = '', icon = '' } = meta
       tags.value.push({
         key: fullPath,
         title: title as string,
-        index: tagIndex.value++
+        index: tagIndex.value++,
+        icon: icon as string
       })
     } else {
       removeTag(fullPath)

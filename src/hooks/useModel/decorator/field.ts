@@ -1,8 +1,18 @@
-import { cloneDeep } from 'lodash-es'
+import { cloneDeep, isArray } from 'lodash-es'
 import { BaseModel } from '@/hooks/useModel'
 
-const Field = <T extends InternalRowData>(label: string | FieldOption<T> = '', option?: FieldOption<T>) => {
-  let optionTemp = cloneDeep(option || {}) as FieldOption<T>
+const Field: FieldDecoratorType = <T extends InternalRowData>(
+  label?: string | FieldOption<T>,
+  option?: FieldOptionFlag[] | FieldOption<T>
+) => {
+  let optionTemp: FieldOption<T> = {}
+  if (isArray(option)) {
+    option.forEach((item) => {
+      optionTemp[item] = true
+    })
+  } else {
+    optionTemp = cloneDeep(option || {}) as FieldOption<T>
+  }
   if (typeof label === 'string') {
     optionTemp.label = label as string
   } else if (label) {
@@ -19,7 +29,7 @@ const Field = <T extends InternalRowData>(label: string | FieldOption<T> = '', o
   return propertyDecorator
 }
 
-Field.Hidden = () => {
+export const FieldHidden = () => {
   const propertyDecorator: PropertyDecorator = (target, propertyKey) => {
     const state = getState(target)
     // state['fields'][propertyKey].hidden = true
@@ -27,8 +37,6 @@ Field.Hidden = () => {
   }
   return propertyDecorator
 }
-
-export default Field
 
 function createColunm<T extends InternalRowData>(key: string | symbol, optionTemp: FieldOption<T>): FieldOption<T> {
   const { label, ...option } = optionTemp
@@ -55,3 +63,5 @@ function setFieldProperty(state: ModelState<BaseModel>, key: string | symbol, pr
   const props = state['fields'][key] || {}
   state['fields'][key] = { ...props, ...property }
 }
+
+export default Field

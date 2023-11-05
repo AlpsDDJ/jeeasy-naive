@@ -1,14 +1,15 @@
-import { BaseModel } from '@/hooks/useModel'
+// import { BaseModel } from '@/hooks/useModel'
 
 // @Model({
 //   api: 'sys/user',
 //   name: 'SysUser',
 //   perms: 'sys:user'
 // })
-@Model.Api('sys/user')
-@Model.Perms('sys:user')
+// @Model.Api('sys/user')
+// @Model.Perms('sys:user')
+@Model('SysUser')
 export class User extends BaseModel {
-  @Field<User>('用户名', { sorter: 'default' })
+  @Field<User>('用户名', ['sorter'])
   username?: string
 
   @Field('用户编号')
@@ -22,6 +23,7 @@ export class User extends BaseModel {
 
   @Field('手机号')
   phone?: string
+
   @Field('姓名')
   realName?: string
 

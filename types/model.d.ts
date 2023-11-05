@@ -25,10 +25,18 @@ declare global {
 
   type FieldOpt<T extends InternalRowData> = {
     label?: string
+    hidden?: boolean
     $type$?: T
   }
 
   type FieldOption<T extends InternalRowData> = FieldOpt | DataTableColumn<T>
+
+  type FieldOptionFlag = string | 'hidden' | 'dict'
+
+  type FieldDecoratorType = <T extends InternalRowData>(
+    label?: string | FieldOption<T>,
+    option?: FieldOptionFlag[] | FieldOption<T>
+  ) => PropertyDecorator
 }
 
 export default {}
