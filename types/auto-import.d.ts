@@ -14,6 +14,7 @@ declare global {
   const Model: (typeof import('../src/hooks/useModel/index'))['Model']
   const ModelApi: (typeof import('../src/hooks/useApi/index'))['ModelApi']
   const NConfigProvider: (typeof import('naive-ui'))['NConfigProvider']
+  const PageEnum: (typeof import('../src/enums/PageEnum'))['PageEnum']
   const acceptHMRUpdate: (typeof import('pinia'))['acceptHMRUpdate']
   const asyncComputed: (typeof import('@vueuse/core'))['asyncComputed']
   const autoResetRef: (typeof import('@vueuse/core'))['autoResetRef']
