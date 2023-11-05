@@ -13,6 +13,7 @@ declare global {
   export type HttpRequest<T = any, P = any> = {
     (data?: P, config?: AxiosRequestConfig<P>): Promise<R<T>>
   }
+  type EnumTypes<T extends string | number> = keyof { [k in T]: unknown }
 }
 
 export default {}

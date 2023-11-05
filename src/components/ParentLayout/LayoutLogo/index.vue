@@ -12,9 +12,14 @@
   </div>
 </template>
 
-<script lang="ts" setup name="LayoutLogo">
+<script lang="ts" setup>
   import Logo from '@/assets/image/logo.png'
   import { useAppStore } from '@/store/modules/app'
+
+  defineOptions({
+    name: 'LayoutLogo'
+  })
+
   const appStore = useAppStore()
   const headerHeight = ref<string>(`${appStore.layout.headerHeight}px`)
 </script>

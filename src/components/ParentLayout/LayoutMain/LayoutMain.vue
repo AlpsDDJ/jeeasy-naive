@@ -11,8 +11,13 @@
   </div>
 </template>
 
-<script lang="ts" setup name="LayoutMain">
+<script lang="ts" setup>
   import { useAppStore } from '@/store/modules/app'
+
+  defineOptions({
+    name: 'LayoutMain'
+  })
+
   const appStore = useAppStore()
   const layoutBackgroundColor = computed(() => {
     return appStore.darkTheme ? 'auto' : '#F5F7F9'

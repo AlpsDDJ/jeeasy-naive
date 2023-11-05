@@ -69,8 +69,12 @@
   </div>
 </template>
 
-<script lang="ts" setup name="SysUserList">
+<script lang="ts" setup>
   import { User } from '@/views/system/user/user'
+
+  defineOptions({
+    name: 'SysUserList'
+  })
 
   const { tableProps, extRef, loadData, formState } = useListView(User)
   const queryCollapsed = ref(true)

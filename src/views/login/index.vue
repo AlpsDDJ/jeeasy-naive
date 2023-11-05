@@ -75,12 +75,16 @@
     </div>
   </n-layout>
 </template>
-<script lang="ts" setup name="Login">
+<script lang="ts" setup>
   // import Logo from '@/assets/image/logo.png'
   import LoginImg from '@/assets/image/login/img.png'
   import { LoginForm } from '@/store/modules/user/type'
   import { useUserStore } from '@/store/modules/user'
-  import { PageEnum } from '@/enums/PageEnum'
+  // import { PageEnum } from '@/enums/PageEnum'
+
+  defineOptions({
+    name: 'Login'
+  })
 
   const userStore = useUserStore()
   const router = useRouter()

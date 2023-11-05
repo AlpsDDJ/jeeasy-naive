@@ -1,6 +1,6 @@
 import type { AppRouteRecordRaw } from '@/router/types'
 import { ErrorPage, RedirectName, Layout } from '@/router/constant'
-import { PageEnum } from '@/enums/PageEnum'
+// import { PageEnum } from '@/enums/PageEnum'
 import { RouteRecordRaw } from 'vue-router'
 
 export const RootRoute: RouteRecordRaw[] = [

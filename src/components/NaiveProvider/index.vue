@@ -13,9 +13,13 @@
   </n-config-provider>
 </template>
 
-<script lang="ts" setup name="NaiveProvider">
+<script lang="ts" setup>
   import { useAppStore } from '@/store/modules/app'
   import NotificationContent from '@/components/NaiveProvider/content/NotificationContent.vue'
+
+  defineOptions({
+    name: 'NaiveProvider'
+  })
 
   const appStore = useAppStore()
 </script>

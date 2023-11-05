@@ -3,7 +3,7 @@
     <template v-for="opt in actionOptions" :key="opt.action">
       <n-button
         v-if="opt.show"
-        :disabled="typeof opt.disabled === 'boolean' ? opt.disabled : opt.disabled(data)"
+        :disabled="typeof opt.isDisabled === 'function' ? opt.isDisabled(data) : opt.isDisabled"
         v-bind="{ ...opt, ...$attrs }"
         @click="opt.handle ? opt.handle(data) : $emit(`action:${opt.action}`, data)"
       >
@@ -14,90 +14,16 @@
   </n-space>
 </template>
 
-<script lang="ts" setup name="ActionButton">
+<script lang="ts" setup>
   import { isNotNull } from '@/utils/tools'
-  import { ButtonProps } from 'naive-ui'
-
-  // type ButonType = 'default' | 'tertiary' | 'primary' | 'success' | 'info' | 'warning' | 'error'
-  type ActionType = 'edit' | 'delete' | 'view' | 'add' | string
-
-  type ColAttrFn<T> =
-    | T
-    | {
-        (data): T
-      }
-
-  type ActionOption = ButtonProps & {
-    action: ActionType
-    html: string
-    handle?: (data: any) => void
-    // btnType?: ButonType
-    // btnStyle?: 'button' | 'link'
-    icon?: string
-    autoShow?: boolean
-    disabled?: ColAttrFn<boolean>
-    show?: ColAttrFn<boolean>
-  }
-
-  type ActionButtonProps = {
-    actions?: ActionOption[] | ActionType[] | boolean | 'default'
-    data?: any
-    align?: 'stretch' | 'baseline' | 'start' | 'end' | 'center' | 'flex-end' | 'flex-start'
-    // index: number
-  }
+  import { commonActions } from './commonActions'
+  import type { ActionOption, ActionButtonProps } from './commonActions'
 
   // function actionHandle(action, row, index) {}
 
-  const commonActions: ActionOption[] = [
-    {
-      action: 'query',
-      html: '查询',
-      secondary: true,
-      type: 'primary'
-    },
-    {
-      action: 'reset',
-      html: '重置',
-      secondary: true,
-      type: 'tertiary'
-    },
-    {
-      action: 'add',
-      html: '添加',
-      secondary: true,
-      type: 'primary'
-    },
-    {
-      action: 'edit',
-      html: '修改',
-      text: true,
-      type: 'primary',
-      autoShow: true
-      // handle: (row, index) => {
-      //   console.log(`action edit row${index}:`, row)
-      // }
-    },
-    {
-      action: 'delete',
-      html: '删除',
-      text: true,
-      type: 'error',
-      autoShow: true
-      // handle: (row, index) => {
-      //   console.log(`action delete row${index}:`, row)
-      // }
-    },
-    {
-      action: 'view',
-      html: '查看',
-      text: true,
-      type: 'primary',
-      autoShow: false
-      // handle: (row, index) => {
-      //   console.log(`action edit row${index}:`, row)
-      // }
-    }
-  ]
+  defineOptions({
+    name: 'ActionButton'
+  })
 
   const props = defineProps<ActionButtonProps>()
   const { actions = ref(true), data } = toRefs(props)
@@ -126,8 +52,11 @@
     }
     return options.map(({ disabled = false, show = true, ...opt }) => ({ ...opt, disabled, show }))
   })
+  // actionOptions.value.forEach((item) => {
+  //   defineEmits(`action:${item.action}`, data.value)
+  // })
 
-  // const emit = defineEmits(actions!.value!.map(({ action }) => action))
+  defineEmits(commonActions.map(({ action }) => `action:${action}`))
 </script>
 
 <style scoped></style>

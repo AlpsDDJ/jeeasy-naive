@@ -25,8 +25,12 @@
   </n-layout>
 </template>
 
-<script lang="ts" setup name="ParentLayout">
+<script lang="ts" setup>
   import { useAppStore } from '@/store/modules/app'
+
+  defineOptions({
+    name: 'ParentLayout'
+  })
 
   const appStore = useAppStore()
   const headerHeight = ref<string>(`${appStore.layout.headerHeight}px`)

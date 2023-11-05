@@ -24,10 +24,14 @@
   </div>
 </template>
 
-<script lang="ts" setup name="TagsView">
+<script lang="ts" setup>
   import type { ScrollbarInst } from 'naive-ui'
   import { useThemeVars } from 'naive-ui'
   import { remove, sortBy } from 'lodash-es'
+
+  defineOptions({
+    name: 'TagsView'
+  })
 
   const router = useRouter()
 

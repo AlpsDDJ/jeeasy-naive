@@ -4,7 +4,7 @@ import ViteRestart from 'vite-plugin-restart'
 import * as path from 'path'
 import AutoImport from 'unplugin-auto-import/vite'
 import VueJsx from '@vitejs/plugin-vue-jsx'
-import VueSetupExtend from 'vite-plugin-vue-setup-extend'
+// import VueSetupExtend from 'vite-plugin-vue-setup-extend'
 import Components from 'unplugin-vue-components/vite'
 import { NaiveUiResolver } from 'unplugin-vue-components/resolvers'
 
@@ -13,12 +13,12 @@ export default () =>
     plugins: [
       vue(),
       VueJsx(),
-      VueSetupExtend(),
+      // VueSetupExtend(),
       ViteRestart({
         restart: ['my.config.[jt]s']
       }),
       AutoImport({
-        dirs: ['src/components', 'src/hooks/**'],
+        dirs: ['src/components', 'src/hooks/**', 'src/enums/**'],
         imports: ['vue', 'vue-router', 'pinia', '@vueuse/core'],
         // 可以选择auto-import.d.ts生成的位置，使用ts建议设置为'src/auto-import.d.ts'
         dts: 'types/auto-import.d.ts',

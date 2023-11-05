@@ -24,9 +24,13 @@
   </n-data-table>
 </template>
 
-<script lang="ts" setup name="ExtTable">
+<script lang="ts" setup>
   import type { DataTableColumn, DataTableInst } from 'naive-ui'
   import { dataTableProps } from 'naive-ui'
+
+  defineOptions({
+    name: 'ExtTable'
+  })
 
   const attrs = useAttrs()
 

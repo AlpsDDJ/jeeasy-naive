@@ -1,5 +1,5 @@
 import { router, menuToRouter } from '@/router'
-import { PageEnum } from '@/enums/PageEnum'
+// import { PageEnum } from '@/enums/PageEnum'
 import { useUserStore } from '@/store/modules/user'
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'

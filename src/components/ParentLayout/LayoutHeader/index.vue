@@ -29,10 +29,14 @@
   </div>
 </template>
 
-<script lang="ts" setup name="LayoutHeader">
+<script lang="ts" setup>
   // LayoutHeader
   import { useAppStore } from '@/store/modules/app'
   import { useUserStore } from '@/store/modules/user'
+
+  defineOptions({
+    name: 'LayoutHeader'
+  })
 
   const appStore = useAppStore()
   const userStore = useUserStore()

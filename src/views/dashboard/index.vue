@@ -2,6 +2,10 @@
   <div> Home Page </div>
 </template>
 
-<script lang="ts" setup name="Dashboard"></script>
+<script lang="ts" setup>
+  defineOptions({
+    name: 'Dashboard'
+  })
+</script>
 
 <style scoped></style>

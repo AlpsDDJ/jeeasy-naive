@@ -4,7 +4,10 @@
   </naive-provider>
 </template>
 
-<script setup lang="ts" name="App">
+<script setup lang="ts">
+  defineOptions({
+    name: 'App'
+  })
   // import { useAppStore } from '@/store/modules/app'
   // const appStore = useAppStore()
   // const layoutBackgroundColor = computed(() => {

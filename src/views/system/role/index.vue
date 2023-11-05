@@ -42,8 +42,12 @@
   </div>
 </template>
 
-<script lang="ts" setup name="SysRoleList">
+<script lang="ts" setup>
   import { Role } from './role'
+
+  defineOptions({
+    name: 'SysRoleList'
+  })
 
   const { tableProps, extRef, loadData, formState } = useListView(Role)
   const queryCollapsed = ref(true)

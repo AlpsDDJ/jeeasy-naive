@@ -18,19 +18,7 @@ export const useListView = <T extends BaseModel>(instance: BaseModelConstructor<
     showForm(row, FormType.EDIT)
   }
 
-  enum FormType {
-    // EDIT = 'edit',
-    // ADD = 'add',
-    // VIEW = 'view'
-    ADD,
-    EDIT,
-    VIEW
-  }
-
-  // interface PropertyInterface<T> extends Record<T, boolean> {}
-  type EnumTypes<T extends string | number> = keyof { [k in T]: unknown }
-
-  const showForm = (formData: any, type: EnumTypes<FormType>) => {
+  const showForm = (formData: any, type: IFormType) => {
     formState.active = true
     // console.log(formData)
     console.log('FormShowType ---> ', type)

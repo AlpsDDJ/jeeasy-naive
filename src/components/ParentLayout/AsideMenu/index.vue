@@ -10,7 +10,7 @@
   />
 </template>
 
-<script lang="tsx" setup name="AsideMenu">
+<script lang="tsx" setup>
   import { useAppStore } from '@/store/modules/app'
   import { MenuMixedOption } from 'naive-ui/es/menu/src/interface'
   import { RouteRecordRaw } from 'vue-router'
@@ -21,6 +21,10 @@
   const userStore = useUserStore()
   const router = useRouter()
   const route = useRoute()
+
+  defineOptions({
+    name: 'AsideMenu'
+  })
 
   const menuState = reactive<{ menus: any[] }>({ menus: [] })
 

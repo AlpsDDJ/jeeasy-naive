@@ -2,8 +2,14 @@
   <n-form v-bind="props"> </n-form>
 </template>
 
-<script lang="ts" setup name="ExtForm">
+<script lang="ts" setup generic="T extends BaseModel">
   import { formProps } from 'naive-ui'
+  import { BaseModel } from '@/hooks/useModel'
+
+  defineOptions({
+    name: 'ExtForm'
+  })
+
   const props = defineProps({
     ...formProps
   })
