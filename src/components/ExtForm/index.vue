@@ -7,8 +7,11 @@
   import { BaseModel } from '@/hooks/useModel'
 
   defineOptions({
-    name: 'ExtForm'
+    name: 'ExtForm',
+    inheritAttrs: true
   })
+
+  // const formData = defineModel<T>()
 
   const props = defineProps({
     ...formProps

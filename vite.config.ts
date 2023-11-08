@@ -11,7 +11,11 @@ import { NaiveUiResolver } from 'unplugin-vue-components/resolvers'
 export default () =>
   defineConfig({
     plugins: [
-      vue(),
+      vue({
+        script: {
+          defineModel: true
+        }
+      }),
       VueJsx(),
       // VueSetupExtend(),
       ViteRestart({
