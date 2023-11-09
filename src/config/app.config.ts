@@ -10,3 +10,14 @@ export const appConfig: AppState = {
   },
   menus: []
 }
+
+export const appSetting: AppSetting = {
+  formSize: 'small',
+  formColWidth: 450
+}
+
+export const formTypeTitleMap = {
+  [FormType.ADD]: '新增',
+  [FormType.EDIT]: '编辑',
+  [FormType.VIEW]: '查看'
+}

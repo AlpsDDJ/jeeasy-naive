@@ -45,7 +45,7 @@ export const commonActions: ActionOption[] = [
   },
   {
     action: 'edit',
-    html: '修改',
+    html: '编辑',
     text: true,
     type: 'primary',
     isDisabled: true,

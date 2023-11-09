@@ -1,4 +1,4 @@
-import { FormInst, FormItemProps, FormProps } from 'naive-ui'
+import { FormInst, FormItemProps } from 'naive-ui'
 import { BaseModel } from '@/hooks/useModel'
 import { FormDataType, FormType, InputType } from '@/enums/ExtEnum'
 // import { FormType } from '@/enums/ExtEnum'
@@ -9,16 +9,16 @@ declare global {
   type IFormDataType = EnumTypes<FormDataType>
   type IInputType = EnumTypes<InputType>
 
-  type ExtFormItem = FormItemProps & {
-    dataType: IFormDataType
-    inputType: IInputType
+  interface ExtFormItem extends FormItemProps {
+    dataType?: IFormDataType
+    inputType?: IInputType
   }
 
   type IFormData<T extends BaseModel> = {
     [key in keyof T]?: T[key]
   }
 
-  export interface ExtFormInst<T> extends FormInst {
+  interface ExtFormInst<T> extends FormInst {
     show: (type: IFormType, fData?: IFormData<T>) => void
     hide: () => Promise<void>
   }
@@ -27,11 +27,12 @@ declare global {
   //   [key in keyof T]: ExtFormItem
   // }
 
-  type ExtFormProps<T> = FormProps & {
-    formDate?: T
-    jsonScheme?: ExtFormItem[]
-    formType?: IFormType
-  }
+  // interface ExtFormProps extends /* @vue-ignore */ FormProps {
+  //   // formDate?: T
+  //   jsonScheme: ExtFormItem[]
+  //   wSize?: number | string
+  //   // formType?: IFormType
+  // }
 }
 
 export {}

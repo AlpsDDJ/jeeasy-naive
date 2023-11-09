@@ -1,6 +1,9 @@
 export const enum FormType {
+  // 新增
   ADD,
+  // 修改
   EDIT,
+  // 查看
   VIEW
 }
 

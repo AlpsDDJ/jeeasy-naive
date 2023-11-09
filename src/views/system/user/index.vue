@@ -63,19 +63,37 @@
         />
       </n-card>
     </div>
-    <!--    <sys-user-form ref="formRef"> </sys-user-form>-->
-    <ext-form ref="formRef" v-model="formData"> </ext-form>
+    <ext-form ref="formRef" v-model="formData" :json-scheme="jsonScheme"> </ext-form>
   </div>
 </template>
 
 <script lang="ts" setup>
   import { User } from './user'
-
-  // const formRef = ref()
+  import { FormDataType, InputType } from '@/enums/ExtEnum'
 
   defineOptions({
     name: 'SysUserList'
   })
+  const jsonScheme = ref<ExtFormItem[]>([
+    {
+      dataType: FormDataType.STRING,
+      inputType: InputType.INPUT,
+      path: 'name',
+      label: '姓名'
+    },
+    {
+      path: 'age',
+      label: '年龄'
+    },
+    {
+      path: '123123',
+      label: '年龄111'
+    },
+    {
+      path: '12312223',
+      label: '年龄11133'
+    }
+  ])
 
   const { tableProps, extRef, loadData, formRef, formData } = useListView(User)
   const queryCollapsed = ref(true)

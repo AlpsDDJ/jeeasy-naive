@@ -1,4 +1,5 @@
 import { MenuMixedOption } from 'naive-ui/es/menu/src/interface'
+import { Size } from 'naive-ui/es/form/src/interface'
 
 declare global {
   interface AppState {
@@ -6,6 +7,11 @@ declare global {
     layout: LayoutState
     darkTheme: boolean
     menus: MenuMixedOption[]
+  }
+
+  interface AppSetting {
+    formSize: Size
+    formColWidth: number
   }
 
   interface LayoutState {
