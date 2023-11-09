@@ -11,11 +11,7 @@
       <n-spin :show="formLoading">
         <n-form ref="formRef" :model="formData" label-placement="left" :inline="cols !== 1" label-width="auto">
           <n-grid :cols="props.cols ? props.cols : 1">
-            <n-form-item-gi
-              v-for="item in formActive ? props.jsonScheme : []"
-              :key="item.key || item.path"
-              :label="item.label"
-            >
+            <n-form-item-gi v-for="item in formActive ? props.jsonScheme : []" :key="item.path" :label="item.label">
               <n-input v-model:value="formData[item.path || '']" :placeholder="item.label" />
             </n-form-item-gi>
           </n-grid>
@@ -35,7 +31,7 @@
   import { BaseModel } from '@/hooks/useModel'
   import type { FormInst } from 'naive-ui'
   import type { FormValidateCallback, ShouldRuleBeApplied } from 'naive-ui/es/form/src/interface'
-  import type { ExtFormProps } from './props'
+  import type { ExtFormProps } from './types'
   import { appSetting, formTypeTitleMap } from '@/config/app.config'
 
   defineOptions({
