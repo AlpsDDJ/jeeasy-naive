@@ -1,4 +1,4 @@
-export enum PageEnum {
+export const enum PageEnum {
   // 登录
   BASE_LOGIN = '/login',
   BASE_LOGIN_NAME = 'Login',

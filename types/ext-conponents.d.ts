@@ -1,45 +1,35 @@
-import { FormItemProps, FormProps } from 'naive-ui'
+import { FormInst, FormItemProps, FormProps } from 'naive-ui'
 import { BaseModel } from '@/hooks/useModel'
+import { FormDataType, FormType, InputType } from '@/enums/ExtEnum'
 // import { FormType } from '@/enums/ExtEnum'
 
 declare global {
-  export const enum FormType {
-    ADD,
-    EDIT,
-    VIEW
-  }
-
-  enum FormDataType {
-    STRING,
-    NUMBER,
-    BOOLEAN,
-    DATE,
-    TIME,
-    DATETIME
-  }
-
   type IFormType = EnumTypes<FormType>
 
   type IFormDataType = EnumTypes<FormDataType>
-  type IInputType = 'input' | 'inputNumber' | 'date' | 'time' | 'datetime' | 'switch' | 'select' | 'treeSelect'
-  type ICustomInputType = 'dict' | 'sysUserSelect'
+  type IInputType = EnumTypes<InputType>
 
   type ExtFormItem = FormItemProps & {
     dataType: IFormDataType
-    inputType: IInputType | ICustomInputType
+    inputType: IInputType
   }
 
-  const formItem: ExtFormItem = {
-    dataType: FormDataType.STRING
+  type IFormData<T extends BaseModel> = {
+    [key in keyof T]?: T[key]
   }
 
-  type FormScheme<T extends BaseModel> = {
-    [key in keyof T]: ExtFormItem
+  export interface ExtFormInst<T> extends FormInst {
+    show: (type: IFormType, fData?: IFormData<T>) => void
+    hide: () => Promise<void>
   }
+
+  // type FormScheme<T extends BaseModel> = {
+  //   [key in keyof T]: ExtFormItem
+  // }
 
   type ExtFormProps<T> = FormProps & {
-    // formDate?: T
-    jsonScheme?: FormScheme<T>
+    formDate?: T
+    jsonScheme?: ExtFormItem[]
     formType?: IFormType
   }
 }

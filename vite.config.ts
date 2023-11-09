@@ -13,6 +13,7 @@ export default () =>
     plugins: [
       vue({
         script: {
+          propsDestructure: true,
           defineModel: true
         }
       }),

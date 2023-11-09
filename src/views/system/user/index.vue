@@ -63,20 +63,21 @@
         />
       </n-card>
     </div>
-    <div class="data-form">
-      <n-drawer v-model:show="formState.active"> </n-drawer>
-    </div>
+    <!--    <sys-user-form ref="formRef"> </sys-user-form>-->
+    <ext-form ref="formRef" v-model="formData"> </ext-form>
   </div>
 </template>
 
 <script lang="ts" setup>
-  import { User } from '@/views/system/user/user'
+  import { User } from './user'
+
+  // const formRef = ref()
 
   defineOptions({
     name: 'SysUserList'
   })
 
-  const { tableProps, extRef, loadData, formState } = useListView(User)
+  const { tableProps, extRef, loadData, formRef, formData } = useListView(User)
   const queryCollapsed = ref(true)
 
   onMounted(() => {

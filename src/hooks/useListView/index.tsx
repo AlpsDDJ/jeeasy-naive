@@ -20,9 +20,7 @@ export const useListView = <T extends BaseModel>(instance: BaseModelConstructor<
 
   const showForm = (formData: any, type: IFormType) => {
     formState.active = true
-    // console.log(formData)
-    console.log('FormShowType ---> ', type)
-    // console.log('FormShowType ---> ', type === FormType.ADD)
+    formRef.value?.show(type, formData)
   }
 
   if (actions !== false) {
@@ -47,7 +45,8 @@ export const useListView = <T extends BaseModel>(instance: BaseModelConstructor<
 
   const fields = reactive(modelState.fields)
 
-  const formRef = ref()
+  const formRef = ref<ExtFormInst<T>>()
+  const formData = ref<IFormData<T>>()
 
   const formState = reactive({
     active: false
@@ -137,6 +136,7 @@ export const useListView = <T extends BaseModel>(instance: BaseModelConstructor<
     loadData,
     formState,
     formRef,
+    formData,
     showForm
   }
 }
