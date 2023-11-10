@@ -4,7 +4,7 @@
 // @Model.Api('sys/role')
 // @Model.Perms('sys:role')
 @Model('SysRole')
-export class Role extends BaseModel {
+class SysRole extends BaseModel {
   @Field('角色名称')
   roleName?: string
 
@@ -24,3 +24,5 @@ export class Role extends BaseModel {
   // @FieldHidden()
   sortNo?: string
 }
+
+export default SysRole

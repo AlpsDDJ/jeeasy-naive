@@ -15,9 +15,7 @@ setupResponse(http)
 export default http
 type HttpRequestParam<T = any, P = any> = Parameters<HttpRequest<T, P>>
 
-export function httpRequest<T = any, P = any>(
-  ...[data, config = {}]: HttpRequestParam<T, P>
-): ReturnType<HttpRequest<T, P>> {
+export function httpRequest<T = any, P = any>(...[data, config = {}]: HttpRequestParam<T, P>): ReturnType<HttpRequest<T, P>> {
   const method = config.method?.toUpperCase() || 'GET'
   config.method = method
   if (data) {

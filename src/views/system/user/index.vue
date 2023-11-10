@@ -55,42 +55,42 @@
     </div>
     <div class="data-table-content">
       <n-card>
-        <ext-table ref="tableRef" :instance="User" @show-form="showForm" />
+        <ext-table ref="tableRef" :instance="Model" @show-form="showForm" />
       </n-card>
     </div>
-    <ext-form ref="formRef" v-model="formData" :json-scheme="jsonScheme" />
+    <ext-form ref="formRef" v-model="formData" :instance="Model" />
   </div>
 </template>
 
 <script lang="ts" setup>
-  import { User } from './user'
-  import { FormDataType, InputType } from '@/enums/ExtEnum'
+  import Model from './model'
+  import { useExtView } from '@/components/ext'
 
   defineOptions({
     name: 'SysUserList'
   })
-  const jsonScheme = ref<ExtFormItem[]>([
-    {
-      dataType: FormDataType.STRING,
-      inputType: InputType.INPUT,
-      path: 'name',
-      label: '姓名'
-    },
-    {
-      path: 'age',
-      label: '年龄'
-    },
-    {
-      path: '123123',
-      label: '年龄111'
-    },
-    {
-      path: '12312223',
-      label: '年龄11133'
-    }
-  ])
+  // const jsonScheme = ref<ExtFormItem<Model>[]>([
+  //   {
+  //     dataType: FormDataType.STRING,
+  //     inputType: InputType.INPUT,
+  //     path: 'name',
+  //     label: '姓名'
+  //   },
+  //   {
+  //     path: 'age',
+  //     label: '年龄'
+  //   },
+  //   {
+  //     path: '123123',
+  //     label: '年龄111'
+  //   },
+  //   {
+  //     path: '12312223',
+  //     label: '年龄11133'
+  //   }
+  // ])
 
-  const { tableRef, formRef, formData, loadData, showForm } = useListView()
+  const { tableRef, formRef, formData, loadData, showForm } = useExtView()
   const queryCollapsed = ref(true)
 
   onMounted(() => {

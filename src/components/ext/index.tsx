@@ -1,18 +1,18 @@
 import { BaseModel } from '@/hooks/useModel'
-import { ExtTableInst } from '@/components/ext/types'
+import { ExtTableInst, ExtFormInst, IFormData, ExtView, IFormType } from '@/components/ext/types'
 
-export const useListView = <T extends BaseModel>() => {
+export const useExtView = <T extends BaseModel>(): ExtView<T> => {
   // const tableRef = ref<DataTableInst>()
   const tableRef = ref<ExtTableInst<T>>()
   const formRef = ref<ExtFormInst<T>>()
   const formData = ref<IFormData<T>>()
 
   const loadData = (params?: any) => {
-    tableRef.value?.loadData(params)
+    return tableRef.value!.loadData(params)
   }
 
   const showForm = (type: IFormType, formData?: any) => {
-    formRef.value?.show(type, formData)
+    formRef.value!.open(type, formData)
   }
 
   return {

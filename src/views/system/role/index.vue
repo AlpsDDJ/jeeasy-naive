@@ -28,28 +28,22 @@
     </div>
     <div class="data-table-content">
       <n-card>
-        <ext-table
-          ref="extRef"
-          v-bind="tableProps"
-          v-model:pagination="tableProps.pagination"
-          @page="tableProps.pageHandle"
-        />
+        <ext-table ref="tableRef" :instance="Model" @show-form="showForm" />
       </n-card>
     </div>
-    <div class="data-form">
-      <n-drawer v-model:show="formState.active"> </n-drawer>
-    </div>
+    <ext-form ref="formRef" v-model="formData" :instance="Model" />
   </div>
 </template>
 
 <script lang="ts" setup>
-  import { Role } from './role'
+  import Model from './model'
+  import { useExtView } from '@/components/ext'
 
   defineOptions({
     name: 'SysRoleList'
   })
 
-  const { tableProps, extRef, loadData, formState } = useListView(Role)
+  const { tableRef, formRef, formData, loadData, showForm } = useExtView()
   const queryCollapsed = ref(true)
 
   onMounted(() => {

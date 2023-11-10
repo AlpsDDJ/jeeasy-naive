@@ -1,11 +1,10 @@
 import { cloneDeep, isArray } from 'lodash-es'
 import { BaseModel } from '@/hooks/useModel'
 
-const Field: FieldDecoratorType = <T extends InternalRowData>(
-  label?: string | FieldOption<T>,
-  option?: FieldOptionFlag[] | FieldOption<T>
-) => {
-  let optionTemp: FieldOption<T> = {}
+const Field: FieldDecoratorType = <T extends InternalRowData>(label?: string | FieldOption<T>, option?: FieldOptionFlag[] | FieldOption<T>) => {
+  let optionTemp: FieldOption<T> = {
+    key: ''
+  }
   if (isArray(option)) {
     option.forEach((item) => {
       optionTemp[item] = true
@@ -29,22 +28,30 @@ const Field: FieldDecoratorType = <T extends InternalRowData>(
   return propertyDecorator
 }
 
-export const FieldHidden = () => {
+export const FieldHidden = (hiddenType?: FieldHiddenType) => {
   const propertyDecorator: PropertyDecorator = (target, propertyKey) => {
+    console.log('propertyKey --1--> ', Object.getOwnPropertyDescriptor(target, propertyKey))
     const state = getState(target)
     // state['fields'][propertyKey].hidden = true
-    setFieldProperty(state, propertyKey, { hidden: true })
+    setFieldProperty(state, propertyKey, { hidden: hiddenType === undefined ? true : hiddenType })
   }
   return propertyDecorator
 }
 
 function createColunm<T extends InternalRowData>(key: string | symbol, optionTemp: FieldOption<T>): FieldOption<T> {
-  const { label, ...option } = optionTemp
+  // const { label, ...option } = optionTemp
+  // optionTemp.key = key as ColumnKey
+  // optionTemp.title = optionTemp.label
   return {
-    ...option,
-    key,
-    title: label
+    ...optionTemp,
+    key: key as string,
+    title: optionTemp.label
   }
+  // return {
+  //   ...option,
+  //   key,
+  //   title: label
+  // }
 }
 
 function getState(target: Object): ModelState<BaseModel> {

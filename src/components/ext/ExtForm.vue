@@ -1,26 +1,20 @@
 <template>
-  <n-drawer
-    v-model:show="showForm"
-    :width="props.wSize ? props.wSize : (props.cols ? props.cols : 1) * appSetting.formColWidth"
-    :mask-closable="!showConfirmBtn"
-    @after-enter="afterEnterHandle"
-    @after-leave="afterLeaveHandle"
-  >
+  <n-drawer v-model:show="showForm" :width="wSize" :mask-closable="!showConfirmBtn" @after-enter="afterEnterHandle" @after-leave="afterLeaveHandle">
     <n-drawer-content>
       <template #header> {{ formTypeTitleMap[formType || ''] || '' }} </template>
       <n-spin :show="formLoading">
         <n-form ref="formRef" :model="formData" label-placement="left" :inline="cols !== 1" label-width="auto">
-          <n-grid :cols="props.cols ? props.cols : 1">
-            <n-form-item-gi v-for="item in formActive ? props.jsonScheme : []" :key="item.path" :label="item.label">
-              <n-input v-model:value="formData[item.path || '']" :placeholder="item.label" />
+          <n-grid v-if="formActive" :cols="cols" :x-gap="12">
+            <n-form-item-gi v-for="item in jsonScheme" :key="item.path || item.key" :label="item.label || item.title">
+              <n-input v-model:value="formData[item.path || item.key || '']" type="text" :placeholder="item.label || item.title" />
             </n-form-item-gi>
           </n-grid>
         </n-form>
       </n-spin>
       <template #footer>
         <n-space>
-          <n-button type="default" secondary @click="hide">关闭</n-button>
-          <n-button v-if="showConfirmBtn" type="primary" secondary :loading="formLoading">保存</n-button>
+          <n-button type="default" secondary @click="close">关闭</n-button>
+          <n-button v-if="showConfirmBtn" type="primary" secondary :loading="formLoading" @click="submitHandle">保存</n-button>
         </n-space>
       </template>
     </n-drawer-content>
@@ -31,16 +25,11 @@
   import { BaseModel } from '@/hooks/useModel'
   import type { FormInst } from 'naive-ui'
   import type { FormValidateCallback, ShouldRuleBeApplied } from 'naive-ui/es/form/src/interface'
-  import type { ExtFormProps } from './types'
+  import type { ExtFormProps, IFormType, IFormData, ExtFormInst } from './types'
   import { appSetting, formTypeTitleMap } from '@/config/app.config'
 
   defineOptions({
-    name: 'ExtForm',
-    inheritAttrs: true
-  })
-
-  const props = withDefaults(defineProps<ExtFormProps>(), {
-    size: appSetting.formSize
+    name: 'ExtForm'
   })
 
   const formRef = ref<FormInst>()
@@ -49,6 +38,30 @@
    * @see FormType
    */
   const formType = ref<IFormType>()
+
+  const props = withDefaults(defineProps<ExtFormProps<T>>(), {
+    size: appSetting.formSize
+  })
+
+  const modelState = ref<ModelState<T>>(useModel<T>(props.instance))
+  const jsonScheme = computed<FieldOption<T>[]>(() =>
+    Object.values(modelState.value?.fields || []).filter(
+      ({ hidden }) => !(hidden === true || hidden?.includes('form') || (formType?.value && hidden?.includes(formType?.value)))
+    )
+  )
+  /**
+   * 表单列数
+   */
+  const cols = computed<number>(() => {
+    const _cols = props.cols ? props.cols : Math.ceil(jsonScheme.value.length / appSetting.formMaxRows)
+    const formMaxCols = appSetting.formMaxCols
+    return _cols > formMaxCols ? formMaxCols : _cols
+  })
+
+  /**
+   * 表单开窗大小
+   */
+  const wSize = computed<number | string>(() => (!props.wSize ? cols.value * appSetting.formColWidth : props.wSize))
 
   /**
    * 表单是否激活
@@ -95,9 +108,10 @@
    * @param type
    * @param fData
    */
-  const show = (type: IFormType, fData?: IFormData<T>) => {
+  const open = (type: IFormType, fData?: IFormData<T>) => {
     console.debug(`form show: type = ${type}, data = `, fData || {})
     // fData && (formData.value = fData)
+    fData && (formData.value = fData)
     formType.value = type
     showForm.value = true
     formLoading.value = true
@@ -106,9 +120,13 @@
   /**
    * 关闭 抽屉
    */
-  const hide = () => {
+  const close = () => {
     showForm.value = false
     return Promise.resolve()
+  }
+
+  const submitHandle = () => {
+    console.log('formData ---> ', formData.value)
   }
 
   /**
@@ -124,8 +142,8 @@
   }
 
   defineExpose<ExtFormInst<T>>({
-    show,
-    hide,
+    open,
+    close,
     ...expose
   })
 </script>

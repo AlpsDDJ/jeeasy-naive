@@ -1,10 +1,10 @@
 export const enum FormType {
   // 新增
-  ADD,
+  ADD = 'add',
   // 修改
-  EDIT,
+  EDIT = 'edit',
   // 查看
-  VIEW
+  VIEW = 'view'
 }
 
 export const enum FormDataType {

@@ -20,12 +20,7 @@
             </n-input>
           </n-form-item>
           <n-form-item path="password">
-            <n-input
-              v-model:value="loginModel.password"
-              type="password"
-              show-password-on="click"
-              placeholder="请输入密码"
-            >
+            <n-input v-model:value="loginModel.password" type="password" show-password-on="click" placeholder="请输入密码">
               <template #prefix>
                 <n-icon size="18" color="#808695">
                   <!--                  <LockClosedOutline />-->

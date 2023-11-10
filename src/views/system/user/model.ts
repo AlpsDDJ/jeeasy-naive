@@ -7,18 +7,21 @@
 // })
 // @Model.Api('sys/user')
 // @Model.Perms('sys:user')
+
 @Model('SysUser')
-export class User extends BaseModel {
-  @Field<User>('用户名', ['sorter'])
-  username?: string
+class SysUser extends BaseModel {
+  @Field<SysUser>('用户名', ['sorter'])
+  username?: String
 
   @Field('用户编号')
   userNo?: number
 
-  @Field()
+  @Field('密码')
+  @FieldHidden()
   password?: string
 
   @Field('年龄')
+  @FieldHidden(['form'])
   age?: number
 
   @Field('手机号')
@@ -42,3 +45,5 @@ export class User extends BaseModel {
   @Field('头像')
   avatar?: number
 }
+
+export default SysUser

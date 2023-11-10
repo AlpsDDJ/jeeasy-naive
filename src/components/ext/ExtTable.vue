@@ -30,7 +30,7 @@
 <script lang="ts" setup generic="T extends BaseModel">
   import { h } from 'vue'
   import type { DataTableColumn, DataTableInst, PaginationProps } from 'naive-ui'
-  import type { ExtTableInst, ExtTableProps, TableScrollToOption } from './types'
+  import type { ExtTableInst, ExtTableProps, TableScrollToOption, IFormType } from './types'
   import { LoadData } from './types'
   import type { ColumnKey, FilterState, SortOrder } from 'naive-ui/es/data-table/src/interface'
   import { BaseModel } from '@/hooks/useModel'
