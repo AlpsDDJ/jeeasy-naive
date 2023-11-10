@@ -4,9 +4,9 @@ export class BaseApi {
   constructor() {}
 }
 
-export class ModelApi extends BaseApi {
+export class ModelApi<T = any> extends BaseApi {
   @Api.Get()
-  declare page: HttpRequest
+  declare page: HttpRequest<PageData<T>>
 
   @Api.Get('/{id}')
   declare info: HttpRequest
@@ -26,8 +26,8 @@ export class ModelApi extends BaseApi {
   }
 }
 
-const useModelApi = (modelPath: string) => {
-  return new ModelApi(modelPath)
+const useModelApi = <T = any>(modelPath: string) => {
+  return new ModelApi<T>(modelPath)
 }
 
 export { useModelApi }

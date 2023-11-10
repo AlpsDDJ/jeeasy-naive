@@ -6,7 +6,7 @@ const useModel = <T extends BaseModel>(instance: BaseModelConstructor<T>) => {
   return cloneDeep(instance.state) as ModelState<T>
 }
 
-export type BaseModelConstructor<T> = typeof BaseModel & { new (...args: any[]): T }
+// export type BaseModelConstructor<T> = typeof BaseModel & { new (...args: any[]): T }
 
 const defaultModelState = { keys: {}, labels: {}, api: '', name: '', perms: '', fields: {} }
 

@@ -5,8 +5,10 @@ export type ActionType = 'edit' | 'delete' | 'view' | 'add' | string
 
 export type ColAttrFn<T> = ((data: any) => T) | T
 
+export type ButtonActions = ActionOption[] | ActionType[] | boolean | 'default'
+
 export type ActionButtonProps = {
-  actions?: ActionOption[] | ActionType[] | boolean | 'default'
+  actions?: ButtonActions
   data?: any
   align?: 'stretch' | 'baseline' | 'start' | 'end' | 'center' | 'flex-end' | 'flex-start'
   // index: number

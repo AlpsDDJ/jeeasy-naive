@@ -55,15 +55,10 @@
     </div>
     <div class="data-table-content">
       <n-card>
-        <ext-table
-          ref="extRef"
-          v-bind="tableProps"
-          v-model:pagination="tableProps.pagination"
-          @page="tableProps.pageHandle"
-        />
+        <ext-table ref="tableRef" :instance="User" @show-form="showForm" />
       </n-card>
     </div>
-    <ext-form ref="formRef" v-model="formData" :json-scheme="jsonScheme"> </ext-form>
+    <ext-form ref="formRef" v-model="formData" :json-scheme="jsonScheme" />
   </div>
 </template>
 
@@ -95,7 +90,7 @@
     }
   ])
 
-  const { tableProps, extRef, loadData, formRef, formData } = useListView(User)
+  const { tableRef, formRef, formData, loadData, showForm } = useListView()
   const queryCollapsed = ref(true)
 
   onMounted(() => {
