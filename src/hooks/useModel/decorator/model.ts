@@ -2,32 +2,32 @@ import { cloneDeep, snakeCase } from 'lodash-es'
 
 type ModelParams<T extends IBaseModel> = Partial<Omit<ModelState<T>, 'keys'>>
 
-const Model = <T extends InternalRowData>(parmas: string | ModelParams<T> = {}) => {
+const Model = <T extends InternalRowData>(parmas: DataKey | ModelParams<T> = {}) => {
   const classDecorator: ClassDecorator = <T extends Function>(constructor: T) => {
-    if (typeof parmas === 'string') {
-      const snakeCaseName = snakeCase(parmas)
+    if (typeof parmas === 'string' || typeof parmas === 'symbol') {
+      const snakeCaseName = snakeCase(parmas.toString())
       return setModelState(constructor, {
-        name: parmas,
+        name: parmas.toString(),
         perms: snakeCaseName.replace(/_+/g, ':'),
         api: snakeCaseName.replace(/_+/g, '/')
       })
     } else {
-      return setModelState(constructor, parmas)
+      return setModelState(constructor, parmas as ModelParams<T>)
     }
   }
   return classDecorator
 }
 
 Model.Api = (api: string) => {
-  return (<T extends Function>(constructor: T) => {
+  return <T extends Function>(constructor: T) => {
     return setModelState(constructor, { api })
-  }) as ClassDecorator
+  }
 }
 
 Model.Perms = (perms: string) => {
-  return (<T extends Function>(constructor: T) => {
+  return <T extends Function>(constructor: T) => {
     return setModelState(constructor, { perms })
-  }) as ClassDecorator
+  }
 }
 
 function setModelState<T extends Function>(constructor: T, state: ModelParams<T>) {

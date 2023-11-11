@@ -126,14 +126,11 @@
       current: page,
       ...param
     }
-    console.log('loadData: ', params)
     try {
       const resp = await loadPage(params)
-      console.log('resp --- ', resp)
       const {
         data: { records, size, current, total, pages }
       } = resp
-      // console.log('data ---> ', resp.data)
       data.value = records
       loading.value = false
 

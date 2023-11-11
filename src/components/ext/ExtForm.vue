@@ -5,8 +5,9 @@
       <n-spin :show="formLoading">
         <n-form ref="formRef" :model="formData" label-placement="left" :inline="cols !== 1" label-width="auto">
           <n-grid v-if="formActive" :cols="cols" :x-gap="12">
-            <n-form-item-gi v-for="item in jsonScheme" :key="item.path || item.key" :label="item.label || item.title">
-              <n-input v-model:value="formData[item.path || item.key || '']" type="text" :placeholder="item.label || item.title" />
+            <n-form-item-gi v-for="item in jsonScheme" :key="item.path || item.key" :label="item.label">
+              <!--<n-input v-model:value="formData[item.path || item.key || '']" type="text" :placeholder="item.label" />-->
+              <component :is="getInputComponent(item)" />
             </n-form-item-gi>
           </n-grid>
         </n-form>
@@ -25,8 +26,9 @@
   import { BaseModel } from '@/hooks/useModel'
   import type { FormInst } from 'naive-ui'
   import type { FormValidateCallback, ShouldRuleBeApplied } from 'naive-ui/es/form/src/interface'
-  import type { ExtFormProps, IFormType, IFormData, ExtFormInst } from './types'
+  import type { ExtFormInst, ExtFormProps, IFormData, IFormType } from './types'
   import { appSetting, formTypeTitleMap } from '@/config/app.config'
+  import { cloneDeep } from 'lodash-es'
 
   defineOptions({
     name: 'ExtForm'
@@ -84,9 +86,53 @@
   const formData = defineModel<IFormData<T>>({ local: true, default: {} })
 
   /**
-   * 扁担显示状态
+   * 表单显示状态
    */
   const showForm = defineModel<boolean>('showForm', { local: true, default: false })
+
+  const getInputComponent = computed(() => {
+    return (field: FieldOption<T>) => {
+      const { key, path, label, inputType, inputProps = {} } = field
+      // console.log('inputProps ---> ', inputProps)
+      let component: any
+      const compProps: Record<string, any> = {
+        placeholder: label,
+        value: formData.value[path || key || ''],
+        'on-update:value': (val: any) => {
+          formData.value[path || key || ''] = val
+        },
+        ...inputProps
+      }
+      switch (inputType) {
+        case InputType.INPUT_NUMBER:
+          component = NInputNumber
+          break
+        case InputType.DATE:
+          component = NDatePicker
+          // console.log("compProps['value-format'] ----- ", compProps['value-format'])
+          !compProps['value-format'] && (compProps['value-format'] = 'yyyy-MM-dd')
+          compProps['formatted-value'] = compProps.value
+          compProps['on-update:formatted-value'] = compProps['on-update:value']
+          delete compProps.value
+          delete compProps['on-update:value']
+          break
+        case InputType.DATETIME:
+          component = NDatePicker
+          compProps.type = 'datetime'
+          break
+        case InputType.TIME:
+          component = NTimePicker
+          break
+        case InputType.SWITCH:
+          component = NSwitch
+          break
+        default:
+          component = NInput
+          break
+      }
+      return h(component, compProps)
+    }
+  })
 
   /**
    * 抽屉 出现后的回调
@@ -111,7 +157,7 @@
   const open = (type: IFormType, fData?: IFormData<T>) => {
     console.debug(`form show: type = ${type}, data = `, fData || {})
     // fData && (formData.value = fData)
-    fData && (formData.value = fData)
+    fData && (formData.value = cloneDeep(fData))
     formType.value = type
     showForm.value = true
     formLoading.value = true

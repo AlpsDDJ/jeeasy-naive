@@ -13,15 +13,15 @@ const defaultModelState = { keys: {}, labels: {}, api: '', name: '', perms: '', 
 class BaseModel implements IBaseModel {
   constructor() {}
 
-  @FieldHidden()
+  @Field.Hidden()
   @Field('ID')
   id?: string
 
-  @FieldHidden()
+  @Field.Hidden()
   @Field('创建时间')
   createTime?: string
 
-  @FieldHidden()
+  @Field.Hidden()
   @Field('更新时间')
   updateTime?: string
 

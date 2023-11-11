@@ -8,23 +8,24 @@ export const enum FormType {
 }
 
 export const enum FormDataType {
-  STRING,
-  NUMBER,
-  BOOLEAN,
-  DATE,
-  TIME,
-  DATETIME
+  STRING = 'string',
+  NUMBER = 'number',
+  BOOLEAN = 'boolean',
+  DATE = 'date',
+  TIME = 'time',
+  DATETIME = 'datetime'
 }
 
 export const enum InputType {
-  INPUT,
-  INPUT_NUMBER,
-  DATE,
-  TIME,
-  DATETIME,
-  SWITCH,
-  SELECT,
-  TREE_SELECT,
-  DICT_SELECT,
-  SYS_USER_SELECT
+  TEXT = 'text',
+  TEXT_AREA = 'textArea',
+  INPUT_NUMBER = 'inputNumber',
+  DATE = 'date',
+  TIME = 'time',
+  DATETIME = 'datetime',
+  SWITCH = 'switch',
+  SELECT = 'select',
+  TREE_SELECT = 'treeSelect',
+  DICT_SELECT = 'dictSelect',
+  SYS_USER_SELECT = 'sysUserSelect'
 }

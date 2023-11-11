@@ -21,7 +21,7 @@ class SysRole extends BaseModel {
   remark?: string
 
   @Field('排序', ['hidden'])
-  // @FieldHidden()
+  // @Field.Hidden()
   sortNo?: string
 }
 

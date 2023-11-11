@@ -1,60 +1,76 @@
-import { cloneDeep, isArray } from 'lodash-es'
+import { cloneDeep } from 'lodash-es'
 import { BaseModel } from '@/hooks/useModel'
+import { IFormDataType, IInputType } from '@/components/ext/types'
 
-const Field: FieldDecoratorType = <T extends InternalRowData>(label?: string | FieldOption<T>, option?: FieldOptionFlag[] | FieldOption<T>) => {
-  let optionTemp: FieldOption<T> = {
-    key: ''
-  }
-  if (isArray(option)) {
-    option.forEach((item) => {
+function fieldFn(): PropertyDecorator
+function fieldFn(label: string): PropertyDecorator
+function fieldFn<T extends InternalRowData>(option: Partial<FieldOption<T>>): PropertyDecorator
+function fieldFn<T extends InternalRowData>(label: string, option: Partial<FieldOption<T>>): PropertyDecorator
+function fieldFn<T extends InternalRowData>(label?: string | Partial<FieldOption<T>>, option?: Partial<FieldOption<T>>): PropertyDecorator {
+  let optionTemp: Partial<FieldOption<T>> = {}
+  optionTemp = cloneDeep(option || {})
+  if (option?.booleanFlags) {
+    option?.booleanFlags?.forEach((item: string): void => {
       optionTemp[item] = true
     })
-  } else {
-    optionTemp = cloneDeep(option || {}) as FieldOption<T>
   }
   if (typeof label === 'string') {
     optionTemp.label = label as string
   } else if (label) {
-    optionTemp = cloneDeep(label) as FieldOption<T>
+    optionTemp = cloneDeep(label)
   }
 
-  const propertyDecorator: PropertyDecorator = (target, propertyKey) => {
-    const state = getState(target)
-    state['keys'][propertyKey] = propertyKey
-    // state['labels'][propertyKey] = label
-    // state['fields'][propertyKey] = createColunm(propertyKey, optionTemp)
-    setFieldProperty(state, propertyKey, createColunm(propertyKey, optionTemp))
+  return (target: Object, propertyKey: DataKey): void => {
+    const state: ModelState<T> = getState<T>(target)
+    const colunm: FieldOption<T> = createColunm(propertyKey, optionTemp)
+    setFieldProperty<T>(state, propertyKey, colunm)
   }
-  return propertyDecorator
 }
 
-export const FieldHidden = (hiddenType?: FieldHiddenType) => {
-  const propertyDecorator: PropertyDecorator = (target, propertyKey) => {
-    console.log('propertyKey --1--> ', Object.getOwnPropertyDescriptor(target, propertyKey))
+fieldFn.Hidden = (hiddenType: FieldHiddenType = true): PropertyDecorator => {
+  return (target: Object, propertyKey: DataKey): void => {
     const state = getState(target)
     // state['fields'][propertyKey].hidden = true
-    setFieldProperty(state, propertyKey, { hidden: hiddenType === undefined ? true : hiddenType })
+    setFieldProperty(state, propertyKey, { hidden: hiddenType })
   }
-  return propertyDecorator
 }
 
-function createColunm<T extends InternalRowData>(key: string | symbol, optionTemp: FieldOption<T>): FieldOption<T> {
-  // const { label, ...option } = optionTemp
-  // optionTemp.key = key as ColumnKey
-  // optionTemp.title = optionTemp.label
+fieldFn.DataType = (dataType: IFormDataType = FormDataType.STRING, inputType?: IInputType): PropertyDecorator => {
+  return (target: Object, propertyKey: DataKey): void => {
+    const state = getState(target)
+    let it: IInputType = InputType.TEXT
+    if (!inputType) {
+      switch (dataType) {
+        case FormDataType.NUMBER:
+          it = InputType.INPUT_NUMBER
+          break
+        case FormDataType.DATE:
+          it = InputType.DATE
+          break
+        case FormDataType.TIME:
+          it = InputType.TIME
+          break
+        case FormDataType.DATETIME:
+          it = InputType.DATETIME
+          break
+        case FormDataType.BOOLEAN:
+          it = InputType.SWITCH
+          break
+      }
+    }
+    setFieldProperty(state, propertyKey, { dataType: dataType, inputType: it })
+  }
+}
+
+function createColunm<T extends InternalRowData>(key: DataKey, optionTemp: Partial<FieldOption<T>>): FieldOption<T> {
   return {
     ...optionTemp,
     key: key as string,
     title: optionTemp.label
   }
-  // return {
-  //   ...option,
-  //   key,
-  //   title: label
-  // }
 }
 
-function getState(target: Object): ModelState<BaseModel> {
+function getState<T extends BaseModel>(target: Object): ModelState<T> {
   const constructor = target.constructor
   const state = Object.getOwnPropertyDescriptor(constructor, 'state')
   if (state) {
@@ -66,9 +82,10 @@ function getState(target: Object): ModelState<BaseModel> {
   }
 }
 
-function setFieldProperty(state: ModelState<BaseModel>, key: string | symbol, property: InternalRowData): void {
+function setFieldProperty<T extends BaseModel>(state: ModelState<T>, key: DataKey, property: Partial<FieldOption<T>>): void {
   const props = state['fields'][key] || {}
   state['fields'][key] = { ...props, ...property }
 }
 
+const Field: FieldDecoratorType = fieldFn
 export default Field

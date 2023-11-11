@@ -1,4 +1,4 @@
-import { ExtFormItem } from '@/components/ext/types'
+import { ExtFormItem, IFormDataType, IInputType } from '@/components/ext/types'
 import { TableBaseColumn } from 'naive-ui/es/data-table/src/interface'
 
 declare global {
@@ -30,17 +30,24 @@ declare global {
   //   $type$?: T
   // }
   type FieldHiddenType = true | ['list' | 'form' | 'query' | 'edit' | 'add' | 'view']
-  type FieldOption<T extends InternalRowData> = TableBaseColumn<T> &
-    (ExtFormItem<T> & {
-      label?: string
-      hidden?: FieldHiddenType
-      $type$?: T
-    })
+
+  type BooleanFlag = string | 'hidden' | 'dict'
+  interface FieldOption<T extends InternalRowData> extends TableBaseColumn<T>, ExtFormItem<T> {
+    label?: string
+    hidden?: FieldHiddenType
+    dataType?: IFormDataType
+    inputType?: IInputType
+    inputProps?: Record<string, any>
+    booleanFlags?: BooleanFlag[]
+    $type$?: T
+  }
   // type FieldOption<T extends InternalRowData> = FieldOpt<T> & DataTableColumn<T>
 
-  type FieldOptionFlag = string | 'hidden' | 'dict'
-
-  type FieldDecoratorType = <T extends InternalRowData>(label?: string | FieldOption<T>, option?: FieldOptionFlag[] | FieldOption<T>) => PropertyDecorator
+  interface FieldDecoratorType {
+    <T extends InternalRowData>(label?: string | Partial<FieldOption<T>>, option?: Partial<FieldOption<T>>): PropertyDecorator
+    Hidden: (hiddenType?: FieldHiddenType) => PropertyDecorator
+    DataType: (dataType?: IFormDataType, inputType?: IInputType) => PropertyDecorator
+  }
 }
 
 export default {}
