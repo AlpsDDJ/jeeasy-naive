@@ -98,7 +98,10 @@
       page: 1,
       pageSize: 5,
       pageCount: 0,
-      itemCount: 0
+      itemCount: 0,
+      showQuickJumper: true,
+      showSizePicker: true,
+      pageSizes: [3, 5, 10, 20, 50, 100]
     }
   })
 
@@ -124,6 +127,7 @@
     const params = {
       size: pageSize,
       current: page,
+      ...(props.queryData || {}),
       ...param
     }
     try {
@@ -146,21 +150,6 @@
       loading.value = false
       return Promise.reject(err || new Error('数据加载失败'))
     }
-
-    // setTimeout(() => {
-    //   const itemCount = 17
-    //   tableProps.value.data = []
-    //   let index = 0
-    //   while (index++ < itemCount) {
-    //     tableProps.value.data.push({
-    //       id: `${index}`,
-    //       username: `user ${index}`,
-    //       userNo: `NO.${index}`,
-    //       age: 20 + index * 2
-    //     } as BaseModel)
-    //   }
-    //   tableProps.value.loading = false
-    // }, 1500)
   }
 
   const tableExpose: ExtTableInst<T> = {
@@ -210,7 +199,6 @@
         }
       }
     })
-    loadData()
   })
 </script>
 

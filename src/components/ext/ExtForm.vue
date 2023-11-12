@@ -7,7 +7,7 @@
           <n-grid v-if="formActive" :cols="cols" :x-gap="12">
             <n-form-item-gi v-for="item in jsonScheme" :key="item.path || item.key" :label="item.label">
               <!--<n-input v-model:value="formData[item.path || item.key || '']" type="text" :placeholder="item.label" />-->
-              <component :is="getInputComponent(item)" />
+              <component :is="createInpComp(item)" />
             </n-form-item-gi>
           </n-grid>
         </n-form>
@@ -27,6 +27,7 @@
   import type { FormInst } from 'naive-ui'
   import type { FormValidateCallback, ShouldRuleBeApplied } from 'naive-ui/es/form/src/interface'
   import type { ExtFormInst, ExtFormProps, IFormData, IFormType } from './types'
+  import { createInputComponent } from './index'
   import { appSetting, formTypeTitleMap } from '@/config/app.config'
   import { cloneDeep } from 'lodash-es'
 
@@ -40,6 +41,8 @@
    * @see FormType
    */
   const formType = ref<IFormType>()
+
+  const formData = defineModel<IFormData<T>>({ local: true, default: () => {} })
 
   const props = withDefaults(defineProps<ExtFormProps<T>>(), {
     size: appSetting.formSize
@@ -83,57 +86,58 @@
    */
   const showConfirmBtn = computed<boolean>(() => formType.value !== FormType.VIEW)
 
-  const formData = defineModel<IFormData<T>>({ local: true, default: {} })
-
   /**
    * 表单显示状态
    */
   const showForm = defineModel<boolean>('showForm', { local: true, default: false })
 
-  const getInputComponent = computed(() => {
-    return (field: FieldOption<T>) => {
-      const { key, path, label, inputType, inputProps = {} } = field
-      // console.log('inputProps ---> ', inputProps)
-      let component: any
-      const compProps: Record<string, any> = {
-        placeholder: label,
-        value: formData.value[path || key || ''],
-        'on-update:value': (val: any) => {
-          formData.value[path || key || ''] = val
-        },
-        ...inputProps
-      }
-      switch (inputType) {
-        case InputType.INPUT_NUMBER:
-          component = NInputNumber
-          break
-        case InputType.DATE:
-          component = NDatePicker
-          // console.log("compProps['value-format'] ----- ", compProps['value-format'])
-          !compProps['value-format'] && (compProps['value-format'] = 'yyyy-MM-dd')
-          compProps['formatted-value'] = compProps.value
-          compProps['on-update:formatted-value'] = compProps['on-update:value']
-          delete compProps.value
-          delete compProps['on-update:value']
-          break
-        case InputType.DATETIME:
-          component = NDatePicker
-          compProps.type = 'datetime'
-          break
-        case InputType.TIME:
-          component = NTimePicker
-          break
-        case InputType.SWITCH:
-          component = NSwitch
-          break
-        default:
-          component = NInput
-          break
-      }
-      return h(component, compProps)
-    }
-  })
+  // const getInputComponent = computed(() => {
+  //   return (field: FieldOption<T>) => {
+  //     const { key, path, label, inputType, inputProps = {} } = field
+  //     // console.log('inputProps ---> ', inputProps)
+  //     let component: any
+  //     const compProps: Record<string, any> = {
+  //       placeholder: label,
+  //       value: formData.value[path || key || ''],
+  //       'on-update:value': (val: any) => {
+  //         formData.value[path || key || ''] = val
+  //       },
+  //       ...inputProps
+  //     }
+  //     switch (inputType) {
+  //       case InputType.INPUT_NUMBER:
+  //         component = NInputNumber
+  //         break
+  //       case InputType.DATE:
+  //         component = NDatePicker
+  //         // console.log("compProps['value-format'] ----- ", compProps['value-format'])
+  //         !compProps['value-format'] && (compProps['value-format'] = 'yyyy-MM-dd')
+  //         compProps['formatted-value'] = compProps.value
+  //         compProps['on-update:formatted-value'] = compProps['on-update:value']
+  //         delete compProps.value
+  //         delete compProps['on-update:value']
+  //         break
+  //       case InputType.DATETIME:
+  //         component = NDatePicker
+  //         compProps.type = 'datetime'
+  //         break
+  //       case InputType.TIME:
+  //         component = NTimePicker
+  //         break
+  //       case InputType.SWITCH:
+  //         component = NSwitch
+  //         break
+  //       default:
+  //         component = NInput
+  //         break
+  //     }
+  //     return h(component, compProps)
+  //   }
+  // })
 
+  const createInpComp = (field: FieldOption<T>) => {
+    return createInputComponent<T>(field, formData)
+  }
   /**
    * 抽屉 出现后的回调
    */

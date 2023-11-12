@@ -38,6 +38,7 @@ declare global {
     dataType?: IFormDataType
     inputType?: IInputType
     inputProps?: Record<string, any>
+    queryInputProps?: Record<string, any>
     booleanFlags?: BooleanFlag[]
     $type$?: T
   }

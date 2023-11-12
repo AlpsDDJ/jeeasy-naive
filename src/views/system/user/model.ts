@@ -39,7 +39,7 @@ class SysUser extends BaseModel {
   @Field.DataType(FormDataType.NUMBER)
   sex?: number
 
-  @Field('生日', { inputProps: { ['value-format']: 'yyyy-MM-dd' } })
+  @Field('生日')
   @Field.DataType(FormDataType.DATE)
   birthday?: string
 

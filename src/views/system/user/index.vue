@@ -1,65 +1,13 @@
 <template>
-  <div class="list-view">
-    <div class="data-table-query">
-      <n-card>
-        <n-form label-placement="left" :show-feedback="false">
-          <n-grid cols="1 600:2 900:3 1200:4 1500:5" :y-gap="8" :x-gap="12" :collapsed="queryCollapsed">
-            <n-form-item-gi label="用户名">
-              <n-input placeholder="" />
-            </n-form-item-gi>
-            <n-form-item-gi label="用户名">
-              <n-input placeholder="" />
-            </n-form-item-gi>
-            <n-form-item-gi label="用户名">
-              <n-input placeholder="" />
-            </n-form-item-gi>
-            <n-form-item-gi label="用户名">
-              <n-input placeholder="" />
-            </n-form-item-gi>
-            <n-form-item-gi label="用户名">
-              <n-input placeholder="" />
-            </n-form-item-gi>
-            <n-form-item-gi label="用户名">
-              <n-input placeholder="" />
-            </n-form-item-gi>
-            <n-form-item-gi label="用户名">
-              <n-input placeholder="" />
-            </n-form-item-gi>
-            <n-form-item-gi label="用户名">
-              <n-input placeholder="" />
-            </n-form-item-gi>
-            <n-form-item-gi label="用户名">
-              <n-input placeholder="" />
-            </n-form-item-gi>
-            <n-form-item-gi label="用户名">
-              <n-input placeholder="" />
-            </n-form-item-gi>
-            <n-form-item-gi label="用户名">
-              <n-input placeholder="" />
-            </n-form-item-gi>
-            <n-form-item-gi suffix class="query-action">
-              <action-button :actions="['query', 'reset']" @action:query="loadData" @action:reset="loadData">
-                <n-button text type="primary" icon-placement="right" @click="queryCollapsed = !queryCollapsed">
-                  {{ queryCollapsed ? '展开' : '收起' }}
-                  <template #icon>
-                    <n-icon>
-                      <icon :icon-name="queryCollapsed ? 'ChevronDown' : 'ChevronUp'" />
-                    </n-icon>
-                  </template>
-                </n-button>
-              </action-button>
-            </n-form-item-gi>
-          </n-grid>
-        </n-form>
-      </n-card>
-    </div>
-    <div class="data-table-content">
-      <n-card>
-        <ext-table ref="tableRef" :instance="Model" @show-form="showForm" />
-      </n-card>
-    </div>
-    <ext-form ref="formRef" v-model="formData" :instance="Model" />
-  </div>
+  <ext-page>
+    <template #query>
+      <ext-query ref="queryRef" v-model="queryData" :instance="Model" :load-data="loadData" />
+    </template>
+    <ext-table ref="tableRef" :instance="Model" :query-data="queryData" @show-form="showForm" />
+    <template #form>
+      <ext-form ref="formRef" v-model="formData" :instance="Model" />
+    </template>
+  </ext-page>
 </template>
 
 <script lang="ts" setup>
@@ -69,33 +17,8 @@
   defineOptions({
     name: 'SysUserList'
   })
-  // const jsonScheme = ref<ExtFormItem<Model>[]>([
-  //   {
-  //     dataType: FormDataType.STRING,
-  //     inputType: InputType.INPUT,
-  //     path: 'name',
-  //     label: '姓名'
-  //   },
-  //   {
-  //     path: 'age',
-  //     label: '年龄'
-  //   },
-  //   {
-  //     path: '123123',
-  //     label: '年龄111'
-  //   },
-  //   {
-  //     path: '12312223',
-  //     label: '年龄11133'
-  //   }
-  // ])
 
-  const { tableRef, formRef, formData, loadData, showForm } = useExtView()
-  const queryCollapsed = ref(true)
-
-  onMounted(() => {
-    // tableRef.value!.page(2)
-  })
+  const { tableRef, formRef, queryRef, formData, queryData, loadData, showForm } = useExtView()
 </script>
 
 <style scoped></style>
