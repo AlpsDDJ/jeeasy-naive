@@ -17,7 +17,7 @@
 
 <script setup lang="ts">
   defineOptions({
-    name: 'ExtView'
+    name: 'EModel'
   })
   defineSlots<{
     default?: (props?: {}) => any

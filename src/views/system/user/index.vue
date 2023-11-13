@@ -1,5 +1,5 @@
 <template>
-  <ext-page>
+  <e-model>
     <template #query>
       <e-search ref="queryRef" v-model="queryData" :instance="Model" :load-data="loadData" />
     </template>
@@ -7,7 +7,7 @@
     <template #form>
       <e-form ref="formRef" v-model="formData" :instance="Model" />
     </template>
-  </ext-page>
+  </e-model>
 </template>
 
 <script lang="ts" setup>

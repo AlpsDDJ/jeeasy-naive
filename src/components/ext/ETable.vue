@@ -39,7 +39,7 @@
   import { appSetting } from '@/config/app.config'
 
   defineOptions({
-    name: 'ExtTable'
+    name: 'ETable'
   })
 
   const props = withDefaults(defineProps<ExtTableProps<T>>(), {

@@ -30,7 +30,7 @@
   import { cloneDeep } from 'lodash-es'
 
   defineOptions({
-    name: 'ExtQuery'
+    name: 'ESearch'
     // inheritAttrs: true,
     // extends: NForm
   })
