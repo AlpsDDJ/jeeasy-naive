@@ -1,7 +1,7 @@
 <template>
   <ext-page>
     <template #query>
-      <ext-query ref="queryRef" v-model="queryData" :instance="Model" :load-data="loadData" size="large" />
+      <e-search ref="queryRef" v-model="queryData" :instance="Model" :load-data="loadData" size="large" />
     </template>
     <ext-table ref="tableRef" :instance="Model" :query-data="queryData" @show-form="showForm" />
     <template #form>
