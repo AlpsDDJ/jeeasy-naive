@@ -3,7 +3,7 @@
     <template #query>
       <e-search ref="queryRef" v-model="queryData" :instance="Model" :load-data="loadData" size="large" />
     </template>
-    <ext-table ref="tableRef" :instance="Model" :query-data="queryData" @show-form="showForm" />
+    <e-table ref="tableRef" :instance="Model" :query-data="queryData" @show-form="showForm" />
     <template #form>
       <e-form ref="formRef" v-model="formData" :instance="Model" />
     </template>
