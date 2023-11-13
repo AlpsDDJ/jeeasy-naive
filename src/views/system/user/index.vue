@@ -1,10 +1,10 @@
 <template>
   <e-model>
-    <template #query>
+    <template #top>
       <e-search ref="queryRef" v-model="queryData" :instance="Model" :load-data="loadData" />
     </template>
     <e-table ref="tableRef" :instance="Model" :query-data="queryData" @show-form="showForm" />
-    <template #form>
+    <template #bottom>
       <e-form ref="formRef" v-model="formData" :instance="Model" />
     </template>
   </e-model>
@@ -12,13 +12,13 @@
 
 <script lang="ts" setup>
   import Model from './model'
-  import { createEModel } from '@/components/ext'
+  import { initModel } from '@/components/ext'
 
   defineOptions({
     name: 'SysUserList'
   })
 
-  const { tableRef, formRef, queryRef, formData, queryData, loadData, showForm } = createEModel()
+  const { tableRef, formRef, queryRef, formData, queryData, loadData, showForm } = initModel()
 </script>
 
 <style scoped></style>

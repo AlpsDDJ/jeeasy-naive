@@ -22,7 +22,7 @@
 
 <script setup lang="ts" generic="T extends BaseModel">
   import { BaseModel } from '@/hooks/useModel'
-  import type { EQueryInst, EQueryProps, QueryData } from './types'
+  import type { EQueryInst, EQueryProps, FormData } from './types'
   import { createInputComponent } from '@/components/ext/index'
   import { appSetting } from '@/config/app.config'
   import type { FormInst } from 'naive-ui'
@@ -46,7 +46,7 @@
   })
 
   const cols = ref('1 600:2 900:3 1200:4 1500:5')
-  const queryData = defineModel<QueryData<T>>({
+  const queryData = defineModel<FormData<T>>({
     local: true,
     default: {}
   })

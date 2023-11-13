@@ -26,7 +26,7 @@
   import { BaseModel } from '@/hooks/useModel'
   import type { FormInst } from 'naive-ui'
   import type { FormValidateCallback, ShouldRuleBeApplied } from 'naive-ui/es/form/src/interface'
-  import type { EFormInst, EFormProps, IFormData, IFormType } from './types'
+  import type { EFormInst, EFormProps, IFormData, IFormType, FormData } from './types'
   import { createInputComponent } from './index'
   import { appSetting, formTypeTitleMap } from '@/config/app.config'
   import { cloneDeep } from 'lodash-es'
@@ -42,7 +42,10 @@
    */
   const formType = ref<IFormType>()
 
-  const formData = defineModel<IFormData<T>>({ local: true, default: () => {} })
+  const formData = defineModel<FormData<T>>({
+    local: true,
+    default: {}
+  })
 
   const props = withDefaults(defineProps<EFormProps<T>>(), {
     formProps: () => ({

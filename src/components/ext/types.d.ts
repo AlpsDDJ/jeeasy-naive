@@ -9,16 +9,16 @@ export type IFormType = EnumTypes<FormType>
 export type IFormDataType = EnumTypes<FormDataType>
 export type IInputType = EnumTypes<InputType>
 
-export interface EFormItem<T> extends FormItemProps, ModelStatePartialAttr<T, FieldOption<T>> {
+export interface EFormItem<T extends BaseModel> extends FormItemProps, ModelStatePartialAttr<T, FieldOption<T>> {
   dataType?: IFormDataType
   inputType?: IInputType
 }
 
-export type IFormData<T extends BaseModel> = {
+export type IFormData<T extends BaseModel> = Record<string, unknown> & {
   [key in keyof T]?: T[key]
 }
 
-export interface EFormInst<T> extends FormInst {
+export interface EFormInst<T extends BaseModel> extends FormInst {
   open: (type: IFormType, fData?: IFormData<T>) => void
   close: () => Promise<void>
 }
@@ -29,7 +29,7 @@ export interface ETableProps<T extends BaseModel> {
   actions?: ButtonActions | false
   showForm?: (type: IFormType, fData?: IFormData<T>) => void
   formInst?: EFormInst<T>
-  queryData?: QueryData<T>
+  queryData?: FormData<T>
   tableProps?: DataTableProps
   // actions?: ButtonActions
 }
@@ -42,7 +42,7 @@ export interface EFormProps<T extends BaseModel> {
   formProps?: FormProps
 }
 
-export interface EQueryInst<T> extends FormInst {
+export interface EQueryInst<T extends BaseModel> extends FormInst {
   query: LoadData<T>
   reset: () => void
 }
@@ -50,21 +50,17 @@ export interface EQueryInst<T> extends FormInst {
 export interface EQueryProps<T extends BaseModel> {
   instance: BaseModelConstructor<T>
   loadData: LoadData<T>
-  defauleData?: QueryData<T>
+  defauleData?: FormData<T>
   autoQuery?: boolean
   resetAndQuery?: boolean
   formProps?: FormProps
 }
 
-export interface EModelProps<T extends BaseModel> {
-  instance?: BaseModelConstructor<T>
-}
-
-export interface LoadData<T> {
+export interface LoadData<T extends BaseModel> {
   (params?: any): Promise<PageData<T>>
 }
 
-export interface ETableInst<T> extends DataTableInst {
+export interface ETableInst<T extends BaseModel> extends DataTableInst {
   loadData: LoadData<T>
 }
 
@@ -78,16 +74,14 @@ export interface ShowForm {
   (type: IFormType, formData?: any): void
 }
 
-export interface EModelState<T> {
+export interface EModelState<T extends BaseModel> {
   tableRef: Ref<ETableInst<T> | undefined>
   formRef: Ref<EFormInst<T> | undefined>
   queryRef: Ref<EFormInst<T> | undefined>
-  formData: Ref<IFormData<T> | undefined>
-  queryData: Ref<QueryData<T> | undefined>
+  formData: Ref<FormData<T>>
+  queryData: Ref<FormData<T>>
   loadData: LoadData<T>
   showForm: ShowForm
 }
 
-export interface QueryData<T> extends IFormData<T> {
-  [key as string]?: any
-}
+export interface FormData<T extends BaseModel> extends IFormData<T> {}

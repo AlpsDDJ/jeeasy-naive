@@ -1,16 +1,17 @@
 import { h, Ref } from 'vue'
 import { BaseModel } from '@/hooks/useModel'
-import { EFormInst, ETableInst, EModelState, IFormData, IFormType, QueryData } from '@/components/ext/types'
+import { EFormInst, EModelState, ETableInst, FormData, IFormType } from '@/components/ext/types'
 import { InputType } from '@/enums/EEnum'
 import { NDatePicker, NInput, NSwitch, NTimePicker } from 'naive-ui'
 
-export const createEModel = <T extends BaseModel>(): EModelState<T> => {
+export const initModel = <T extends BaseModel>(): EModelState<T> => {
   // const tableRef = ref<DataTableInst>()
   const tableRef = ref<ETableInst<T>>()
   const formRef = ref<EFormInst<T>>()
   const queryRef = ref<EFormInst<T>>()
-  const formData = ref<IFormData<T>>()
-  const queryData = ref<QueryData<T>>({})
+  // const formData = ref<IFormData<T>>()
+  const formData = ref<FormData<T>>({})
+  const queryData = ref<FormData<T>>({})
 
   const loadData = (params: any = {}) => {
     console.log('queryData.value --> ', queryData.value)
@@ -33,7 +34,7 @@ export const createEModel = <T extends BaseModel>(): EModelState<T> => {
   }
 }
 
-export const createInputComponent = <T extends BaseModel>(field: FieldOption<T>, formData: Ref<QueryData<T>>, query: boolean = false) => {
+export const createInputComponent = <T extends BaseModel>(field: FieldOption<T>, formData: Ref<FormData<T>>, query: boolean = false) => {
   const { key, path, label, inputType, inputProps = {}, queryInputProps = {} } = field
   // console.log('inputProps ---> ', inputProps)
   let component: any
