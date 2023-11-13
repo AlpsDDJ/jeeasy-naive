@@ -12,13 +12,13 @@
 
 <script lang="ts" setup>
   import Model from './model'
-  import { useExtView } from '@/components/ext'
+  import { createEModel } from '@/components/ext'
 
   defineOptions({
     name: 'SysRoleList'
   })
 
-  const { tableRef, formRef, queryRef, formData, queryData, loadData, showForm } = useExtView()
+  const { tableRef, formRef, queryRef, formData, queryData, loadData, showForm } = createEModel()
 </script>
 
 <style scoped></style>

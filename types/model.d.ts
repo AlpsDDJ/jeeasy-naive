@@ -1,4 +1,4 @@
-import { ExtFormItem, IFormDataType, IInputType } from '@/components/ext/types'
+import { EFormItem, IFormDataType, IInputType } from '@/components/ext/types'
 import { TableBaseColumn } from 'naive-ui/es/data-table/src/interface'
 
 declare global {
@@ -32,7 +32,7 @@ declare global {
   type FieldHiddenType = true | ['list' | 'form' | 'query' | 'edit' | 'add' | 'view']
 
   type BooleanFlag = string | 'hidden' | 'dict'
-  interface FieldOption<T extends InternalRowData> extends TableBaseColumn<T>, ExtFormItem<T> {
+  interface FieldOption<T extends InternalRowData> extends TableBaseColumn<T>, EFormItem<T> {
     label?: string
     hidden?: FieldHiddenType
     dataType?: IFormDataType

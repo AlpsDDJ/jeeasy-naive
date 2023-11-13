@@ -26,7 +26,7 @@
   import { BaseModel } from '@/hooks/useModel'
   import type { FormInst } from 'naive-ui'
   import type { FormValidateCallback, ShouldRuleBeApplied } from 'naive-ui/es/form/src/interface'
-  import type { ExtFormInst, ExtFormProps, IFormData, IFormType } from './types'
+  import type { EFormInst, EFormProps, IFormData, IFormType } from './types'
   import { createInputComponent } from './index'
   import { appSetting, formTypeTitleMap } from '@/config/app.config'
   import { cloneDeep } from 'lodash-es'
@@ -44,7 +44,7 @@
 
   const formData = defineModel<IFormData<T>>({ local: true, default: () => {} })
 
-  const props = withDefaults(defineProps<ExtFormProps<T>>(), {
+  const props = withDefaults(defineProps<EFormProps<T>>(), {
     formProps: () => ({
       size: appSetting.formSize
     })
@@ -149,7 +149,7 @@
     }
   }
 
-  defineExpose<ExtFormInst<T>>({
+  defineExpose<EFormInst<T>>({
     open,
     close,
     ...expose

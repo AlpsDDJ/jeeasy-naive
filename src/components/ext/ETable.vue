@@ -30,7 +30,7 @@
 <script lang="ts" setup generic="T extends BaseModel">
   import { h } from 'vue'
   import type { DataTableColumn, DataTableInst, PaginationProps } from 'naive-ui'
-  import type { ExtTableInst, ExtTableProps, TableScrollToOption, IFormType } from './types'
+  import type { ETableInst, ETableProps, TableScrollToOption, IFormType } from './types'
   import { LoadData } from './types'
   import type { ColumnKey, FilterState, SortOrder } from 'naive-ui/es/data-table/src/interface'
   import { BaseModel } from '@/hooks/useModel'
@@ -42,7 +42,7 @@
     name: 'ETable'
   })
 
-  const props = withDefaults(defineProps<ExtTableProps<T>>(), {
+  const props = withDefaults(defineProps<ETableProps<T>>(), {
     actions: 'default',
     tableProps: () => ({})
   })
@@ -155,7 +155,7 @@
     }
   }
 
-  const tableExpose: ExtTableInst<T> = {
+  const tableExpose: ETableInst<T> = {
     loadData,
     filter: (filters: FilterState | null) => {
       tableRef.value!.filter(filters)

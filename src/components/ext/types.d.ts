@@ -1,7 +1,7 @@
 import { Ref } from 'vue'
 import { DataTableInst, DataTableProps, FormInst, FormItemProps, FormProps } from 'naive-ui'
 import { ButtonActions } from '@/components/ActionButton/commonActions'
-import { FormDataType, FormType, InputType } from '@/enums/ExtEnum'
+import { FormDataType, FormType, InputType } from '@/enums/EEnum'
 import { BaseModel } from '@/hooks/useModel'
 
 export type IFormType = EnumTypes<FormType>
@@ -9,7 +9,7 @@ export type IFormType = EnumTypes<FormType>
 export type IFormDataType = EnumTypes<FormDataType>
 export type IInputType = EnumTypes<InputType>
 
-export interface ExtFormItem<T> extends FormItemProps, ModelStatePartialAttr<T, FieldOption<T>> {
+export interface EFormItem<T> extends FormItemProps, ModelStatePartialAttr<T, FieldOption<T>> {
   dataType?: IFormDataType
   inputType?: IInputType
 }
@@ -18,23 +18,23 @@ export type IFormData<T extends BaseModel> = {
   [key in keyof T]?: T[key]
 }
 
-export interface ExtFormInst<T> extends FormInst {
+export interface EFormInst<T> extends FormInst {
   open: (type: IFormType, fData?: IFormData<T>) => void
   close: () => Promise<void>
 }
 
-export interface ExtTableProps<T extends BaseModel> {
+export interface ETableProps<T extends BaseModel> {
   instance: BaseModelConstructor<T>
   // modelState: ModelState<T>
   actions?: ButtonActions | false
   showForm?: (type: IFormType, fData?: IFormData<T>) => void
-  formInst?: ExtFormInst<T>
+  formInst?: EFormInst<T>
   queryData?: QueryData<T>
   tableProps?: DataTableProps
   // actions?: ButtonActions
 }
 
-export interface ExtFormProps<T extends BaseModel> {
+export interface EFormProps<T extends BaseModel> {
   instance: BaseModelConstructor<T>
   defauleData?: FormData<T>
   wSize?: number | string
@@ -42,12 +42,12 @@ export interface ExtFormProps<T extends BaseModel> {
   formProps?: FormProps
 }
 
-export interface ExtQueryInst<T> extends FormInst {
+export interface EQueryInst<T> extends FormInst {
   query: LoadData<T>
   reset: () => void
 }
 
-export interface ExtQueryProps<T extends BaseModel> {
+export interface EQueryProps<T extends BaseModel> {
   instance: BaseModelConstructor<T>
   loadData: LoadData<T>
   defauleData?: QueryData<T>
@@ -56,11 +56,15 @@ export interface ExtQueryProps<T extends BaseModel> {
   formProps?: FormProps
 }
 
+export interface EModelProps<T extends BaseModel> {
+  instance?: BaseModelConstructor<T>
+}
+
 export interface LoadData<T> {
   (params?: any): Promise<PageData<T>>
 }
 
-export interface ExtTableInst<T> extends DataTableInst {
+export interface ETableInst<T> extends DataTableInst {
   loadData: LoadData<T>
 }
 
@@ -74,10 +78,10 @@ export interface ShowForm {
   (type: IFormType, formData?: any): void
 }
 
-export interface ExtView<T> {
-  tableRef: Ref<ExtTableInst<T> | undefined>
-  formRef: Ref<ExtFormInst<T> | undefined>
-  queryRef: Ref<ExtFormInst<T> | undefined>
+export interface EModelState<T> {
+  tableRef: Ref<ETableInst<T> | undefined>
+  formRef: Ref<EFormInst<T> | undefined>
+  queryRef: Ref<EFormInst<T> | undefined>
   formData: Ref<IFormData<T> | undefined>
   queryData: Ref<QueryData<T> | undefined>
   loadData: LoadData<T>

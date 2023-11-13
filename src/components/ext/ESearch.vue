@@ -22,7 +22,7 @@
 
 <script setup lang="ts" generic="T extends BaseModel">
   import { BaseModel } from '@/hooks/useModel'
-  import type { ExtQueryInst, ExtQueryProps, QueryData } from './types'
+  import type { EQueryInst, EQueryProps, QueryData } from './types'
   import { createInputComponent } from '@/components/ext/index'
   import { appSetting } from '@/config/app.config'
   import type { FormInst } from 'naive-ui'
@@ -36,7 +36,7 @@
   })
   const formRef = ref<FormInst>()
 
-  const props = withDefaults(defineProps<ExtQueryProps<T>>(), {
+  const props = withDefaults(defineProps<EQueryProps<T>>(), {
     size: 'medium',
     autoQuery: true,
     resetAndQuery: true,
@@ -73,7 +73,7 @@
   /**
    * 对外暴漏表单方法
    */
-  const expose: ExtQueryInst<T> = {
+  const expose: EQueryInst<T> = {
     restoreValidation: () => {
       formRef.value!.restoreValidation()
     },
@@ -84,7 +84,7 @@
     reset: resetHandle
   }
 
-  defineExpose<ExtQueryInst<T>>({
+  defineExpose<EQueryInst<T>>({
     ...expose
   })
 

@@ -9,7 +9,7 @@
 // @Model.Api('sys/user')
 // @Model.Perms('sys:user')
 
-import { FormDataType } from '@/enums/ExtEnum'
+import { FormDataType } from '@/enums/EEnum'
 
 @Model('SysUser')
 class SysUser extends BaseModel {

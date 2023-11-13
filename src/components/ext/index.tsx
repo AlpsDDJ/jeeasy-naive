@@ -1,14 +1,14 @@
 import { h, Ref } from 'vue'
 import { BaseModel } from '@/hooks/useModel'
-import { ExtFormInst, ExtTableInst, ExtView, IFormData, IFormType, QueryData } from '@/components/ext/types'
-import { InputType } from '@/enums/ExtEnum'
+import { EFormInst, ETableInst, EModelState, IFormData, IFormType, QueryData } from '@/components/ext/types'
+import { InputType } from '@/enums/EEnum'
 import { NDatePicker, NInput, NSwitch, NTimePicker } from 'naive-ui'
 
-export const useExtView = <T extends BaseModel>(): ExtView<T> => {
+export const createEModel = <T extends BaseModel>(): EModelState<T> => {
   // const tableRef = ref<DataTableInst>()
-  const tableRef = ref<ExtTableInst<T>>()
-  const formRef = ref<ExtFormInst<T>>()
-  const queryRef = ref<ExtFormInst<T>>()
+  const tableRef = ref<ETableInst<T>>()
+  const formRef = ref<EFormInst<T>>()
+  const queryRef = ref<EFormInst<T>>()
   const formData = ref<IFormData<T>>()
   const queryData = ref<QueryData<T>>({})
 

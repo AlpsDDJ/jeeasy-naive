@@ -15,10 +15,14 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup lang="ts" generic="T extends BaseModel">
+  import { BaseModel } from '@/hooks/useModel'
+  import { EModelProps } from './types'
+
   defineOptions({
     name: 'EModel'
   })
+  defineProps<EModelProps<T>>()
   defineSlots<{
     default?: (props?: {}) => any
     query?: (props?: {}) => any
