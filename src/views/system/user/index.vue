@@ -5,7 +5,7 @@
     </template>
     <ext-table ref="tableRef" :instance="Model" :query-data="queryData" @show-form="showForm" />
     <template #form>
-      <ext-form ref="formRef" v-model="formData" :instance="Model" />
+      <e-form ref="formRef" v-model="formData" :instance="Model" />
     </template>
   </ext-page>
 </template>
