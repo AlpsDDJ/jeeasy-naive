@@ -1,7 +1,7 @@
 <template>
   <n-data-table
     ref="tableRef"
-    v-bind="{ ...props }"
+    v-bind="tableProps"
     :columns="columns"
     :loading="loading"
     :data="data"
@@ -36,13 +36,15 @@
   import { BaseModel } from '@/hooks/useModel'
   import { useModelApi } from '@/hooks/useApi'
   import ActionButton from '@/components/ActionButton/index.vue'
+  import { appSetting } from '@/config/app.config'
 
   defineOptions({
     name: 'ExtTable'
   })
 
   const props = withDefaults(defineProps<ExtTableProps<T>>(), {
-    actions: 'default'
+    actions: 'default',
+    tableProps: () => ({})
   })
 
   const modelState = ref(useModel<T>(props.instance))
@@ -96,17 +98,18 @@
     local: true,
     default: {
       page: 1,
-      pageSize: 5,
+      pageSize: appSetting.pageSizes[0] || 10,
       pageCount: 0,
       itemCount: 0,
       showQuickJumper: true,
       showSizePicker: true,
-      pageSizes: [3, 5, 10, 20, 50, 100]
+      pageSizes: appSetting.pageSizes,
+      prefix: ({ itemCount }) => `共 ${itemCount} 项 `
     }
   })
 
   const pageChangeHandle = (page: PaginationProps) => {
-    console.log('page = ', page)
+    // console.log('page = ', page)
     pagination.value = Object.assign(pagination.value, page)
     // pageValue.value && (pageValue.value = { ...pageValue.value, ...pagination })
     loadData()

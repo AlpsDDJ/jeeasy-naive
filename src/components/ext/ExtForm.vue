@@ -3,7 +3,7 @@
     <n-drawer-content>
       <template #header> {{ formTypeTitleMap[formType || ''] || '' }} </template>
       <n-spin :show="formLoading">
-        <n-form ref="formRef" :model="formData" label-placement="left" :inline="cols !== 1" label-width="auto">
+        <n-form ref="formRef" v-bind="props.formProps" :model="formData" label-placement="left" :inline="cols !== 1" label-width="auto">
           <n-grid v-if="formActive" :cols="cols" :x-gap="12">
             <n-form-item-gi v-for="item in jsonScheme" :key="item.path || item.key" :label="item.label">
               <!--<n-input v-model:value="formData[item.path || item.key || '']" type="text" :placeholder="item.label" />-->
@@ -45,7 +45,9 @@
   const formData = defineModel<IFormData<T>>({ local: true, default: () => {} })
 
   const props = withDefaults(defineProps<ExtFormProps<T>>(), {
-    size: appSetting.formSize
+    formProps: () => ({
+      size: appSetting.formSize
+    })
   })
 
   const modelState = ref<ModelState<T>>(useModel<T>(props.instance))

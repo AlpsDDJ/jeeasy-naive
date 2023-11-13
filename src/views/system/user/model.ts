@@ -24,10 +24,10 @@ class SysUser extends BaseModel {
   @Field.Hidden()
   password?: string
 
-  @Field('年龄')
-  @Field.Hidden(['form'])
-  @Field.DataType(FormDataType.NUMBER)
-  age?: number
+  // @Field('年龄')
+  // @Field.Hidden(['form'])
+  // @Field.DataType(FormDataType.NUMBER)
+  // age?: number
 
   @Field('手机号')
   phone?: string

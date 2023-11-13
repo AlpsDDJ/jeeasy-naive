@@ -23,21 +23,23 @@ export interface ExtFormInst<T> extends FormInst {
   close: () => Promise<void>
 }
 
-export interface ExtTableProps<T extends BaseModel> extends /* @vue-ignore */ DataTableProps {
+export interface ExtTableProps<T extends BaseModel> {
   instance: BaseModelConstructor<T>
   // modelState: ModelState<T>
   actions?: ButtonActions | false
   showForm?: (type: IFormType, fData?: IFormData<T>) => void
   formInst?: ExtFormInst<T>
   queryData?: QueryData<T>
+  tableProps?: DataTableProps
   // actions?: ButtonActions
 }
 
-export interface ExtFormProps<T extends BaseModel> extends /* @vue-ignore */ FormProps {
+export interface ExtFormProps<T extends BaseModel> {
   instance: BaseModelConstructor<T>
   defauleData?: FormData<T>
   wSize?: number | string
   cols?: number
+  formProps?: FormProps
 }
 
 export interface ExtQueryInst<T> extends FormInst {
@@ -45,12 +47,13 @@ export interface ExtQueryInst<T> extends FormInst {
   reset: () => void
 }
 
-export interface ExtQueryProps<T extends BaseModel> extends /* @vue-ignore */ ExtFormProps<T> {
+export interface ExtQueryProps<T extends BaseModel> {
   instance: BaseModelConstructor<T>
   loadData: LoadData<T>
   defauleData?: QueryData<T>
   autoQuery?: boolean
   resetAndQuery?: boolean
+  formProps?: FormProps
 }
 
 export interface LoadData<T> {

@@ -1,5 +1,5 @@
 <template>
-  <n-form ref="formRef" :model="queryData" label-placement="left" :show-feedback="false" inline label-width="auto">
+  <n-form ref="formRef" v-bind="props.formProps" :model="queryData" label-placement="left" :show-feedback="false" inline label-width="auto">
     <n-grid :cols="cols" :y-gap="8" :x-gap="12" :collapsed="queryCollapsed">
       <n-form-item-gi v-for="item in queryScheme" :key="item.path || item.key" :label="item.label">
         <component :is="createInpComp(item)" v-model="queryData[item.path || item.key || '']" />
@@ -19,6 +19,7 @@
     </n-grid>
   </n-form>
 </template>
+
 <script setup lang="ts" generic="T extends BaseModel">
   import { BaseModel } from '@/hooks/useModel'
   import type { ExtQueryInst, ExtQueryProps, QueryData } from './types'
@@ -30,24 +31,25 @@
 
   defineOptions({
     name: 'ExtQuery'
+    // inheritAttrs: true,
+    // extends: NForm
   })
   const formRef = ref<FormInst>()
 
-  const cols = ref('1 600:2 900:3 1200:4 1500:5')
-
   const props = withDefaults(defineProps<ExtQueryProps<T>>(), {
-    size: appSetting.formSize,
+    size: 'medium',
     autoQuery: true,
-    resetAndQuery: true
+    resetAndQuery: true,
+    formProps: () => ({
+      size: appSetting.formSize
+    })
   })
 
+  const cols = ref('1 600:2 900:3 1200:4 1500:5')
   const queryData = defineModel<QueryData<T>>({
     local: true,
     default: {}
   })
-  if (props.defauleData) {
-    queryData.value = cloneDeep(props.defauleData)
-  }
   // const queryData = ref<QueryData<T>>({})
   const queryCollapsed = defineModel<boolean>('collapsed', { local: true, default: true })
 
@@ -87,6 +89,9 @@
   })
 
   onMounted(() => {
+    if (props.defauleData) {
+      queryData.value = cloneDeep(props.defauleData)
+    }
     // tableRef.value!.page(2)
     props.autoQuery && props.loadData()
   })

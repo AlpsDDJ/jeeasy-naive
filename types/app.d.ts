@@ -27,6 +27,10 @@ declare global {
      * 表单最大列数
      */
     formMaxCols: number
+    /**
+     * 列表分页选项
+     */
+    pageSizes: number[]
   }
 
   interface LayoutState {
