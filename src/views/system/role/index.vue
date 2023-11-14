@@ -3,7 +3,11 @@
     <template #top>
       <e-search ref="queryRef" v-model:model-value="queryData" :instance="Model" :load-data="loadData" />
     </template>
-    <e-table ref="tableRef" :instance="Model" :query-data="queryData" @show-form="showForm" />
+    <e-table ref="tableRef" :instance="Model" :query-data="queryData" @show-form="showForm">
+      <template ##roleCode="row, index">
+        <a>{{ index }} - {{ row?.roleCode }}</a>
+      </template>
+    </e-table>
     <template #bottom>
       <e-form ref="formRef" v-model:model-value="formData" :instance="Model" />
     </template>

@@ -18,10 +18,10 @@
       }
     "
   >
-    <template v-if="slots.loading" #loading>
+    <template v-if="$slots.loading" #loading>
       <slot name="loading" />
     </template>
-    <template v-if="slots.empty" #empty>
+    <template v-if="$slots.empty" #empty>
       <slot name="empty" />
     </template>
   </n-data-table>
@@ -30,8 +30,7 @@
 <script lang="ts" setup generic="T extends BaseModel">
   import { h } from 'vue'
   import type { DataTableColumn, DataTableInst, PaginationProps } from 'naive-ui'
-  import type { ETableInst, ETableProps, TableScrollToOption, IFormType } from './types'
-  import { LoadData } from './types'
+  import type { ETableInst, ETableProps, IFormType, TableScrollToOption, ETableSlots, LoadData } from './types'
   import type { ColumnKey, FilterState, SortOrder } from 'naive-ui/es/data-table/src/interface'
   import { BaseModel } from '@/hooks/useModel'
   import { useModelApi } from '@/hooks/useApi'
@@ -92,7 +91,7 @@
     showForm(row, FormType.EDIT)
   }
 
-  const slots = useSlots()
+  // const slots = useSlots()
 
   const pagination = defineModel<PaginationProps>('page', {
     local: true,
@@ -191,12 +190,14 @@
     ...tableExpose
   })
 
+  const slots = defineSlots<ETableSlots<T>>()
+
   onMounted(() => {
     const slotsTmp = toRaw(slots)
     Object.keys(slotsTmp).forEach((slotName) => {
       if (slotName.indexOf('#') === 0) {
         const colKey = slotName.replace('#', '')
-        const col = props.columns?.find((column) => column['key'] === colKey)
+        const col = columns.value?.find((column) => column['key'] === colKey)
         if (col) {
           ;(col as DataTableColumn)['render'] = (row: any, index: number) => slotsTmp[slotName]?.(row, index)
         }

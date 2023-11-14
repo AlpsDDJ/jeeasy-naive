@@ -64,6 +64,14 @@ export interface ETableInst<T extends BaseModel> extends DataTableInst {
   loadData: LoadData<T>
 }
 
+export type ETableSlots<T> = {
+  [K in keyof T & string as `#${K}`]: (row: any, index: number) => void
+  // [key in keyof T]: any
+} & {
+  loading: any
+  empty: any
+}
+
 export interface TableScrollToOption {
   left?: number
   top?: number
