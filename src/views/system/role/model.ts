@@ -13,20 +13,21 @@ class SysRole extends BaseModel {
   @Field('角色标识')
   roleCode?: string
 
-  @Field('启用标记')
-  @Field.DataType(FormDataType.NUMBER)
-  enableFlag?: number
-
   @Field('描述')
   description?: string
-
-  @Field('备注')
-  remark?: string
 
   @Field('排序')
   @Field.Hidden()
   // @Field.Hidden()
   sortNo?: string
+
+  @Field('备注')
+  remark?: string
+
+  @Field('启用标记')
+  @Field.DataType(FormDataType.NUMBER)
+  @Field.Dict()
+  enableFlag?: number
 }
 
 export default SysRole

@@ -11,7 +11,7 @@
 
 import { FormDataType } from '@/enums/EEnum'
 
-@Model('SysUser')
+@Model()
 class SysUser extends BaseModel {
   @Field('用户名', { booleanFlags: ['sorter'] })
   username?: String
@@ -35,7 +35,8 @@ class SysUser extends BaseModel {
   @Field('姓名')
   realName?: string
 
-  @Field('性别')
+  @Field('性别', { dict: 'Sex' })
+  @Field.Dict('Sex')
   @Field.DataType(FormDataType.NUMBER)
   sex?: number
 
@@ -44,6 +45,7 @@ class SysUser extends BaseModel {
   birthday?: string
 
   @Field('状态')
+  @Field.Dict('SysUserStatus')
   @Field.DataType(FormDataType.NUMBER)
   status?: number
 

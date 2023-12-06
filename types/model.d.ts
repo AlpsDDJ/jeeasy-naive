@@ -40,12 +40,14 @@ declare global {
     inputProps?: Record<string, any>
     queryInputProps?: Record<string, any>
     booleanFlags?: BooleanFlag[]
+    dict?: string | true
     $type$?: T
   }
   // type FieldOption<T extends InternalRowData> = FieldOpt<T> & DataTableColumn<T>
 
   interface FieldDecoratorType {
     <T extends InternalRowData>(label?: string | Partial<FieldOption<T>>, option?: Partial<FieldOption<T>>): PropertyDecorator
+    Dict: (dict?: string) => PropertyDecorator
     Hidden: (hiddenType?: FieldHiddenType) => PropertyDecorator
     DataType: (dataType?: IFormDataType, inputType?: IInputType) => PropertyDecorator
   }

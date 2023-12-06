@@ -6,6 +6,13 @@ function fieldFn(): PropertyDecorator
 function fieldFn(label: string): PropertyDecorator
 function fieldFn<T extends InternalRowData>(option: Partial<FieldOption<T>>): PropertyDecorator
 function fieldFn<T extends InternalRowData>(label: string, option: Partial<FieldOption<T>>): PropertyDecorator
+/**
+ * fieldFn函数用作定义PropertyDecorator类型的装饰器。
+ *
+ * @param label - 字符串类型，字段的标签。可选参数。
+ * @param option - Partial<FieldOption<T>>类型，字段的选项。可选参数。
+ * @returns 返回一个PropertyDecorator类型的函数，用于装饰对象的属性。
+ */
 function fieldFn<T extends InternalRowData>(label?: string | Partial<FieldOption<T>>, option?: Partial<FieldOption<T>>): PropertyDecorator {
   let optionTemp: Partial<FieldOption<T>> = {}
   optionTemp = cloneDeep(option || {})
@@ -27,14 +34,41 @@ function fieldFn<T extends InternalRowData>(label?: string | Partial<FieldOption
   }
 }
 
+/**
+ * 隐藏字段属性装饰器
+ * @param hiddenType - 隐藏类型，默认为 FieldHiddenType.TRUE
+ * @returns PropertyDecorator
+ */
 fieldFn.Hidden = (hiddenType: FieldHiddenType = true): PropertyDecorator => {
   return (target: Object, propertyKey: DataKey): void => {
     const state = getState(target)
-    // state['fields'][propertyKey].hidden = true
     setFieldProperty(state, propertyKey, { hidden: hiddenType })
   }
 }
 
+/**
+ * 设置指定属性为字典类型
+ *
+ * @param dict - 字典值或true
+ * @returns PropertyDecorator
+ */
+fieldFn.Dict = (dict?: string): PropertyDecorator => {
+  return (target: Object, propertyKey: DataKey): void => {
+    const state = getState(target)
+    const dictRender = (row: any) => {
+      return row[`${propertyKey as string}_dict`]
+    }
+    setFieldProperty(state, propertyKey, { dict: dict || (propertyKey as string), render: dictRender })
+  }
+}
+
+/**
+ * 设置字段的类型和输入类型
+ *
+ * @param dataType - 字段的数据类型，默认为字符串类型
+ * @param inputType - 字段的输入类型，默认为文本输入类型
+ * @returns 无返回值
+ */
 fieldFn.DataType = (dataType: IFormDataType = FormDataType.STRING, inputType?: IInputType): PropertyDecorator => {
   return (target: Object, propertyKey: DataKey): void => {
     const state = getState(target)
@@ -63,13 +97,31 @@ fieldFn.DataType = (dataType: IFormDataType = FormDataType.STRING, inputType?: I
 }
 
 function createColunm<T extends InternalRowData>(key: DataKey, optionTemp: Partial<FieldOption<T>>): FieldOption<T> {
+  // const textRender = (row: any) => {
+  //   if (optionTemp.dict) {
+  //     console.log(`${key as string}_dict`, row[`${key as string}_dict`])
+  //     return row[`${key as string}_dict`]
+  //   } else {
+  //     return row[key]
+  //   }
+  // }
+  // key === 'status' && console.log(1, optionTemp)
+
+  // console.log('optionTemp.render --------> ', optionTemp.render)
+
   return {
     ...optionTemp,
     key: key as string,
     title: optionTemp.label
+    // render: textRender
   }
 }
 
+/**
+ * 获取指定对象的状态
+ * @param target 目标对象
+ * @returns 返回目标对象的状态
+ */
 function getState<T extends BaseModel>(target: Object): ModelState<T> {
   const constructor = target.constructor
   const state = Object.getOwnPropertyDescriptor(constructor, 'state')
@@ -82,6 +134,13 @@ function getState<T extends BaseModel>(target: Object): ModelState<T> {
   }
 }
 
+/**
+ * 设置指定属性
+ * @param state - 模型状态对象
+ * @param key - 数据键值
+ * @param property - 属性对象
+ * @returns 无返回值
+ */
 function setFieldProperty<T extends BaseModel>(state: ModelState<T>, key: DataKey, property: Partial<FieldOption<T>>): void {
   const props = state['fields'][key] || {}
   state['fields'][key] = { ...props, ...property }
