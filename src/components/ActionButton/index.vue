@@ -19,8 +19,6 @@
   import { commonActions } from './commonActions'
   import type { ActionOption, ActionButtonProps } from './commonActions'
 
-  // function actionHandle(action, row, index) {}
-
   defineOptions({
     name: 'ActionButton'
   })
@@ -52,11 +50,6 @@
     }
     return options.map(({ disabled = false, show = true, ...opt }) => ({ ...opt, disabled, show }))
   })
-  // actionOptions.value.forEach((item) => {
-  //   defineEmits(`action:${item.action}`, data.value)
-  // })
 
   defineEmits(commonActions.map(({ action }) => `action:${action}`))
 </script>
-
-<style scoped></style>

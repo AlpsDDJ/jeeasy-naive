@@ -1,30 +1,36 @@
 <template>
-  <n-data-table
-    ref="tableRef"
-    v-bind="tableProps"
-    :columns="columns"
-    :loading="loading"
-    :data="data"
-    :pagination="pagination"
-    :remote="true"
-    @update:page="
-      (page) => {
-        pageChangeHandle({ page })
-      }
-    "
-    @update:page-size="
-      (pageSize) => {
-        pageChangeHandle({ pageSize })
-      }
-    "
-  >
-    <template v-if="$slots.loading" #loading>
-      <slot name="loading" />
-    </template>
-    <template v-if="$slots.empty" #empty>
-      <slot name="empty" />
-    </template>
-  </n-data-table>
+  <n-space vertical>
+    <slot name="toolBar">
+      <action-button :actions="['add']" @action:add="handleAdd" />
+    </slot>
+    <n-data-table
+      ref="tableRef"
+      v-bind="tableProps"
+      :columns="columns"
+      :loading="loading"
+      :data="data"
+      :pagination="pagination"
+      :remote="true"
+      :min-height="200"
+      @update:page="
+        (page) => {
+          pageChangeHandle({ page })
+        }
+      "
+      @update:page-size="
+        (pageSize) => {
+          pageChangeHandle({ pageSize })
+        }
+      "
+    >
+      <template v-if="$slots.loading" #loading>
+        <slot name="loading" />
+      </template>
+      <template v-if="$slots.empty" #empty>
+        <slot name="empty" />
+      </template>
+    </n-data-table>
+  </n-space>
 </template>
 
 <script lang="ts" setup generic="T extends BaseModel">
@@ -34,8 +40,8 @@
   import type { ColumnKey, FilterState, SortOrder } from 'naive-ui/es/data-table/src/interface'
   import { BaseModel } from '@/hooks/useModel'
   import { useModelApi } from '@/hooks/useApi'
-  import ActionButton from '@/components/ActionButton/index.vue'
   import { appSetting } from '@/config/app.config'
+  import ActionButton from '@/components/ActionButton/index.vue'
 
   defineOptions({
     name: 'ETable'
@@ -77,12 +83,12 @@
   }>()
 
   const showForm = (formData: any, type: IFormType) => {
-    // formState.active = true
-    // console.log('props.showForm ', props.showForm)
-    // props.showForm && props.showForm(type, formData)
     emit('showForm', type, formData)
   }
 
+  const handleAdd = () => {
+    showForm({}, FormType.ADD)
+  }
   const handleDelete = ({ row, index }) => {
     console.log(`删除第${index} 行，id = ${row.id}`)
   }

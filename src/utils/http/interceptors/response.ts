@@ -40,8 +40,8 @@ export const setupResponse = (http: AxiosInstance) => {
         default:
           msg = '网络连接错误'
       }
-      window.$message.error(message || msg)
-      return Promise.reject(message || error)
+      window.$message.error(message || msg || error.message)
+      return Promise.reject(message ? new Error(message) : error)
     }
   )
 }

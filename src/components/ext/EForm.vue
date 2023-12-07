@@ -26,10 +26,11 @@
   import { BaseModel } from '@/hooks/useModel'
   import type { FormInst } from 'naive-ui'
   import type { FormValidateCallback, ShouldRuleBeApplied } from 'naive-ui/es/form/src/interface'
-  import type { EFormInst, EFormProps, IFormData, IFormType, FormData } from './types'
+  import type { EFormInst, EFormProps, IFormData, IFormType } from './types'
   import { createInputComponent } from './index'
   import { appSetting, formTypeTitleMap } from '@/config/app.config'
   import { cloneDeep } from 'lodash-es'
+  import { useModelApi } from '@/hooks/useApi'
 
   defineOptions({
     name: 'EForm'
@@ -42,7 +43,7 @@
    */
   const formType = ref<IFormType>()
 
-  const formData = defineModel<FormData<T>>({
+  const formData = defineModel<IFormData<T>>({
     local: true,
     default: {}
   })
@@ -50,10 +51,13 @@
   const props = withDefaults(defineProps<EFormProps<T>>(), {
     formProps: () => ({
       size: appSetting.formSize
-    })
+    }),
+    formatFormData: (data: IFormData<T>) => cloneDeep(data)
   })
 
   const modelState = ref<ModelState<T>>(useModel<T>(props.instance))
+  const { save, update } = useModelApi<T>(modelState.value.api)
+
   const jsonScheme = computed<FieldOption<T>[]>(() =>
     Object.values(modelState.value?.fields || []).filter(
       ({ hidden }) => !(hidden === true || hidden?.includes('form') || (formType?.value && hidden?.includes(formType?.value)))
@@ -131,13 +135,43 @@
   /**
    * 关闭 抽屉
    */
-  const close = () => {
+  const close = (clearForm?: boolean) => {
     showForm.value = false
+    formLoading.value = false
+    clearForm && (formData.value = {})
     return Promise.resolve()
   }
 
-  const submitHandle = () => {
-    console.log('formData ---> ', formData.value)
+  const emits = defineEmits<{
+    (e: 'success', resp?: R, formType?: IFormType): void
+    (e: 'error', error: unknown, resp?: R, formType?: IFormType): void
+  }>()
+
+  const submitHandle = async () => {
+    formLoading.value = true
+    const formDataClone = props.formatFormData(formData.value, formType.value)
+    let resp: any
+    try {
+      switch (formType.value) {
+        case FormType.ADD:
+          resp = await save(formDataClone)
+          break
+        case FormType.EDIT:
+          resp = await update(formDataClone)
+          break
+        default:
+          close()
+          break
+      }
+    } catch (error) {
+      emits('error', error, resp, formType.value)
+      window.$message.error(error ? (error as Error).message : typeof resp.data === 'string' ? resp.data : resp.message)
+      formLoading.value = false
+      return
+    }
+    emits('success', resp, formType.value)
+    window.$message.success(typeof resp.data === 'string' ? resp.data : resp.message)
+    close(true)
   }
 
   /**

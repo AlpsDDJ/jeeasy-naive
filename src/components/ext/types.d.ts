@@ -36,10 +36,11 @@ export interface ETableProps<T extends BaseModel> {
 
 export interface EFormProps<T extends BaseModel> {
   instance: BaseModelConstructor<T>
-  defauleData?: FormData<T>
+  defauleData?: IFormData<T>
   wSize?: number | string
   cols?: number
   formProps?: FormProps
+  formatFormData?: (fData: IFormData<T>, type?: IFormType) => IFormData<T>
 }
 
 export interface EQueryInst<T extends BaseModel> extends FormInst {
@@ -86,7 +87,7 @@ export interface EModelState<T extends BaseModel> {
   tableRef: Ref<ETableInst<T> | undefined>
   formRef: Ref<EFormInst<T> | undefined>
   queryRef: Ref<EFormInst<T> | undefined>
-  formData: Ref<FormData<T>>
+  formData: Ref<IFormData<T>>
   queryData: Ref<FormData<T>>
   loadData: LoadData<T>
   showForm: ShowForm
