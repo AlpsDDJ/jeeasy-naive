@@ -73,24 +73,22 @@ fieldFn.DataType = (dataType: IFormDataType = FormDataType.STRING, inputType?: I
   return (target: Object, propertyKey: DataKey): void => {
     const state = getState(target)
     let it: IInputType = InputType.TEXT
-    if (!inputType) {
-      switch (dataType) {
-        case FormDataType.NUMBER:
-          it = InputType.INPUT_NUMBER
-          break
-        case FormDataType.DATE:
-          it = InputType.DATE
-          break
-        case FormDataType.TIME:
-          it = InputType.TIME
-          break
-        case FormDataType.DATETIME:
-          it = InputType.DATETIME
-          break
-        case FormDataType.BOOLEAN:
-          it = InputType.SWITCH
-          break
-      }
+    switch (dataType) {
+      case FormDataType.NUMBER:
+        it = inputType || InputType.INPUT_NUMBER
+        break
+      case FormDataType.DATE:
+        it = inputType || InputType.DATE
+        break
+      case FormDataType.TIME:
+        it = inputType || InputType.TIME
+        break
+      case FormDataType.DATETIME:
+        it = inputType || InputType.DATETIME
+        break
+      case FormDataType.BOOLEAN:
+        it = inputType || InputType.SWITCH
+        break
     }
     setFieldProperty(state, propertyKey, { dataType: dataType, inputType: it })
   }

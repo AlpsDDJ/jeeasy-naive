@@ -11,7 +11,6 @@
       :data="data"
       :pagination="pagination"
       :remote="true"
-      :min-height="200"
       @update:page="
         (page) => {
           pageChangeHandle({ page })

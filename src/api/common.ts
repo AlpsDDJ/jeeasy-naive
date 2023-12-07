@@ -15,6 +15,9 @@ export class CommonApi extends BaseApi {
   @Api.Get('/sys/user/menus')
   static getUserMenus: HttpRequest
 
+  @Api.Get('/sys/common/dicts/{code}')
+  static getDicts: HttpRequest
+
   /**
    * 由于 tsconig 配置了 useDefineForClassFields = true, 所以 declare 必须声明，不然装饰器配置默认值无效
    * 调用方式：

@@ -18,8 +18,9 @@ class MbModel extends BaseModel {
   code?: string
 
   @Field('启用标记')
-  @Field.DataType(FormDataType.NUMBER)
-  @Field.Dict()
+  @Field.Hidden(['add'])
+  @Field.DataType(FormDataType.NUMBER, InputType.SWITCH)
+  @Field.Dict('enableFlag')
   enableFlag?: number
 }
 

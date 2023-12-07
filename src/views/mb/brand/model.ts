@@ -14,7 +14,7 @@ class MbBrand extends BaseModel {
   code?: string
 
   @Field('启用标记')
-  @Field.DataType(FormDataType.NUMBER)
+  @Field.DataType(FormDataType.NUMBER, InputType.SWITCH)
   @Field.Dict()
   enableFlag?: number
 }

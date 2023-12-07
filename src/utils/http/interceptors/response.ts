@@ -16,8 +16,7 @@ export const setupResponse = (http: AxiosInstance) => {
       let msg: string
       // HTTP 状态码
       const status = error.response?.status
-      // @ts-ignore
-      const message = error.response?.data?.message || ''
+      const message = (error.response?.data as R).message || ''
       switch (status) {
         case 401:
           msg = 'token失效，请重新登录'

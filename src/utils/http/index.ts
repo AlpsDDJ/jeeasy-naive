@@ -28,7 +28,7 @@ export function httpRequest<T = any, P = any>(...[data, config = {}]: HttpReques
         }
         // 删除URL中匹配的参数
         delete data[objKey]
-        return val
+        return encodeURIComponent(val)
       }))
   }
 

@@ -40,7 +40,7 @@ declare global {
     inputProps?: Record<string, any>
     queryInputProps?: Record<string, any>
     booleanFlags?: BooleanFlag[]
-    dict?: string | true
+    dict?: string
     $type$?: T
   }
   // type FieldOption<T extends InternalRowData> = FieldOpt<T> & DataTableColumn<T>
