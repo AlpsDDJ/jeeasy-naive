@@ -61,6 +61,10 @@ export interface LoadData<T extends BaseModel> {
   (params?: any): Promise<PageData<T>>
 }
 
+// export interface LoadTree<T extends BaseModel> {
+//   (params?: any): Promise<TreeData<T>>
+// }
+
 export interface ETableInst<T extends BaseModel> extends DataTableInst {
   loadData: LoadData<T>
 }

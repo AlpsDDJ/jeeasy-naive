@@ -18,6 +18,7 @@ declare global {
     total: number
     pages: number
   }
+  // type TreeData<T> = T[]
 
   export type HttpRequest<T = any, P = any> = {
     (data?: P, config?: AxiosRequestConfig<P>): Promise<R<T>>

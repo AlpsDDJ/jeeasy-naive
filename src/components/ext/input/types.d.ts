@@ -3,6 +3,15 @@ export type DictInputProps = {
   multiple?: boolean
   component?: 'select' | 'treeSelect' | 'checkbox' | 'radio' | 'switch'
   showSwitchText?: boolean
+  topPid?: string | number
+  async?: boolean
+}
+
+export type DictData = {
+  dictCode: string
+  dictName: string
+  leaf?: number
+  children?: DictData[]
 }
 
 export type DictInputValues = string | string[] | number | number[]

@@ -11,6 +11,8 @@
       :data="data"
       :pagination="pagination"
       :remote="true"
+      :tree="!!treeField"
+      :row-key="(row) => row.id"
       @update:page="
         (page) => {
           pageChangeHandle({ page })
@@ -41,6 +43,7 @@
   import { useModelApi } from '@/hooks/useApi'
   import { appSetting } from '@/config/app.config'
   import ActionButton from '@/components/ActionButton/index.vue'
+  import { cloneDeep } from 'lodash-es'
 
   defineOptions({
     name: 'ETable'
@@ -126,10 +129,10 @@
   const data = ref<T[]>()
   const { page: loadPage } = useModelApi<T>(modelState.value.api)
 
+  const treeField = modelState.value.tree as TreeField<T>
+
   const loadData: LoadData<T> = async (param?: any) => {
-    param && console.log(param)
     loading.value = true
-    // const { api } = modelState
     const { pageSize, page } = pagination.value
     const params = {
       size: pageSize,
@@ -142,7 +145,7 @@
       const {
         data: { records, size, current, total, pages }
       } = resp
-      data.value = records
+      data.value = cloneDeep(records)
       loading.value = false
 
       pagination.value = {

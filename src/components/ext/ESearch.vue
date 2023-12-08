@@ -42,7 +42,8 @@
     resetAndQuery: true,
     formProps: () => ({
       size: appSetting.formSize
-    })
+    }),
+    defaultData: {}
   })
 
   const cols = ref('1 600:2 900:3 1200:4 1500:5')
@@ -63,7 +64,7 @@
   }
 
   const resetHandle = () => {
-    queryData.value = {}
+    queryData.value = cloneDeep(props.defauleData || {})
     props.resetAndQuery &&
       nextTick().then(() => {
         props.loadData()
@@ -93,7 +94,7 @@
       queryData.value = cloneDeep(props.defauleData)
     }
     // tableRef.value!.page(2)
-    props.autoQuery && props.loadData()
+    props.autoQuery && props.loadData(props.defauleData || {})
   })
 </script>
 

@@ -5,8 +5,7 @@
       <n-spin :show="formLoading">
         <n-form ref="formRef" v-bind="props.formProps" :model="formData" label-placement="left" :inline="cols !== 1" label-width="auto">
           <n-grid v-if="formActive" :cols="cols" :x-gap="12">
-            <n-form-item-gi v-for="item in jsonScheme" :key="item.path || item.key" :label="item.label">
-              <!--<n-input v-model:value="formData[item.path || item.key || '']" type="text" :placeholder="item.label" />-->
+            <n-form-item-gi v-for="item in jsonScheme" :key="item.path || item.key" :label="item.label" :span="item.formSpan">
               <component :is="createInpComp(item)" />
             </n-form-item-gi>
           </n-grid>
@@ -14,7 +13,7 @@
       </n-spin>
       <template #footer>
         <n-space>
-          <n-button type="default" secondary @click="close">关闭</n-button>
+          <n-button type="default" secondary @click="() => close()">关闭</n-button>
           <n-button v-if="showConfirmBtn" type="primary" secondary :loading="formLoading" @click="submitHandle">保存</n-button>
         </n-space>
       </template>

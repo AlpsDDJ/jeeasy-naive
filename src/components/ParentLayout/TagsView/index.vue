@@ -53,7 +53,6 @@
 
   // 展示标签 (排序后)
   const showTags = computed(() => sortBy(tags.value, 'index'))
-  console.debug('showTags --> ', showTags)
   // 是否为当前标签
   const activeTagKey = computed(() => (key) => currTagKey.value === key)
   // 标签是否可关闭

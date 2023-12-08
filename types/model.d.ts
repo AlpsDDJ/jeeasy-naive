@@ -12,6 +12,11 @@ declare global {
   // type ModelLabel<T extends IBaseModel> = ModelStateRequiredAttr<T, string>
   type ModelField<T extends IBaseModel> = ModelStateRequiredAttr<T, string>
 
+  type TreeField<T> = {
+    pid?: 'parentId' | keyof ModelField<T>
+    children?: 'children' | keyof ModelField<T>
+  }
+
   type ModelState<T extends IBaseModel> = {
     keys: ModelField<T>
     // labels: ModelLabel<T>
@@ -21,6 +26,9 @@ declare global {
     perms: string | boolean
 
     fields: ModelStatePartialAttr<T, FieldOption<T>>
+    tree?: true | TreeField<T>
+    // pid: keyof ModelField<T> | 'parantId'
+    // children: keyof ModelField<T> | 'children'
     // columns: FieldOption<T>
   }
 
@@ -29,7 +37,7 @@ declare global {
   //   hidden?: boolean | ['edit' | 'add' | 'view' | 'list' | 'query']
   //   $type$?: T
   // }
-  type FieldHiddenType = true | ['list' | 'form' | 'query' | 'edit' | 'add' | 'view']
+  type FieldHiddenType = true | ('list' | 'form' | 'query' | 'edit' | 'add' | 'view')[]
 
   type BooleanFlag = string | 'hidden' | 'dict'
   interface FieldOption<T extends InternalRowData> extends TableBaseColumn<T>, EFormItem<T> {
@@ -41,6 +49,7 @@ declare global {
     queryInputProps?: Record<string, any>
     booleanFlags?: BooleanFlag[]
     dict?: string
+    formSpan?: number
     $type$?: T
   }
   // type FieldOption<T extends InternalRowData> = FieldOpt<T> & DataTableColumn<T>

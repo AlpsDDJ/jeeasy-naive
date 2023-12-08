@@ -7,7 +7,7 @@
 
 <script setup lang="ts">
   import { CommonApi } from '@/api/common'
-  import { DictInputProps, DictInputValues } from './types'
+  import { DictData, DictInputProps, DictInputValues } from './types'
   import { NCheckbox, NTreeSelect, NSelect, NSwitch } from 'naive-ui'
 
   defineOptions({
@@ -22,15 +22,54 @@
 
   const modelValue = defineModel<DictInputValues>('value')
 
-  const options = ref([])
+  const options = ref<DictData[]>()
   const optionMap = ref({})
 
   const component = ref<any>()
   const compProps = ref({})
 
+  const loadData = (params = {}) => {
+    return new Promise<DictData[]>((resolve) => {
+      CommonApi.getDicts({
+        code: props.code,
+        parentId: props.topPid,
+        async: props.async,
+        ...params
+      }).then((resp) => {
+        resolve(resp.data?.map(({ leaf, ...item }) => ({ isLeaf: leaf, ...item })))
+      })
+    })
+  }
+
+  const loadChildren = async (option?: any) => {
+    option.children = await loadData({
+      parentId: option.dictCode
+    })
+    // return new Promise<void>((resolve) => {
+    //   CommonApi.getDicts({
+    //     code: props.code,
+    //     parentId: option.dictCode,
+    //     async: props.async
+    //   }).then((resp) => {
+    //     option.children = resp.data
+    //     resolve()
+    //   })
+    // })
+  }
+
   switch (props.component) {
     case 'treeSelect':
       component.value = markRaw(NTreeSelect)
+      compProps.value = {
+        options,
+        cascade: true,
+        multiple: props.multiple,
+        checkable: props.multiple,
+        labelField: 'dictName',
+        keyField: 'dictCode',
+        childrenField: 'children',
+        onLoad: loadChildren
+      }
       break
     case 'checkbox':
       component.value = markRaw(NCheckbox)
@@ -56,15 +95,11 @@
       break
   }
   // const component = props.component
-  onMounted(() => {
-    CommonApi.getDicts({
-      code: props.code
-    }).then((resp) => {
-      // console.log('resp ---> ', resp)
-      options.value = resp.data
-      resp.data.forEach((item) => {
-        optionMap.value[item.dictCode] = item.dictName
-      })
+  onMounted(async () => {
+    const data = await loadData()
+    options.value = data
+    data.forEach((item) => {
+      optionMap.value[item.dictCode] = item.dictName
     })
   })
 </script>

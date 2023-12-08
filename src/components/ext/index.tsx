@@ -15,7 +15,6 @@ export const initModel = <T extends BaseModel>(): EModelState<T> => {
   const queryData = ref<FormData<T>>({})
 
   const loadData = (params: any = {}) => {
-    console.log('queryData.value --> ', queryData.value)
     return tableRef.value!.loadData({ ...queryData.value, ...params })
   }
 
@@ -54,12 +53,16 @@ export const createInputComponent = <T extends BaseModel>(field: FieldOption<T>,
   if (!!dict) {
     component = EDictInput
     compProps.code = dict
-    compProps.component = query ? 'select' : inputType
+    compProps.component = query && inputType === 'switch' ? 'select' : inputType
     compProps.clearable = true
   } else {
     switch (inputType) {
       case InputType.INPUT_NUMBER:
         component = NInputNumber
+        break
+      case InputType.TEXT_AREA:
+        component = NInput
+        compProps.type = 'textarea'
         break
       case InputType.DATE:
         component = NDatePicker

@@ -72,7 +72,7 @@ fieldFn.Dict = (dict?: string): PropertyDecorator => {
 fieldFn.DataType = (dataType: IFormDataType = FormDataType.STRING, inputType?: IInputType): PropertyDecorator => {
   return (target: Object, propertyKey: DataKey): void => {
     const state = getState(target)
-    let it: IInputType = InputType.TEXT
+    let it: IInputType
     switch (dataType) {
       case FormDataType.NUMBER:
         it = inputType || InputType.INPUT_NUMBER
@@ -88,6 +88,9 @@ fieldFn.DataType = (dataType: IFormDataType = FormDataType.STRING, inputType?: I
         break
       case FormDataType.BOOLEAN:
         it = inputType || InputType.SWITCH
+        break
+      default:
+        it = inputType || InputType.TEXT
         break
     }
     setFieldProperty(state, propertyKey, { dataType: dataType, inputType: it })
