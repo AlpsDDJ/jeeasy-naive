@@ -9,6 +9,7 @@
   import { CommonApi } from '@/api/common'
   import { DictData, DictInputProps, DictInputValues } from './types'
   import { NCheckbox, NTreeSelect, NSelect, NSwitch } from 'naive-ui'
+  import { useCacheStore } from '@/store/modules/cache'
 
   defineOptions({
     name: 'EDictInput'
@@ -27,34 +28,39 @@
 
   const component = ref<any>()
   const compProps = ref({})
+  const cacheStore = useCacheStore()
 
   const loadData = (params = {}) => {
-    return new Promise<DictData[]>((resolve) => {
-      CommonApi.getDicts({
-        code: props.code,
-        parentId: props.topPid,
-        async: props.async,
-        ...params
-      }).then((resp) => {
-        resolve(resp.data?.map(({ leaf, ...item }) => ({ isLeaf: leaf, ...item })))
+    const _params = {
+      code: props.code,
+      parentId: props.topPid,
+      async: props.async,
+      ...params
+    }
+    const cacheKey = `dict_${Object.values(_params).join('$$')}`
+    const cacheValue = cacheStore.getValue(cacheKey)
+    if (cacheValue) {
+      return Promise.resolve(cacheValue)
+    } else {
+      return new Promise<DictData[]>((resolve) => {
+        CommonApi.getDicts({
+          code: props.code,
+          parentId: props.topPid,
+          async: props.async,
+          ...params
+        }).then((resp) => {
+          const value = resp.data?.map(({ leaf, ...item }) => ({ isLeaf: leaf, ...item }))
+          cacheStore.setValue(cacheKey, value)
+          resolve(value)
+        })
       })
-    })
+    }
   }
 
   const loadChildren = async (option?: any) => {
     option.children = await loadData({
       parentId: option.dictCode
     })
-    // return new Promise<void>((resolve) => {
-    //   CommonApi.getDicts({
-    //     code: props.code,
-    //     parentId: option.dictCode,
-    //     async: props.async
-    //   }).then((resp) => {
-    //     option.children = resp.data
-    //     resolve()
-    //   })
-    // })
   }
 
   switch (props.component) {
