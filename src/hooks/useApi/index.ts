@@ -9,16 +9,19 @@ export class ModelApi<T = any> extends BaseApi {
   declare page: HttpRequest<PageData<T>>
 
   @Api.Get('/{id}')
-  declare info: HttpRequest
+  declare info: HttpRequest<T, DataIdParam>
 
   @Api.Put()
-  declare update: HttpRequest
+  declare update: HttpRequest<string, T>
 
   @Api.Post()
-  declare save: HttpRequest
+  declare save: HttpRequest<string, T>
 
-  @Api.Delete()
-  declare delete: HttpRequest
+  @Api.Delete('/{id}')
+  declare delete: HttpRequest<string, DataIdParam>
+
+  @Api.Delete('/batch')
+  declare batchDelete: HttpRequest<string, { ids: string }>
 
   constructor(modelPath: string) {
     super()
@@ -26,8 +29,6 @@ export class ModelApi<T = any> extends BaseApi {
   }
 }
 
-const useModelApi = <T = any>(modelPath: string) => {
+export const useModelApi = <T = any>(modelPath: string) => {
   return new ModelApi<T>(modelPath)
 }
-
-export { useModelApi }

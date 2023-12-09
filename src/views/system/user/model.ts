@@ -9,7 +9,7 @@
 // @Model.Api('sys/user')
 // @Model.Perms('sys:user')
 
-import { FormDataType } from '@/enums/EEnum'
+import { FormDataType, InputType } from '@/enums/EEnum'
 
 @Model()
 class SysUser extends BaseModel {
@@ -17,17 +17,12 @@ class SysUser extends BaseModel {
   username?: String
 
   @Field('用户编号')
-  @Field.DataType(FormDataType.NUMBER)
-  userNo?: number
+  // @Field.DataType(FormDataType.NUMBER)
+  userNo?: string
 
   @Field('密码')
-  @Field.Hidden()
+  @Field.Hidden(['list', 'query'])
   password?: string
-
-  // @Field('年龄')
-  // @Field.Hidden(['form'])
-  // @Field.DataType(FormDataType.NUMBER)
-  // age?: number
 
   @Field('手机号')
   phone?: string
@@ -44,16 +39,30 @@ class SysUser extends BaseModel {
   @Field.DataType(FormDataType.DATE)
   birthday?: string
 
-  @Field('状态')
-  @Field.Dict('SysUserStatus')
-  @Field.DataType(FormDataType.NUMBER)
-  status?: number
-
   @Field('邮箱')
   email?: string
 
   @Field('头像')
   avatar?: string
+
+  @Field('角色', { render: ({ roles }) => roles?.map?.(({ roleName }) => roleName)?.join(','), formSpan: 2 })
+  @Field.DataType(FormDataType.ARRAY)
+  @Field.Dict('#sys_role')
+  roles?: string[]
+
+  @Field('部门', {
+    render: ({ depts }) => depts?.map?.(({ deptName }) => deptName)?.join(','),
+    formSpan: 2,
+    inputProps: { topPid: '0', async: false }
+  })
+  @Field.DataType(FormDataType.ARRAY, InputType.TREE_SELECT)
+  @Field.Dict('#sys_dept')
+  depts?: string[]
+
+  @Field('状态')
+  @Field.Dict('SysUserStatus')
+  @Field.DataType(FormDataType.NUMBER, InputType.SWITCH)
+  status?: number
 }
 
 export default SysUser

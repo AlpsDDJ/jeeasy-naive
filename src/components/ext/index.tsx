@@ -1,7 +1,7 @@
 import { h, Ref } from 'vue'
 import { BaseModel } from '@/hooks/useModel'
 import { EFormInst, EModelState, ETableInst, FormData, IFormType } from '@/components/ext/types'
-import { InputType } from '@/enums/EEnum'
+import { FormDataType, InputType } from '@/enums/EEnum'
 import { NDatePicker, NInput, NSwitch, NTimePicker } from 'naive-ui'
 import EDictInput from '@/components/ext/input/EDictInput.vue'
 
@@ -55,6 +55,7 @@ export const createInputComponent = <T extends BaseModel>(field: FieldOption<T>,
     compProps.code = dict
     compProps.component = query && inputType === 'switch' ? 'select' : inputType
     compProps.clearable = true
+    compProps.multiple = !query && field.dataType === FormDataType.ARRAY
   } else {
     switch (inputType) {
       case InputType.INPUT_NUMBER:

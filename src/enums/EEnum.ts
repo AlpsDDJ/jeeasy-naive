@@ -13,7 +13,8 @@ export const enum FormDataType {
   BOOLEAN = 'boolean',
   DATE = 'date',
   TIME = 'time',
-  DATETIME = 'datetime'
+  DATETIME = 'datetime',
+  ARRAY = 'array'
 }
 
 export const enum InputType {

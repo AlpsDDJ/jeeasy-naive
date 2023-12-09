@@ -24,6 +24,10 @@ declare global {
     (data?: P, config?: AxiosRequestConfig<P>): Promise<R<T>>
   }
 
+  export type DataIdParam = {
+    id: string
+  }
+
   type EnumTypes<T extends string | number> = keyof { [k in T]: unknown }
 
   type BaseModelConstructor<T> = typeof BaseModel & { new (...args: any[]): T }

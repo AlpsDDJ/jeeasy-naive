@@ -16,7 +16,7 @@
       </template>
     </e-table>
     <template #bottom>
-      <e-form ref="formRef" v-model:model-value="formData" :instance="Model" />
+      <e-form ref="formRef" v-model:model-value="formData" :instance="Model" @success="loadData()" />
     </template>
   </e-model>
 </template>

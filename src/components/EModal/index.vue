@@ -40,10 +40,11 @@
   const props = withDefaults(defineProps<EModalProps>(), {
     type: 'drawer',
     width: 400,
-    actions: [
+    actions: () => [
       {
         action: 'close',
-        html: '关闭'
+        html: '关闭',
+        secondary: true
         // // type: 'primary',
         // isDisabled: true,
         // handle: () => {
@@ -53,6 +54,7 @@
       {
         action: 'ok',
         html: '确定',
+        secondary: true,
         type: 'primary'
         // handle: () => {
         //   ok()

@@ -30,6 +30,7 @@ export interface ETableProps<T extends BaseModel> {
   showForm?: (type: IFormType, fData?: IFormData<T>) => void
   formInst?: EFormInst<T>
   queryData?: FormData<T>
+  beforeQuery?: (queryData: FormData<T>) => FormData<T>
   tableProps?: DataTableProps
   // actions?: ButtonActions
 }
@@ -98,3 +99,16 @@ export interface EModelState<T extends BaseModel> {
 }
 
 export interface FormData<T extends BaseModel> extends IFormData<T> {}
+
+export interface FormatFormData<T extends BaseModel> {
+  (fData: IFormData<T>, type?: IFormType): IFormData<T>
+}
+
+export interface FormatQueryData<T extends BaseModel> {
+  (fData: FormData<T>): FormData<T>
+}
+
+export interface InitModelOptions {
+  formatFormData?: FormatFormData
+  formatQueryData?: FormatQueryData
+}

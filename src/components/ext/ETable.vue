@@ -52,7 +52,8 @@
 
   const props = withDefaults(defineProps<ETableProps<T>>(), {
     actions: 'default',
-    tableProps: () => ({})
+    tableProps: () => ({}),
+    beforeQuery: (queryData) => queryData
   })
 
   const modelState = ref(useModel<T>(props.instance))
@@ -188,7 +189,7 @@
       ...param
     }
     try {
-      const resp = await loadPage(params)
+      const resp = await loadPage(props.beforeQuery(params))
       const {
         data: { records, size, current, total, pages }
       } = resp

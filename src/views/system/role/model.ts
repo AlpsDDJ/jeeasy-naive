@@ -1,9 +1,6 @@
-// import { BaseModel } from '@/hooks/useModel'
-// import Field from '../../../hooks/useModel/decorator/field'
-
 // @Model.Api('sys/role')
 // @Model.Perms('sys:role')
-import { FormDataType } from '@/enums/EEnum'
+import { FormDataType, InputType } from '@/enums/EEnum'
 import { BaseApi } from '@/hooks/useApi'
 
 @Model('SysRole')
@@ -26,7 +23,7 @@ export default class SysRole extends BaseModel {
   remark?: string
 
   @Field('启用标记')
-  @Field.DataType(FormDataType.NUMBER)
+  @Field.DataType(FormDataType.NUMBER, InputType.SWITCH)
   @Field.Dict()
   enableFlag?: number
 }
@@ -45,7 +42,7 @@ export type SaveRolePermissionParams = {
 @Api('/sys/role/')
 export class SysRoleApi extends BaseApi {
   @Api.Get('permissions/{id}')
-  static getRolePermission: HttpRequest<RolePermission[], { id: string }>
+  static getRolePermission: HttpRequest<RolePermission[], DataIdParam>
 
   @Api.Post('permissions')
   static saveRolePermission: HttpRequest<string, SaveRolePermissionParams>

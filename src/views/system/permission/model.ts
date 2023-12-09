@@ -8,7 +8,7 @@ export default class SysPermission extends BaseModel {
   @Field('资源名称')
   name?: string
 
-  @Field('上级菜单', { inputProps: { topPid: '0', async: true } })
+  @Field('上级菜单', { inputProps: { topPid: '0', async: false } })
   @Field.Hidden(['list'])
   @Field.Dict('#sys_permission')
   @Field.DataType(FormDataType.STRING, InputType.TREE_SELECT)

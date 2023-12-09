@@ -68,7 +68,7 @@
       component.value = markRaw(NTreeSelect)
       compProps.value = {
         options,
-        cascade: true,
+        // cascade: true,
         multiple: props.multiple,
         checkable: props.multiple,
         labelField: 'dictName',
