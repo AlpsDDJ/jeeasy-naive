@@ -16,15 +16,15 @@ export const useCacheStore = defineStore('cache', {
       this.pool = {}
     }
   },
-  getters: {},
-  persist: {
-    enabled: true,
-    strategies: [
-      {
-        key: 'cahce', // 修改存在缓存中的key值
-        storage: sessionStorage /// 修改存储方式为localStorage，默认sessionStorage
-        // paths: ['darkTheme'] // 只持久化'curTheme'，此时刷新页面curTheme数据会被保留，其他state将会重置
-      }
-    ]
-  }
+  getters: {}
+  // persist: {
+  //   enabled: true,
+  //   strategies: [
+  //     {
+  //       key: 'cahce', // 修改存在缓存中的key值
+  //       storage: sessionStorage /// 修改存储方式为localStorage，默认sessionStorage
+  //       // paths: ['darkTheme'] // 只持久化'curTheme'，此时刷新页面curTheme数据会被保留，其他state将会重置
+  //     }
+  //   ]
+  // }
 })

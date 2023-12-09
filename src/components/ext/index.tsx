@@ -1,6 +1,6 @@
 import { h, Ref } from 'vue'
 import { BaseModel } from '@/hooks/useModel'
-import { EFormInst, EModelState, ETableInst, FormData, IFormType } from '@/components/ext/types'
+import { EFormInst, EModelState, ETableInst, FormData, IFormData, IFormType } from '@/components/ext/types'
 import { FormDataType, InputType } from '@/enums/EEnum'
 import { NDatePicker, NInput, NSwitch, NTimePicker } from 'naive-ui'
 import EDictInput from '@/components/ext/input/EDictInput.vue'
@@ -26,7 +26,7 @@ export const initModel = <T extends BaseModel>(): EModelState<T> => {
     tableRef,
     formRef,
     queryRef,
-    formData,
+    formData: formData as Ref<IFormData<T>>,
     queryData,
     loadData,
     showForm
@@ -34,11 +34,14 @@ export const initModel = <T extends BaseModel>(): EModelState<T> => {
   }
 }
 
-export const createInputComponent = <T extends BaseModel>(field: FieldOption<T>, formData: Ref<FormData<T>>, query: boolean = false) => {
-  const { key, path, label, inputType, inputProps = {}, queryInputProps = {} } = field
-  // console.log('inputProps ---> ', inputProps)
+export const createInputComponent = <T extends BaseModel>(
+  field: FieldOption<T>,
+  formData: Ref<FormData<T>>,
+  query: boolean = false,
+  formType?: Ref<IFormType>
+) => {
+  const { key, path, label, inputType, inputProps = {}, queryInputProps = {}, readonly, readonlyHandler } = field
   let component: any
-  // const formData = defineModel<IFormData<T>>({ local: true, default: {} })
   const fieldValue = formData.value?.[path || key || '']
   const compProps: Record<string, any> = {
     placeholder: label,
@@ -49,6 +52,10 @@ export const createInputComponent = <T extends BaseModel>(field: FieldOption<T>,
     ...inputProps,
     ...(query ? queryInputProps : {})
   }
+  if ((readonly && formType?.value === readonly) || (readonlyHandler && readonlyHandler(formData.value as IFormData<T>, formType?.value))) {
+    compProps.readonly = true
+  }
+
   const dict = field.dict
   if (!!dict) {
     component = EDictInput

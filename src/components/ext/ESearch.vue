@@ -56,7 +56,7 @@
 
   // const modelState = ref<ModelState<T>>(useModel<T>(props.instance))
   const queryScheme = computed<FieldOption<T>[]>(() =>
-    Object.values(useModel<T>(props.instance)?.fields || []).filter(({ hidden }) => !(hidden === true || hidden?.includes('query')))
+    Object.values(useModel<T>(props.instance)?.fields || []).filter(({ hidden }) => !(hidden === true || (hidden && hidden?.includes('query'))))
   )
 
   const createInpComp = (field: FieldOption<T>) => {

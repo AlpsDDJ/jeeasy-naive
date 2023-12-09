@@ -12,7 +12,7 @@ export const appConfig: AppState = {
 }
 
 export const appSetting: AppSetting = {
-  formMaxCols: 4,
+  formMaxCols: 6,
   formMaxRows: 8,
   formSize: 'medium',
   formColWidth: 318,

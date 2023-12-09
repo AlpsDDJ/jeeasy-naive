@@ -108,7 +108,8 @@
     }
     return h(ActionButton, {
       actions: _actions,
-      data: { row, index }
+      data: { row, index },
+      divider: true
     })
   }
 
@@ -117,7 +118,7 @@
       title: '操作',
       key: 'action',
       fixed: 'right',
-      width: actions === 'default' ? 100 : typeof actions !== 'boolean' ? actions.length * 50 : 0,
+      width: actions === 'default' ? 140 : typeof actions !== 'boolean' ? actions.length * 70 : 0,
       render: actionRender
       // actions === 'default'
       //   ? (row, index) =>
@@ -134,7 +135,7 @@
       //       })
     }
   }
-  const columns = ref(Object.values(modelState.value?.fields || []).filter(({ hidden }) => !(hidden === true || hidden?.includes('list'))))
+  const columns = ref(Object.values(modelState.value?.fields || []).filter(({ hidden }) => !(hidden === true || (hidden && hidden?.includes('list')))))
 
   // const showFormEmit = defineEmits<{ (evt: 'showForm', formData: any, type: IFormType): void }>()
 

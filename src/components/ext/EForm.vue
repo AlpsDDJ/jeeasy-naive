@@ -10,6 +10,7 @@
             </n-form-item-gi>
           </n-grid>
         </n-form>
+        <slot />
       </n-spin>
       <template #footer>
         <n-space>
@@ -58,9 +59,11 @@
   const { save, update } = useModelApi<T>(modelState.value.api)
 
   const jsonScheme = computed<FieldOption<T>[]>(() =>
-    Object.values(modelState.value?.fields || []).filter(
-      ({ hidden }) => !(hidden === true || hidden?.includes('form') || (formType?.value && hidden?.includes(formType?.value)))
-    )
+    Object.values(modelState.value?.fields || []).filter(({ hidden, hiddenHandler }) => {
+      const flag1 = !(hidden === true || (hidden && hidden?.includes('form')) || (formType?.value && hidden && hidden?.includes(formType?.value)))
+      const flag2 = !hiddenHandler || !hiddenHandler(formData.value, formType.value)
+      return flag1 && flag2
+    })
   )
   /**
    * 表单列数

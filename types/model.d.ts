@@ -1,5 +1,6 @@
-import { EFormItem, IFormDataType, IInputType } from '@/components/ext/types'
+import { EFormItem, IFormData, IFormDataType, IFormType, IInputType } from '@/components/ext/types'
 import { TableBaseColumn } from 'naive-ui/es/data-table/src/interface'
+import { BaseModel } from '@/hooks/useModel'
 
 declare global {
   interface IBaseModel extends InternalRowData {
@@ -37,12 +38,19 @@ declare global {
   //   hidden?: boolean | ['edit' | 'add' | 'view' | 'list' | 'query']
   //   $type$?: T
   // }
-  type FieldHiddenType = true | ('list' | 'form' | 'query' | 'edit' | 'add' | 'view')[]
+
+  type FieldAttrHandler = <T extends BaseModel, P = any>(formData: IFormData<T>, formType?: IFormType) => P
+
+  type FieldHiddenType = boolean | ('list' | 'form' | 'query' | 'edit' | 'add' | 'view')[]
+  type FieldReadonlyType = boolean | 'edit' | 'add'
 
   type BooleanFlag = string | 'hidden' | 'dict'
   interface FieldOption<T extends InternalRowData> extends TableBaseColumn<T>, EFormItem<T> {
     label?: string
     hidden?: FieldHiddenType
+    hiddenHandler?: FieldAttrHandler
+    readonly?: FieldReadonlyType
+    readonlyHandler?: FieldAttrHandler
     dataType?: IFormDataType
     inputType?: IInputType
     inputProps?: Record<string, any>
@@ -57,7 +65,8 @@ declare global {
   interface FieldDecoratorType {
     <T extends InternalRowData>(label?: string | Partial<FieldOption<T>>, option?: Partial<FieldOption<T>>): PropertyDecorator
     Dict: (dict?: string) => PropertyDecorator
-    Hidden: (hiddenType?: FieldHiddenType) => PropertyDecorator
+    Hidden: <T extends BaseModel = BaseModel, P = any>(hiddenType?: FieldHiddenType, hiddenHandler?: FieldAttrHandler<T, P>) => PropertyDecorator
+    Readonly: <T extends BaseModel = BaseModel, P = any>(readonlyType?: FieldReadonlyType, readonlyHandler?: FieldAttrHandler<T, P>) => PropertyDecorator
     DataType: (dataType?: IFormDataType, inputType?: IInputType) => PropertyDecorator
   }
 }

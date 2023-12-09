@@ -37,12 +37,26 @@ function fieldFn<T extends InternalRowData>(label?: string | Partial<FieldOption
 /**
  * 隐藏字段属性装饰器
  * @param hiddenType - 隐藏类型，默认为 FieldHiddenType.TRUE
+ * @param hiddenHandler 隐藏属性处理器
  * @returns PropertyDecorator
  */
-fieldFn.Hidden = (hiddenType: FieldHiddenType = true): PropertyDecorator => {
+fieldFn.Hidden = (hiddenType: FieldHiddenType = true, hiddenHandler?: FieldAttrHandler): PropertyDecorator => {
   return (target: Object, propertyKey: DataKey): void => {
     const state = getState(target)
-    setFieldProperty(state, propertyKey, { hidden: hiddenType })
+    setFieldProperty(state, propertyKey, { hidden: hiddenType, hiddenHandler })
+  }
+}
+
+/**
+ * 字段只读属性装饰器
+ * @returns PropertyDecorator
+ * @param readonlyType
+ * @param readonlyHandler
+ */
+fieldFn.Readonly = (readonlyType: FieldReadonlyType = true, readonlyHandler?: FieldAttrHandler): PropertyDecorator => {
+  return (target: Object, propertyKey: DataKey): void => {
+    const state = getState(target)
+    setFieldProperty(state, propertyKey, { readonly: readonlyType, readonlyHandler })
   }
 }
 
