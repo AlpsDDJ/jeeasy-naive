@@ -37,13 +37,14 @@
 <script lang="ts" setup generic="T extends BaseModel">
   import { h } from 'vue'
   import type { DataTableColumn, DataTableInst, PaginationProps } from 'naive-ui'
-  import type { ETableInst, ETableProps, IFormType, TableScrollToOption, ETableSlots, LoadData } from './types'
+  import type { ETableInst, ETableProps, ETableSlots, IFormType, LoadData, TableScrollToOption } from './types'
   import type { ColumnKey, FilterState, SortOrder } from 'naive-ui/es/data-table/src/interface'
   import { BaseModel } from '@/hooks/useModel'
   import { useModelApi } from '@/hooks/useApi'
   import { appSetting } from '@/config/app.config'
   import ActionButton from '@/components/ActionButton/index.vue'
   import { cloneDeep } from 'lodash-es'
+  import { ActionOption } from '@/components/ActionButton/commonActions'
 
   defineOptions({
     name: 'ETable'
@@ -57,25 +58,82 @@
   const modelState = ref(useModel<T>(props.instance))
   const actions = props.actions
 
+  const handleAdd = () => {
+    showForm({}, FormType.ADD)
+  }
+  const handleDelete = ({ row, index }) => {
+    console.log(`删除第${index} 行，id = ${row.id}`)
+  }
+  const handleEdit = ({ row, index }) => {
+    console.log(`编辑第${index} 行，id = ${row.id}`)
+    showForm(row, FormType.EDIT)
+  }
+
+  const defaultActions: ActionOption[] = [
+    {
+      action: 'edit',
+      html: '编辑',
+      text: true,
+      type: 'primary',
+      isDisabled: true,
+      autoShow: true,
+      handle: handleEdit
+    },
+    {
+      action: 'delete',
+      html: '删除',
+      text: true,
+      type: 'error',
+      autoShow: true,
+      handle: handleDelete
+    }
+  ]
+
+  const actionRender = (row, index) => {
+    let _actions: ActionOption[] = []
+    if (typeof actions === 'object') {
+      actions.forEach((act) => {
+        if (typeof act === 'string') {
+          const option = defaultActions.find(({ action }) => act == action)
+          if (option) {
+            _actions.push(option)
+          }
+        } else {
+          _actions.push(act)
+        }
+      })
+    } else {
+      _actions = defaultActions
+    }
+    return h(ActionButton, {
+      actions: _actions,
+      data: { row, index }
+    })
+  }
+
   if (actions !== false) {
     modelState.value.fields['actions'] = {
       title: '操作',
       key: 'action',
       fixed: 'right',
-      width: 100,
-      render:
-        actions === 'default'
-          ? (row, index) =>
-              h(ActionButton, {
-                actions,
-                data: { row, index },
-                'onAction:edit': handleEdit,
-                'onAction:delete': handleDelete
-              })
-          : undefined
+      width: actions === 'default' ? 100 : typeof actions !== 'boolean' ? actions.length * 50 : 0,
+      render: actionRender
+      // actions === 'default'
+      //   ? (row, index) =>
+      //       h(ActionButton, {
+      //         actions,
+      //         data: { row, index },
+      //         'onAction:edit': handleEdit,
+      //         'onAction:delete': handleDelete
+      //       })
+      //   : (row, index) =>
+      //       h(ActionButton, {
+      //         actions,
+      //         data: { row, index }
+      //       })
     }
   }
-  const columns = ref(Object.values(modelState.value?.fields || []).filter(({ hidden }) => !hidden))
+  const columns = ref(Object.values(modelState.value?.fields || []).filter(({ hidden }) => !(hidden === true || hidden?.includes('list'))))
 
   // const showFormEmit = defineEmits<{ (evt: 'showForm', formData: any, type: IFormType): void }>()
 
@@ -86,17 +144,6 @@
 
   const showForm = (formData: any, type: IFormType) => {
     emit('showForm', type, formData)
-  }
-
-  const handleAdd = () => {
-    showForm({}, FormType.ADD)
-  }
-  const handleDelete = ({ row, index }) => {
-    console.log(`删除第${index} 行，id = ${row.id}`)
-  }
-  const handleEdit = ({ row, index }) => {
-    console.log(`编辑第${index} 行，id = ${row.id}`)
-    showForm(row, FormType.EDIT)
   }
 
   // const slots = useSlots()

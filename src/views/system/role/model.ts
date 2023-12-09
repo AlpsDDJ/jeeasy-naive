@@ -4,9 +4,10 @@
 // @Model.Api('sys/role')
 // @Model.Perms('sys:role')
 import { FormDataType } from '@/enums/EEnum'
+import { BaseApi } from '@/hooks/useApi'
 
 @Model('SysRole')
-class SysRole extends BaseModel {
+export default class SysRole extends BaseModel {
   @Field('角色名称')
   roleName?: string
 
@@ -30,4 +31,22 @@ class SysRole extends BaseModel {
   enableFlag?: number
 }
 
-export default SysRole
+export type RolePermission = {
+  id: string
+  name: string
+  roleId: string
+}
+
+export type SaveRolePermissionParams = {
+  roleId: string
+  permissions: string[]
+}
+
+@Api('/sys/role/')
+export class SysRoleApi extends BaseApi {
+  @Api.Get('permissions/{id}')
+  static getRolePermission: HttpRequest<RolePermission[], { id: string }>
+
+  @Api.Post('permissions')
+  static saveRolePermission: HttpRequest<string, SaveRolePermissionParams>
+}

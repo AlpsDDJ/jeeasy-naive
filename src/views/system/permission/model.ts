@@ -61,7 +61,7 @@ export default class SysPermission extends BaseModel {
   @Field.Hidden()
   leaf?: number
 
-  @Field('缓存该页面')
+  @Field('缓存页面')
   @Field.Dict('boolean')
   @Field.DataType(FormDataType.NUMBER, InputType.SWITCH)
   keepAlive?: number

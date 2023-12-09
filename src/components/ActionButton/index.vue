@@ -31,16 +31,27 @@
     switch (typeof actions.value) {
       case 'object':
         if (isNotNull(actions.value)) {
-          if (typeof actions.value[0] === 'string') {
-            actions.value.forEach((act) => {
+          actions.value.forEach((act) => {
+            if (typeof act === 'string') {
               const option = commonActions.find(({ action }) => act == action) || { action: act, html: act }
               if (option) {
                 options.push(option)
               }
-            })
-          } else {
-            options.push(...(actions.value as ActionOption[]))
-          }
+            } else {
+              options.push(act)
+            }
+          })
+
+          // if (typeof actions.value[0] === 'string') {
+          //   actions.value.forEach((act) => {
+          //     const option = commonActions.find(({ action }) => act == action) || { action: act, html: act }
+          //     if (option) {
+          //       options.push(option)
+          //     }
+          //   })
+          // } else {
+          //   options.push(...(actions.value as ActionOption[]))
+          // }
         }
         break
       default:

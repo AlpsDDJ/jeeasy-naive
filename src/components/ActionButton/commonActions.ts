@@ -5,7 +5,7 @@ export type ActionType = 'edit' | 'delete' | 'view' | 'add' | string
 
 export type ColAttrFn<T> = ((data: any) => T) | T
 
-export type ButtonActions = ActionOption[] | ActionType[] | boolean | 'default'
+export type ButtonActions = (ActionOption | ActionType)[] | boolean | 'default'
 
 export type ActionButtonProps = {
   actions?: ButtonActions

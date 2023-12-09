@@ -3,7 +3,11 @@
     <template #top>
       <e-search ref="queryRef" v-model:model-value="queryData" :instance="Model" :load-data="loadData" />
     </template>
-    <e-table ref="tableRef" :instance="Model" :query-data="queryData" @show-form="showForm"> </e-table>
+    <e-table ref="tableRef" :instance="Model" :query-data="queryData" @show-form="showForm">
+      <template ##enableFlag="row">
+        <n-tag :type="row.enableFlag ? 'success' : 'warning'" :bordered="false">{{ row.enableFlag_dict }}</n-tag>
+      </template>
+    </e-table>
     <template #bottom>
       <e-form ref="formRef" v-model:model-value="formData" :instance="Model" @success="loadData()" />
     </template>

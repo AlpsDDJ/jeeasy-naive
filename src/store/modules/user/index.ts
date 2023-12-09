@@ -2,6 +2,7 @@ import { LoginForm, UserState } from '@/store/modules/user/type'
 import { CommonApi } from '@/api/common'
 import { router } from '@/router'
 import { cloneDeep } from 'lodash-es'
+import { useCacheStore } from '@/store/modules/cache'
 
 const nullState: UserState = {
   token: null,
@@ -71,6 +72,7 @@ export const useUserStore = defineStore('user', {
           redirect: router.currentRoute.value.fullPath
         }
       })
+      useCacheStore()?.clear?.()
     },
     setToken(token: string) {
       this.token = token

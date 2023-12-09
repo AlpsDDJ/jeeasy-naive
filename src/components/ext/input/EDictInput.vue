@@ -8,7 +8,7 @@
 <script setup lang="ts">
   import { CommonApi } from '@/api/common'
   import { DictData, DictInputProps, DictInputValues } from './types'
-  import { NCheckbox, NTreeSelect, NSelect, NSwitch } from 'naive-ui'
+  import { NCheckbox, NTreeSelect, NTree, NSelect, NSwitch } from 'naive-ui'
   import { useCacheStore } from '@/store/modules/cache'
 
   defineOptions({
@@ -74,6 +74,27 @@
         labelField: 'dictName',
         keyField: 'dictCode',
         childrenField: 'children',
+        onLoad: loadChildren
+      }
+      break
+    case 'tree':
+      component.value = markRaw(NTree)
+      compProps.value = {
+        data: options,
+        selectable: !props.multiple,
+        blockNode: !props.multiple,
+        // cascade: true,
+        multiple: props.multiple,
+        checkable: props.multiple,
+        labelField: 'dictName',
+        keyField: 'dictCode',
+        childrenField: 'children',
+        selectedKeys: props.multiple ? undefined : modelValue,
+        checkedKeys: props.multiple ? modelValue : undefined,
+        'onUpdate:checked-keys': (keys: DictInputValues) => {
+          console.log('keys ---> ', keys)
+          modelValue.value = keys
+        },
         onLoad: loadChildren
       }
       break
