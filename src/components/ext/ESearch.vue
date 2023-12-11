@@ -60,7 +60,7 @@
   )
 
   const createInpComp = (field: FieldOption<T>) => {
-    return createInputComponent<T>(field, queryData, true)
+    return createInputComponent<T>(field, queryData, FormType.SEARCH)
   }
 
   const resetHandle = () => {

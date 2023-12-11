@@ -1,16 +1,20 @@
 <template>
-  <n-drawer v-model:show="showForm" :width="wSize" :mask-closable="!showConfirmBtn" @after-enter="afterEnterHandle" @after-leave="afterLeaveHandle">
+  <n-drawer v-model:show="showForm" :width="wSize" :mask-closable="!showConfirmBtn" @after-enter="() => (formLoading = false)">
     <n-drawer-content>
       <template #header> {{ formTypeTitleMap[formType || ''] || '' }} </template>
       <n-spin :show="formLoading">
-        <n-form ref="formRef" v-bind="props.formProps" :model="formData" label-placement="left" :inline="cols !== 1" label-width="auto">
-          <n-grid v-if="formActive" :cols="cols" :x-gap="12">
-            <n-form-item-gi v-for="item in jsonScheme" :key="item.path || item.key" :label="item.label" :span="item.formSpan">
-              <component :is="createInpComp(item)" />
-            </n-form-item-gi>
-          </n-grid>
-        </n-form>
-        <slot />
+        <div :style="{ minHeight: '500px' }">
+          <div v-if="!formLoading">
+            <n-form ref="formRef" v-bind="props.formProps" :model="formData" label-placement="left" :inline="cols !== 1" label-width="auto">
+              <n-grid :cols="cols" :x-gap="12">
+                <n-form-item-gi v-for="item in jsonScheme" :key="item.path || item.key" :label="item.label" :span="item.formSpan">
+                  <component :is="createInpComp(item)" />
+                </n-form-item-gi>
+              </n-grid>
+            </n-form>
+            <slot />
+          </div>
+        </div>
       </n-spin>
       <template #footer>
         <n-space>
@@ -60,7 +64,7 @@
 
   const jsonScheme = computed<FieldOption<T>[]>(() =>
     Object.values(modelState.value?.fields || []).filter(({ hidden, hiddenHandler }) => {
-      const flag1 = !(hidden === true || (hidden && hidden?.includes('form')) || (formType?.value && hidden && hidden?.includes(formType?.value)))
+      const flag1 = !(hidden === true || (hidden && hidden?.includes('form')) || (formType?.value && hidden && hidden?.includes(formType as any)))
       const flag2 = !hiddenHandler || !hiddenHandler(formData.value, formType.value)
       return flag1 && flag2
     })
@@ -80,12 +84,6 @@
   const wSize = computed<number | string>(() => (!props.wSize ? cols.value * appSetting.formColWidth : props.wSize))
 
   /**
-   * 表单是否激活
-   * 用于延迟动态渲染表单项，减少打开抽屉时卡顿
-   */
-  const formActive = ref<boolean>(false)
-
-  /**
    * 表单加载中状态标记
    * 1.打开抽屉 --> 动态创建表单项完成
    * 2.提交表单 --> 提交完成
@@ -103,21 +101,7 @@
   const showForm = defineModel<boolean>('showForm', { local: true, default: false })
 
   const createInpComp = (field: FieldOption<T>) => {
-    return createInputComponent<T>(field, formData)
-  }
-  /**
-   * 抽屉 出现后的回调
-   */
-  const afterEnterHandle = () => {
-    formActive.value = true
-    formLoading.value = false
-  }
-
-  /**
-   * 	抽屉 关闭后的回调
-   */
-  const afterLeaveHandle = () => {
-    formActive.value = false
+    return createInputComponent<T>(field, formData, formType.value)
   }
 
   /**
@@ -127,7 +111,6 @@
    */
   const open = (type: IFormType, fData?: IFormData<T>) => {
     console.debug(`form show: type = ${type}, data = `, fData || {})
-    // fData && (formData.value = fData)
     fData && (formData.value = cloneDeep(fData))
     formType.value = type
     showForm.value = true

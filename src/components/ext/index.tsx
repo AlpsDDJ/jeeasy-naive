@@ -34,13 +34,9 @@ export const initModel = <T extends BaseModel>(): EModelState<T> => {
   }
 }
 
-export const createInputComponent = <T extends BaseModel>(
-  field: FieldOption<T>,
-  formData: Ref<FormData<T>>,
-  query: boolean = false,
-  formType?: Ref<IFormType>
-) => {
-  const { key, path, label, inputType, inputProps = {}, queryInputProps = {}, readonly, readonlyHandler } = field
+export const createInputComponent = <T extends BaseModel>(field: FieldOption<T>, formData: Ref<FormData<T>>, formType?: IFormType, props?: any) => {
+  const { key, path, label, inputType, inputProps = {}, queryInputProps = {}, disabled, disabledHandler } = field
+  const query = formType === FormType.SEARCH
   let component: any
   const fieldValue = formData.value?.[path || key || '']
   const compProps: Record<string, any> = {
@@ -49,11 +45,19 @@ export const createInputComponent = <T extends BaseModel>(
     'onUpdate:value': (val: any) => {
       formData.value[path || key || ''] = val
     },
+    clearable: true,
+    filterable: true,
+    showButton: formType !== FormType.EDIT_TABLE,
     ...inputProps,
-    ...(query ? queryInputProps : {})
+    ...(query ? queryInputProps : {}),
+    ...(props || {})
   }
-  if ((readonly && formType?.value === readonly) || (readonlyHandler && readonlyHandler(formData.value as IFormData<T>, formType?.value))) {
-    compProps.readonly = true
+  if (
+    disabled === true ||
+    (disabled && formType && disabled.includes(formType as any)) ||
+    (disabledHandler && disabledHandler(formData.value as IFormData<T>, formType))
+  ) {
+    compProps.disabled = true
   }
 
   const dict = field.dict
@@ -63,6 +67,7 @@ export const createInputComponent = <T extends BaseModel>(
     compProps.component = query && inputType === 'switch' ? 'select' : inputType
     compProps.clearable = true
     compProps.multiple = !query && field.dataType === FormDataType.ARRAY
+    formType === FormType.EDIT_TABLE && (compProps.showButton = false)
   } else {
     switch (inputType) {
       case InputType.INPUT_NUMBER:

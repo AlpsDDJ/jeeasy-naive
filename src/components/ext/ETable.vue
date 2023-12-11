@@ -3,41 +3,44 @@
     <slot name="toolBar">
       <action-button :actions="['add']" @action:add="handleAdd" />
     </slot>
-    <n-data-table
-      ref="tableRef"
-      v-bind="tableProps"
-      :columns="columns"
-      :loading="loading"
-      :data="data"
-      :pagination="pagination"
-      :remote="true"
-      :tree="!!treeField"
-      :row-key="(row) => row.id"
-      @update:page="
-        (page) => {
-          pageChangeHandle({ page })
-        }
-      "
-      @update:page-size="
-        (pageSize) => {
-          pageChangeHandle({ pageSize })
-        }
-      "
-    >
-      <template v-if="$slots.loading" #loading>
-        <slot name="loading" />
-      </template>
-      <template v-if="$slots.empty" #empty>
-        <slot name="empty" />
-      </template>
-    </n-data-table>
+    <n-config-provider :theme-overrides="enableEdit ? editTableThemeOverrides : {}">
+      <n-form ref="tableEditFormRef" :model="tableData">
+        <n-data-table
+          ref="tableRef"
+          v-bind="tableProps"
+          :columns="columns"
+          :loading="loading"
+          :data="tableData"
+          :pagination="showPage && pagination"
+          :remote="true"
+          :tree="!!treeField"
+          @update:page="
+            (page) => {
+              pageChangeHandle({ page })
+            }
+          "
+          @update:page-size="
+            (pageSize) => {
+              pageChangeHandle({ pageSize })
+            }
+          "
+        >
+          <template v-if="$slots.loading" #loading>
+            <slot name="loading" />
+          </template>
+          <template v-if="$slots.empty" #empty>
+            <slot name="empty" />
+          </template>
+        </n-data-table>
+      </n-form>
+    </n-config-provider>
   </n-space>
 </template>
 
 <script lang="ts" setup generic="T extends BaseModel">
   import { h } from 'vue'
   import type { DataTableColumn, DataTableInst, PaginationProps } from 'naive-ui'
-  import type { ETableInst, ETableProps, ETableSlots, IFormType, LoadData, TableScrollToOption } from './types'
+  import type { ETableInst, ETableProps, ETableSlots, IFormData, IFormType, LoadData, TableScrollToOption } from './types'
   import type { ColumnKey, FilterState, SortOrder } from 'naive-ui/es/data-table/src/interface'
   import { BaseModel } from '@/hooks/useModel'
   import { useModelApi } from '@/hooks/useApi'
@@ -45,6 +48,9 @@
   import ActionButton from '@/components/ActionButton/index.vue'
   import { cloneDeep } from 'lodash-es'
   import { ActionOption } from '@/components/ActionButton/commonActions'
+  import { createInputComponent } from '@/components/ext/index'
+  import { FormType } from '@/enums/EEnum'
+  import { GlobalThemeOverrides } from 'naive-ui'
 
   defineOptions({
     name: 'ETable'
@@ -53,8 +59,12 @@
   const props = withDefaults(defineProps<ETableProps<T>>(), {
     actions: 'default',
     tableProps: () => ({}),
-    beforeQuery: (queryData) => queryData
+    beforeQuery: (queryData: any) => queryData,
+    data: () => [],
+    showPage: true,
+    enableEdit: false
   })
+  const tableEditFormRef = ref()
 
   const modelState = ref(useModel<T>(props.instance))
   const actions = props.actions
@@ -120,27 +130,55 @@
       fixed: 'right',
       width: actions === 'default' ? 140 : typeof actions !== 'boolean' ? actions.length * 70 : 0,
       render: actionRender
-      // actions === 'default'
-      //   ? (row, index) =>
-      //       h(ActionButton, {
-      //         actions,
-      //         data: { row, index },
-      //         'onAction:edit': handleEdit,
-      //         'onAction:delete': handleDelete
-      //       })
-      //   : (row, index) =>
-      //       h(ActionButton, {
-      //         actions,
-      //         data: { row, index }
-      //       })
     }
   }
-  const columns = ref(Object.values(modelState.value?.fields || []).filter(({ hidden }) => !(hidden === true || (hidden && hidden?.includes('list')))))
+
+  const editTableThemeOverrides = ref<GlobalThemeOverrides>({
+    common: {
+      borderRadius: '0',
+      inputColor: 'transparent'
+    },
+    DataTable: {
+      tdPaddingSmall: '0',
+      tdPaddingMedium: '0',
+      tdPaddingLarge: '0',
+      borderRadius: '3px'
+    },
+    Input: {
+      border: 'none'
+    },
+    InternalSelection: {
+      border: 'none'
+    }
+  })
+
+  const columns = computed(() =>
+    Object.values(modelState.value?.fields || {})
+      .filter(({ hidden }) => !(hidden === true || (hidden && hidden?.includes('list'))))
+      .map((col) => {
+        if (props.enableEdit) {
+          return {
+            ...col,
+            render: (_, index: number) => {
+              return h(
+                'div',
+                {
+                  class: 'editable-cell'
+                },
+                [createInputComponent<T>(col, toRef(tableData.value[index]), FormType.EDIT_TABLE)]
+              )
+            }
+          }
+        } else {
+          return col
+        }
+      })
+  )
 
   // const showFormEmit = defineEmits<{ (evt: 'showForm', formData: any, type: IFormType): void }>()
 
   const emit = defineEmits<{
-    (evt: 'showForm', formData: any, type: IFormType): void
+    (evt: 'showForm', type: IFormType, formData: IFormData<T>): void
     (evt: 'pageChange', page: PaginationProps | false): void
   }>()
 
@@ -175,7 +213,7 @@
   const tableRef = ref<DataTableInst>()
 
   const loading = ref<boolean>(false)
-  const data = ref<T[]>()
+  const tableData = ref<T[]>(props.data)
   const { page: loadPage } = useModelApi<T>(modelState.value.api)
 
   const treeField = modelState.value.tree as TreeField<T>
@@ -194,7 +232,7 @@
       const {
         data: { records, size, current, total, pages }
       } = resp
-      data.value = cloneDeep(records)
+      tableData.value = cloneDeep(records)
       loading.value = false
 
       pagination.value = {
@@ -263,4 +301,13 @@
   })
 </script>
 
-<style scoped></style>
+<style lang="less">
+  .editable-cell {
+    &:child {
+      background: transparent !important;
+    }
+    .n-base-suffix {
+      display: none;
+    }
+  }
+</style>

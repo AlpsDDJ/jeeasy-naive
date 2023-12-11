@@ -18,17 +18,17 @@ const Model = <T extends InternalRowData>(parmas?: DataKey | ModelParams<T>) => 
   return classDecorator
 }
 
-Model.Api = (api: string) => {
-  return <T extends Function>(constructor: T) => {
-    return setModelState(constructor, { api })
-  }
-}
+// const Api = (api: string) => {
+//   return <T extends Function>(constructor: T) => {
+//     return setModelState(constructor, { api })
+//   }
+// }
 
-Model.Perms = (perms: string) => {
-  return <T extends Function>(constructor: T) => {
-    return setModelState(constructor, { perms })
-  }
-}
+// const Perms = (perms: string) => {
+//   return <T extends Function>(constructor: T) => {
+//     return setModelState(constructor, { perms })
+//   }
+// }
 
 function setModelState<T extends Function>(constructor: T, state: ModelParams<T>) {
   const modelName = state.name || constructor.name
@@ -53,5 +53,4 @@ function setModelState<T extends Function>(constructor: T, state: ModelParams<T>
   constructor['state'] = cloneDeep({ ...constructor['state'], ...state, name: modelName }) as ModelState<T>
   return constructor
 }
-
-export default Model
+export { Model }

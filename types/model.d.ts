@@ -42,15 +42,15 @@ declare global {
   type FieldAttrHandler = <T extends BaseModel, P = any>(formData: IFormData<T>, formType?: IFormType) => P
 
   type FieldHiddenType = boolean | ('list' | 'form' | 'query' | 'edit' | 'add' | 'view')[]
-  type FieldReadonlyType = boolean | 'edit' | 'add'
+  type FieldDisabledType = boolean | ('form' | 'edit' | 'add' | 'editTable')[]
 
   type BooleanFlag = string | 'hidden' | 'dict'
   interface FieldOption<T extends InternalRowData> extends TableBaseColumn<T>, EFormItem<T> {
     label?: string
     hidden?: FieldHiddenType
     hiddenHandler?: FieldAttrHandler
-    readonly?: FieldReadonlyType
-    readonlyHandler?: FieldAttrHandler
+    disabled?: FieldDisabledType
+    disabledHandler?: FieldAttrHandler
     dataType?: IFormDataType
     inputType?: IInputType
     inputProps?: Record<string, any>
@@ -61,14 +61,17 @@ declare global {
     $type$?: T
   }
   // type FieldOption<T extends InternalRowData> = FieldOpt<T> & DataTableColumn<T>
-
-  interface FieldDecoratorType {
-    <T extends InternalRowData>(label?: string | Partial<FieldOption<T>>, option?: Partial<FieldOption<T>>): PropertyDecorator
-    Dict: (dict?: string) => PropertyDecorator
-    Hidden: <T extends BaseModel = BaseModel, P = any>(hiddenType?: FieldHiddenType, hiddenHandler?: FieldAttrHandler<T, P>) => PropertyDecorator
-    Readonly: <T extends BaseModel = BaseModel, P = any>(readonlyType?: FieldReadonlyType, readonlyHandler?: FieldAttrHandler<T, P>) => PropertyDecorator
-    DataType: (dataType?: IFormDataType, inputType?: IInputType) => PropertyDecorator
-  }
+  type DictDecoratorType = (dict?: string) => PropertyDecorator
+  type HiddenDecoratorType = <T extends BaseModel = BaseModel, P = any>(
+    hiddenType?: FieldHiddenType,
+    hiddenHandler?: FieldAttrHandler<T, P>
+  ) => PropertyDecorator
+  type DisabledDecoratorType = <T extends BaseModel = BaseModel, P = any>(
+    disabledType?: FieldDisabledType,
+    disabledHandler?: FieldAttrHandler<T, P>
+  ) => PropertyDecorator
+  type DataTypeDecoratorType = (dataType?: IFormDataType, inputType?: IInputType) => PropertyDecorator
+  type FieldDecoratorType = <T extends InternalRowData>(label?: string | Partial<FieldOption<T>>, option?: Partial<FieldOption<T>>) => PropertyDecorator
 }
 
 export default {}

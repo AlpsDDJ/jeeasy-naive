@@ -2,10 +2,10 @@ import { cloneDeep } from 'lodash-es'
 import { BaseModel } from '@/hooks/useModel'
 import { IFormDataType, IInputType } from '@/components/ext/types'
 
-function fieldFn(): PropertyDecorator
-function fieldFn(label: string): PropertyDecorator
-function fieldFn<T extends InternalRowData>(option: Partial<FieldOption<T>>): PropertyDecorator
-function fieldFn<T extends InternalRowData>(label: string, option: Partial<FieldOption<T>>): PropertyDecorator
+// function fieldFn(): PropertyDecorator
+// function fieldFn(label: string): PropertyDecorator
+// function fieldFn<T extends InternalRowData>(option: Partial<FieldOption<T>>): PropertyDecorator
+// function fieldFn<T extends InternalRowData>(label: string, option: Partial<FieldOption<T>>): PropertyDecorator
 /**
  * fieldFn函数用作定义PropertyDecorator类型的装饰器。
  *
@@ -13,7 +13,10 @@ function fieldFn<T extends InternalRowData>(label: string, option: Partial<Field
  * @param option - Partial<FieldOption<T>>类型，字段的选项。可选参数。
  * @returns 返回一个PropertyDecorator类型的函数，用于装饰对象的属性。
  */
-function fieldFn<T extends InternalRowData>(label?: string | Partial<FieldOption<T>>, option?: Partial<FieldOption<T>>): PropertyDecorator {
+const Field: FieldDecoratorType = <T extends InternalRowData>(
+  label?: string | Partial<FieldOption<T>>,
+  option?: Partial<FieldOption<T>>
+): PropertyDecorator => {
   let optionTemp: Partial<FieldOption<T>> = {}
   optionTemp = cloneDeep(option || {})
   if (option?.booleanFlags) {
@@ -40,7 +43,7 @@ function fieldFn<T extends InternalRowData>(label?: string | Partial<FieldOption
  * @param hiddenHandler 隐藏属性处理器
  * @returns PropertyDecorator
  */
-fieldFn.Hidden = (hiddenType: FieldHiddenType = true, hiddenHandler?: FieldAttrHandler): PropertyDecorator => {
+const Hidden: HiddenDecoratorType = (hiddenType: FieldHiddenType = true, hiddenHandler?: FieldAttrHandler): PropertyDecorator => {
   return (target: Object, propertyKey: DataKey): void => {
     const state = getState(target)
     setFieldProperty(state, propertyKey, { hidden: hiddenType, hiddenHandler })
@@ -50,13 +53,13 @@ fieldFn.Hidden = (hiddenType: FieldHiddenType = true, hiddenHandler?: FieldAttrH
 /**
  * 字段只读属性装饰器
  * @returns PropertyDecorator
- * @param readonlyType
- * @param readonlyHandler
+ * @param disabledType
+ * @param disabledHandler
  */
-fieldFn.Readonly = (readonlyType: FieldReadonlyType = true, readonlyHandler?: FieldAttrHandler): PropertyDecorator => {
+const Disabled: DisabledDecoratorType = (disabledType: FieldDisabledType = true, disabledHandler?: FieldAttrHandler): PropertyDecorator => {
   return (target: Object, propertyKey: DataKey): void => {
     const state = getState(target)
-    setFieldProperty(state, propertyKey, { readonly: readonlyType, readonlyHandler })
+    setFieldProperty(state, propertyKey, { disabled: disabledType, disabledHandler: disabledHandler })
   }
 }
 
@@ -66,7 +69,7 @@ fieldFn.Readonly = (readonlyType: FieldReadonlyType = true, readonlyHandler?: Fi
  * @param dict - 字典值或true
  * @returns PropertyDecorator
  */
-fieldFn.Dict = (dict?: string): PropertyDecorator => {
+const Dict: DictDecoratorType = (dict?: string): PropertyDecorator => {
   return (target: Object, propertyKey: DataKey): void => {
     const state = getState(target)
     const dictRender = (row: any) => {
@@ -83,7 +86,7 @@ fieldFn.Dict = (dict?: string): PropertyDecorator => {
  * @param inputType - 字段的输入类型，默认为文本输入类型
  * @returns 无返回值
  */
-fieldFn.DataType = (dataType: IFormDataType = FormDataType.STRING, inputType?: IInputType): PropertyDecorator => {
+const DataType: DataTypeDecoratorType = (dataType: IFormDataType = FormDataType.STRING, inputType?: IInputType): PropertyDecorator => {
   return (target: Object, propertyKey: DataKey): void => {
     const state = getState(target)
     let it: IInputType
@@ -161,5 +164,4 @@ function setFieldProperty<T extends BaseModel>(state: ModelState<T>, key: DataKe
   state['fields'][key] = { ...props, ...property }
 }
 
-const Field: FieldDecoratorType = fieldFn
-export default Field
+export { Field, Hidden, Disabled, Dict, DataType }

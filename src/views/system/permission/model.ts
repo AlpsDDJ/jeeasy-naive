@@ -9,9 +9,9 @@ export default class SysPermission extends BaseModel {
   name?: string
 
   @Field('上级菜单', { inputProps: { topPid: '0', async: false } })
-  @Field.Hidden(['list'])
-  @Field.Dict('#sys_permission')
-  @Field.DataType(FormDataType.STRING, InputType.TREE_SELECT)
+  @Hidden(['list'])
+  @Dict('#sys_permission')
+  @DataType(FormDataType.STRING, InputType.TREE_SELECT)
   parentId?: string
 
   @Field('路径')
@@ -27,75 +27,75 @@ export default class SysPermission extends BaseModel {
   component?: string
 
   @Field('组件名称')
-  @Field.Hidden(['list'])
+  @Hidden(['list'])
   componentName?: string
 
   @Field('一级菜单路由地址')
-  @Field.Hidden()
+  @Hidden()
   redirect?: string
 
   @Field('菜单类型')
-  @Field.Dict()
-  @Field.DataType(FormDataType.NUMBER)
+  @Dict()
+  @DataType(FormDataType.NUMBER)
   menuType?: number
 
   @Field('权限策略')
-  @Field.Dict()
-  @Field.DataType(FormDataType.NUMBER)
+  @Dict()
+  @DataType(FormDataType.NUMBER)
   permsType?: number
 
   @Field('聚合子路由')
-  @Field.Dict('boolean')
-  @Field.Hidden(['list'])
-  @Field.DataType(FormDataType.NUMBER, InputType.SWITCH)
+  @Dict('boolean')
+  @Hidden(['list'])
+  @DataType(FormDataType.NUMBER, InputType.SWITCH)
   alwaysShow?: number
 
   @Field('路由菜单')
-  @Field.Dict('boolean')
-  @Field.DataType(FormDataType.NUMBER, InputType.SWITCH)
+  @Dict('boolean')
+  @DataType(FormDataType.NUMBER, InputType.SWITCH)
   route?: number
 
   @Field('叶子节点')
-  @Field.Dict('boolean')
-  @Field.DataType(FormDataType.NUMBER, InputType.SWITCH)
-  @Field.Hidden()
+  @Dict('boolean')
+  @DataType(FormDataType.NUMBER, InputType.SWITCH)
+  @Hidden()
   leaf?: number
 
   @Field('缓存页面')
-  @Field.Dict('boolean')
-  @Field.DataType(FormDataType.NUMBER, InputType.SWITCH)
+  @Dict('boolean')
+  @DataType(FormDataType.NUMBER, InputType.SWITCH)
   keepAlive?: number
 
   @Field('隐藏路由')
-  @Field.Dict('boolean')
-  @Field.DataType(FormDataType.NUMBER, InputType.SWITCH)
+  @Dict('boolean')
+  @DataType(FormDataType.NUMBER, InputType.SWITCH)
   hidden?: number
 
   @Field('添加数据权限')
-  @Field.Dict('boolean')
-  @Field.Hidden(['list'])
-  @Field.DataType(FormDataType.NUMBER, InputType.SWITCH)
+  @Dict('boolean')
+  @Hidden(['list'])
+  @DataType(FormDataType.NUMBER, InputType.SWITCH)
   ruleFlag?: number
 
   @Field('外链打开方式')
-  @Field.Dict('LinkOpenType')
-  @Field.Hidden(['query'])
-  @Field.DataType(FormDataType.NUMBER)
+  @Dict('LinkOpenType')
+  @Hidden(['query'])
+  @DataType(FormDataType.NUMBER)
   internalOrExternal?: number
 
   @Field('菜单排序')
-  @Field.Hidden(['query'])
-  @Field.DataType(FormDataType.NUMBER)
+  @Hidden(['query'])
+  @DataType(FormDataType.NUMBER)
   sortNo?: number
 
   @Field('描述', { formSpan: 3 })
-  @Field.Hidden(['list', 'query'])
-  @Field.DataType(FormDataType.STRING, InputType.TEXT_AREA)
+  @Hidden(['list', 'query'])
+  @DataType(FormDataType.STRING, InputType.TEXT_AREA)
   description?: string
 
   @Field('启用标记')
-  @Field.DataType(FormDataType.NUMBER, InputType.SWITCH)
-  @Field.Dict()
+  @DataType(FormDataType.NUMBER, InputType.SWITCH)
+  @Dict()
   enableFlag?: number
 }
 

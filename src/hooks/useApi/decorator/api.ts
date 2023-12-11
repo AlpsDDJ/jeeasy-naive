@@ -6,7 +6,7 @@ type ApiModule = {
   module?: string
 }
 
-const Api = (module?: string | ApiModule, params?: ApiModule) => {
+const Server = (module?: string | ApiModule, params?: ApiModule) => {
   return <T extends { new (...args: any[]): {} }>(constructor: T) => {
     let module_ = ''
     if (module) {
@@ -21,7 +21,7 @@ const Api = (module?: string | ApiModule, params?: ApiModule) => {
   }
 }
 
-Api.Http = (config: AxiosRequestConfig) => {
+const Http = (config: AxiosRequestConfig) => {
   return function (target, propertyKey): any {
     const isStatic = typeof target === 'function'
 
@@ -50,36 +50,36 @@ Api.Http = (config: AxiosRequestConfig) => {
   }
 }
 
-Api.Get = (url = '', config: AxiosRequestConfig = {}) => {
+const Get = (url = '', config: AxiosRequestConfig = {}) => {
   const httpConfig = Object.assign(config, {
     url,
     method: 'GET'
   } as AxiosRequestConfig)
-  return Api.Http(httpConfig)
+  return Http(httpConfig)
 }
 
-Api.Post = (url = '', config: AxiosRequestConfig = {}) => {
+const Post = (url = '', config: AxiosRequestConfig = {}) => {
   const httpConfig = Object.assign(config, {
     url,
     method: 'POST'
   } as AxiosRequestConfig)
-  return Api.Http(httpConfig)
+  return Http(httpConfig)
 }
 
-Api.Put = (url = '', config: AxiosRequestConfig = {}) => {
+const Put = (url = '', config: AxiosRequestConfig = {}) => {
   const httpConfig = Object.assign(config, {
     url,
     method: 'PUT'
   } as AxiosRequestConfig)
-  return Api.Http(httpConfig)
+  return Http(httpConfig)
 }
 
-Api.Delete = (url = '', config: AxiosRequestConfig = {}) => {
+const Delete = (url = '', config: AxiosRequestConfig = {}) => {
   const httpConfig = Object.assign(config, {
     url,
     method: 'DELETE'
   } as AxiosRequestConfig)
-  return Api.Http(httpConfig)
+  return Http(httpConfig)
 }
 
-export { Api }
+export { Server, Http, Get, Post, Put, Delete }

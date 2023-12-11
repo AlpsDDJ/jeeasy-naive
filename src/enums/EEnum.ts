@@ -4,7 +4,11 @@ export const enum FormType {
   // 修改
   EDIT = 'edit',
   // 查看
-  VIEW = 'view'
+  VIEW = 'view',
+  // 搜索
+  SEARCH = 'search',
+  // 表格编辑
+  EDIT_TABLE = 'editTable'
 }
 
 export const enum FormDataType {

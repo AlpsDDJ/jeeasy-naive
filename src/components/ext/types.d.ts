@@ -25,13 +25,16 @@ export interface EFormInst<T extends BaseModel> extends FormInst {
 
 export interface ETableProps<T extends BaseModel> {
   instance: BaseModelConstructor<T>
+  data?: T[]
   // modelState: ModelState<T>
   actions?: ButtonActions | false
-  showForm?: (type: IFormType, fData?: IFormData<T>) => void
+  onShowForm?: (type: IFormType, fData?: IFormData<T>) => void
   formInst?: EFormInst<T>
   queryData?: FormData<T>
   beforeQuery?: (queryData: FormData<T>) => FormData<T>
   tableProps?: DataTableProps
+  showPage?: boolean
+  enableEdit?: boolean
   // actions?: ButtonActions
 }
 

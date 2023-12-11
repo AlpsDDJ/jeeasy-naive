@@ -8,22 +8,22 @@ export class BaseApi {
 }
 
 export class ModelApi<T extends BaseModel> extends BaseApi {
-  @Api.Get()
+  @Get()
   declare page: HttpRequest<PageData<T>>
 
-  @Api.Get('/{id}')
+  @Get('/{id}')
   declare info: HttpRequest<T, DataIdParam>
 
-  @Api.Put()
+  @Put()
   declare update: HttpRequest<string, IFormData<T>>
 
-  @Api.Post()
+  @Post()
   declare save: HttpRequest<string, IFormData<T>>
 
-  @Api.Delete('/{id}')
+  @Delete('/{id}')
   declare delete: HttpRequest<string, DataIdParam>
 
-  @Api.Delete('/batch')
+  @Delete('/batch')
   declare batchDelete: HttpRequest<string, { ids: string }>
 
   constructor(modelPath: string) {

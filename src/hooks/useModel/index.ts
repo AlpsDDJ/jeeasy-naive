@@ -1,5 +1,5 @@
-import Model from './decorator/model'
-import Field from './decorator/field'
+// import Model from './decorator/model'
+// import Field from './decorator/field'
 import { cloneDeep } from 'lodash-es'
 
 const useModel = <T extends BaseModel>(instance: BaseModelConstructor<T>) => {
@@ -13,19 +13,19 @@ const defaultModelState = { keys: {}, labels: {}, api: '', name: '', perms: '', 
 class BaseModel implements IBaseModel {
   constructor() {}
 
-  @Field.Hidden()
+  @Hidden()
   @Field('ID')
   id?: string
 
-  @Field.Hidden()
+  @Hidden()
   @Field('创建时间')
   createTime?: string
 
-  @Field.Hidden()
+  @Hidden()
   @Field('更新时间')
   updateTime?: string
 
   static state: ModelState<BaseModel> = cloneDeep(defaultModelState)
 }
 
-export { useModel, Model, Field, BaseModel }
+export { useModel, BaseModel }
