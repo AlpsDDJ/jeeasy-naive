@@ -18,7 +18,7 @@
   const props = withDefaults(defineProps<DictInputProps>(), {
     multiple: false,
     component: 'select',
-    showSwitchText: true
+    showSwitchText: false
   })
 
   const modelValue = defineModel<DictInputValues>('value')

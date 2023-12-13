@@ -39,18 +39,18 @@
 
 <script lang="ts" setup generic="T extends BaseModel">
   import { h } from 'vue'
-  import type { DataTableColumn, DataTableInst, PaginationProps } from 'naive-ui'
+  import type { DataTableColumn, DataTableInst, GlobalThemeOverrides, PaginationProps } from 'naive-ui'
   import type { ETableInst, ETableProps, ETableSlots, IFormData, IFormType, LoadData, TableScrollToOption } from './types'
   import type { ColumnKey, FilterState, SortOrder } from 'naive-ui/es/data-table/src/interface'
+  import type { ActionOption } from '@/components/ActionButton/commonActions'
+  import ActionButton from '@/components/ActionButton/index.vue'
+  import { useThemeVars } from 'naive-ui'
+  import { cloneDeep } from 'lodash-es'
   import { BaseModel } from '@/hooks/useModel'
   import { useModelApi } from '@/hooks/useApi'
   import { appSetting } from '@/config/app.config'
-  import ActionButton from '@/components/ActionButton/index.vue'
-  import { cloneDeep } from 'lodash-es'
-  import { ActionOption } from '@/components/ActionButton/commonActions'
   import { createInputComponent } from '@/components/ext/index'
   import { FormType } from '@/enums/EEnum'
-  import { GlobalThemeOverrides } from 'naive-ui'
 
   defineOptions({
     name: 'ETable'
@@ -160,12 +160,14 @@
           return {
             ...col,
             render: (_, index: number) => {
+              const child = createInputComponent<T>(col, toRef((tableData.value || [])[index]), FormType.EDIT_TABLE)
+              const disabled = child.props?.disabled
               return h(
                 'div',
                 {
-                  class: 'editable-cell'
+                  class: ['editable-cell', disabled ? 'disabled-cell' : '']
                 },
-                [createInputComponent<T>(col, toRef(tableData.value[index]), FormType.EDIT_TABLE)]
+                [child]
               )
             }
           }
@@ -213,7 +215,11 @@
   const tableRef = ref<DataTableInst>()
 
   const loading = ref<boolean>(false)
-  const tableData = ref<T[]>(props.data)
+  const tableData = ref<T[]>()
+  // if (props.data && props.data.length > 0) {
+  //   tableData.value = props.data
+  // }
+  tableData.value = props.data
   const { page: loadPage } = useModelApi<T>(modelState.value.api)
 
   const treeField = modelState.value.tree as TreeField<T>
@@ -232,7 +238,7 @@
       const {
         data: { records, size, current, total, pages }
       } = resp
-      tableData.value = cloneDeep(records)
+      tableData.value = cloneDeep(records) as T[]
       loading.value = false
 
       pagination.value = {
@@ -299,6 +305,7 @@
       }
     })
   })
+  const inputColorDisabled = useThemeVars().value.inputColorDisabled //computed(() => themeVars.value.inputColorDisabled)
 </script>
 
 <style lang="less">
@@ -308,6 +315,14 @@
     }
     .n-base-suffix {
       display: none;
+    }
+  }
+  td.n-data-table-td:has(div.disabled-cell) {
+    background-color: v-bind(inputColorDisabled);
+    & div.n-input--disabled,
+    div.n-base-selection--disabled,
+    div.n-base-selection-label {
+      background-color: transparent;
     }
   }
 </style>

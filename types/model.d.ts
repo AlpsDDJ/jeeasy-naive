@@ -1,6 +1,7 @@
 import { EFormItem, IFormData, IFormDataType, IFormType, IInputType } from '@/components/ext/types'
 import { TableBaseColumn } from 'naive-ui/es/data-table/src/interface'
 import { BaseModel } from '@/hooks/useModel'
+import { FormItemRule } from 'naive-ui'
 
 declare global {
   interface IBaseModel extends InternalRowData {
@@ -58,7 +59,11 @@ declare global {
     booleanFlags?: BooleanFlag[]
     dict?: string
     formSpan?: number
+    rule?: EFormItemRule | Array<EFormItemRule>
     $type$?: T
+  }
+  type EFormItemRule = FormItemRule & {
+    formTypes?: IFormType[]
   }
   // type FieldOption<T extends InternalRowData> = FieldOpt<T> & DataTableColumn<T>
   type DictDecoratorType = (dict?: string) => PropertyDecorator
@@ -71,6 +76,7 @@ declare global {
     disabledHandler?: FieldAttrHandler<T, P>
   ) => PropertyDecorator
   type DataTypeDecoratorType = (dataType?: IFormDataType, inputType?: IInputType) => PropertyDecorator
+  type RuleTypeDecoratorType = (rule: EFormItemRule | Array<EFormItemRule>) => PropertyDecorator
   type FieldDecoratorType = <T extends InternalRowData>(label?: string | Partial<FieldOption<T>>, option?: Partial<FieldOption<T>>) => PropertyDecorator
 }
 

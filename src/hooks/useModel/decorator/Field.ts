@@ -86,7 +86,7 @@ const Dict: DictDecoratorType = (dict?: string): PropertyDecorator => {
  * @param inputType - 字段的输入类型，默认为文本输入类型
  * @returns 无返回值
  */
-const DataType: DataTypeDecoratorType = (dataType: IFormDataType = FormDataType.STRING, inputType?: IInputType): PropertyDecorator => {
+const DataType: DataTypeDecoratorType = (dataType: IFormDataType = FormDataType.STRING, inputType?: IInputType) => {
   return (target: Object, propertyKey: DataKey): void => {
     const state = getState(target)
     let it: IInputType
@@ -114,24 +114,18 @@ const DataType: DataTypeDecoratorType = (dataType: IFormDataType = FormDataType.
   }
 }
 
+const Rule: RuleTypeDecoratorType = (rule: EFormItemRule | Array<EFormItemRule>) => {
+  return (target: Object, propertyKey: DataKey): void => {
+    const state = getState(target)
+    setFieldProperty(state, propertyKey, { rule })
+  }
+}
+
 function createColunm<T extends InternalRowData>(key: DataKey, optionTemp: Partial<FieldOption<T>>): FieldOption<T> {
-  // const textRender = (row: any) => {
-  //   if (optionTemp.dict) {
-  //     console.log(`${key as string}_dict`, row[`${key as string}_dict`])
-  //     return row[`${key as string}_dict`]
-  //   } else {
-  //     return row[key]
-  //   }
-  // }
-  // key === 'status' && console.log(1, optionTemp)
-
-  // console.log('optionTemp.render --------> ', optionTemp.render)
-
   return {
     ...optionTemp,
     key: key as string,
     title: optionTemp.label
-    // render: textRender
   }
 }
 
@@ -164,4 +158,4 @@ function setFieldProperty<T extends BaseModel>(state: ModelState<T>, key: DataKe
   state['fields'][key] = { ...props, ...property }
 }
 
-export { Field, Hidden, Disabled, Dict, DataType }
+export { Field, Hidden, Disabled, Dict, DataType, Rule }

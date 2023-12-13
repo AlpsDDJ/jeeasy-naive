@@ -7,7 +7,7 @@
           <div v-if="!formLoading">
             <n-form ref="formRef" v-bind="props.formProps" :model="formData" label-placement="left" :inline="cols !== 1" label-width="auto">
               <n-grid :cols="cols" :x-gap="12">
-                <n-form-item-gi v-for="item in jsonScheme" :key="item.path || item.key" :label="item.label" :span="item.formSpan">
+                <n-form-item-gi v-for="item in jsonScheme" :key="item.path || item.key" v-bind="createFormItemProps(item)">
                   <component :is="createInpComp(item)" />
                 </n-form-item-gi>
               </n-grid>
@@ -28,12 +28,12 @@
 
 <script lang="ts" setup generic="T extends BaseModel">
   import { BaseModel } from '@/hooks/useModel'
-  import type { FormInst } from 'naive-ui'
+  import type { FormInst, FormItemGiProps } from 'naive-ui'
   import type { FormValidateCallback, ShouldRuleBeApplied } from 'naive-ui/es/form/src/interface'
   import type { EFormInst, EFormProps, IFormData, IFormType } from './types'
   import { createInputComponent } from './index'
   import { appSetting, formTypeTitleMap } from '@/config/app.config'
-  import { cloneDeep } from 'lodash-es'
+  import { cloneDeep, isArray } from 'lodash-es'
   import { useModelApi } from '@/hooks/useApi'
 
   defineOptions({
@@ -102,6 +102,20 @@
 
   const createInpComp = (field: FieldOption<T>) => {
     return createInputComponent<T>(field, formData, formType.value)
+  }
+
+  const createFormItemProps = (field: FieldOption<T>): FormItemGiProps => {
+    const { key, path, rule, rulePath, required, formSpan, label } = field
+    const _rule: EFormItemRule[] = []
+    if (rule) {
+      if (isArray(rule)) {
+        _rule.push(...rule.filter(({ formTypes }) => !formTypes || formTypes.includes(formType.value as any)))
+      } else if (!rule.formTypes || rule.formTypes.includes(formType.value as any)) {
+        _rule.push(rule)
+      }
+    }
+    const _key = (path || key).toString()
+    return { path: _key, rule: _rule, rulePath, required, label, span: formSpan }
   }
 
   /**
