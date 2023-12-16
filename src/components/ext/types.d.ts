@@ -40,11 +40,12 @@ export interface ETableProps<T extends BaseModel> {
 
 export interface EFormProps<T extends BaseModel> {
   instance: BaseModelConstructor<T>
+  isModal?: boolean
   defauleData?: IFormData<T>
   wSize?: number | string
   cols?: number
   formProps?: FormProps
-  formatFormData?: (fData: IFormData<T>, type?: IFormType) => IFormData<T>
+  formatFormData?: (fData: IFormData<T>, type?: IFormType) => Promise<IFormData<T>>
 }
 
 export interface EQueryInst<T extends BaseModel> extends FormInst {

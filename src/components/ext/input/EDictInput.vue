@@ -8,7 +8,7 @@
 <script setup lang="ts">
   import { CommonApi } from '@/api/common'
   import { DictData, DictInputProps, DictInputValues } from './types'
-  import { NCheckbox, NTreeSelect, NTree, NSelect, NSwitch } from 'naive-ui'
+  import { NCheckbox, NSelect, NSwitch, NTree, NTreeSelect } from 'naive-ui'
   import { useCacheStore } from '@/store/modules/cache'
 
   defineOptions({
@@ -121,6 +121,19 @@
       }
       break
   }
+
+  export interface EDictInputInst {
+    options: DictData[]
+  }
+
+  defineExpose<EDictInputInst>({
+    options: options.value || []
+  })
+
+  const emits = defineEmits<{
+    (e: 'show', value?: DictInputValues, options?: DictData[]): void
+  }>()
+
   // const component = props.component
   onMounted(async () => {
     const data = await loadData()
@@ -128,6 +141,7 @@
     data.forEach((item) => {
       optionMap.value[item.dictCode] = item.dictName
     })
+    emits('show', modelValue.value, options.value)
   })
 </script>
 

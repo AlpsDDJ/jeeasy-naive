@@ -1,5 +1,7 @@
 import { FormDataType } from '@/enums/EEnum'
 import { Rule } from '@/hooks/useModel/decorator/Field'
+import { getRules, Rules } from '@/utils/validateRules'
+import { GeneratorData } from '@/views/gen/module/model'
 
 const hiddenIfNotTree = ({ izTree }) => !izTree
 
@@ -10,7 +12,7 @@ export default class GenTable extends BaseModel {
   name?: string
 
   @Field('表描述')
-  @Rule({ required: true })
+  @Rule(Rules.username)
   description?: string
 
   @Field('表类型')
@@ -129,6 +131,7 @@ export class GenTableFieldForDB extends GenTableField {
     width: 180
   })
   @Disabled([], disableIfId)
+  @Rule(getRules('required'))
   description?: string
 
   @Field('数据类型', {
@@ -216,7 +219,7 @@ export class GenTableFieldForPage extends GenTableField {
   @Hidden()
   viewOptionsJson?: string
 
-  @Field('修改时展示', {
+  @Field('新增显示', {
     width: 100,
     align: 'center'
   })
@@ -225,7 +228,16 @@ export class GenTableFieldForPage extends GenTableField {
   @DataType(FormDataType.NUMBER, InputType.SWITCH)
   showAdd?: number
 
-  @Field('修改时展示', {
+  @Field('修改显示', {
+    width: 100,
+    align: 'center'
+  })
+  @Dict('Boolean')
+  @Disabled([], disableIfId)
+  @DataType(FormDataType.NUMBER, InputType.SWITCH)
+  showEdit?: number
+
+  @Field('列表显示', {
     width: 100,
     align: 'center'
   })
@@ -378,4 +390,10 @@ export class GenTableIndex extends BaseModel {
     dict: 'IndexType'
   })
   indexType?: string
+}
+
+@Server('/gen')
+export class GeneratorApi extends BaseApi {
+  @Post('/generator')
+  static generator: HttpRequest<string, GeneratorData>
 }

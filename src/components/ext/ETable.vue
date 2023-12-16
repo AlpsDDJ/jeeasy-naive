@@ -4,7 +4,7 @@
       <action-button :actions="['add']" @action:add="handleAdd" />
     </slot>
     <n-config-provider :theme-overrides="enableEdit ? editTableThemeOverrides : {}">
-      <n-form ref="tableEditFormRef" :model="tableData">
+      <n-form ref="tableEditFormRef" :model="tableData" :show-label="false" inline :show-feedback="false">
         <n-data-table
           ref="tableRef"
           v-bind="tableProps"
@@ -44,8 +44,8 @@
   import type { ColumnKey, FilterState, SortOrder } from 'naive-ui/es/data-table/src/interface'
   import type { ActionOption } from '@/components/ActionButton/commonActions'
   import ActionButton from '@/components/ActionButton/index.vue'
-  import { useThemeVars } from 'naive-ui'
-  import { cloneDeep } from 'lodash-es'
+  import { useThemeVars, NFormItem, FormItemGiProps } from 'naive-ui'
+  import { cloneDeep, isArray } from 'lodash-es'
   import { BaseModel } from '@/hooks/useModel'
   import { useModelApi } from '@/hooks/useApi'
   import { appSetting } from '@/config/app.config'
@@ -145,12 +145,32 @@
       borderRadius: '3px'
     },
     Input: {
-      border: 'none'
+      border: 'none',
+      borderDisabled: 'none'
     },
     InternalSelection: {
-      border: 'none'
+      border: 'none',
+      borderDisabled: 'none'
     }
   })
+
+  /**
+   * 创建表单项属性
+   * @param field
+   */
+  const createFormItemProps = (field: FieldOption<T>): FormItemGiProps => {
+    const { key, path, rule, rulePath, required, formSpan, label } = field
+    const _rule: EFormItemRule[] = []
+    if (rule) {
+      if (isArray(rule)) {
+        _rule.push(...rule.filter(({ formTypes }) => !formTypes || formTypes.includes(FormType.EDIT_TABLE as any)))
+      } else if (!rule.formTypes || rule.formTypes.includes(FormType.EDIT_TABLE as any)) {
+        _rule.push(rule)
+      }
+    }
+    const _key = (path || key).toString()
+    return { path: _key, rule: _rule, rulePath, required, label, span: formSpan }
+  }
 
   const columns = computed(() =>
     Object.values(modelState.value?.fields || {})
@@ -163,11 +183,12 @@
               const child = createInputComponent<T>(col, toRef((tableData.value || [])[index]), FormType.EDIT_TABLE)
               const disabled = child.props?.disabled
               return h(
-                'div',
+                NFormItem,
                 {
+                  ...createFormItemProps(col),
                   class: ['editable-cell', disabled ? 'disabled-cell' : '']
                 },
-                [child]
+                () => child
               )
             }
           }
@@ -316,6 +337,9 @@
     .n-base-suffix {
       display: none;
     }
+    //.n-form-item-feedback-wrapper {
+    //  margin-bottom: -24px;
+    //}
   }
   td.n-data-table-td:has(div.disabled-cell) {
     background-color: v-bind(inputColorDisabled);

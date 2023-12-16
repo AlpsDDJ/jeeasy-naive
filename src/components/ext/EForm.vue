@@ -1,29 +1,50 @@
 <template>
-  <n-drawer v-model:show="showForm" :width="wSize" :mask-closable="!showConfirmBtn" @after-enter="() => (formLoading = false)">
-    <n-drawer-content>
-      <template #header> {{ formTypeTitleMap[formType || ''] || '' }} </template>
-      <n-spin :show="formLoading">
-        <div :style="{ minHeight: '500px' }">
-          <div v-if="!formLoading">
-            <n-form ref="formRef" v-bind="props.formProps" :model="formData" label-placement="left" :inline="cols !== 1" label-width="auto">
-              <n-grid :cols="cols" :x-gap="12">
-                <n-form-item-gi v-for="item in jsonScheme" :key="item.path || item.key" v-bind="createFormItemProps(item)">
-                  <component :is="createInpComp(item)" />
-                </n-form-item-gi>
-              </n-grid>
-            </n-form>
-            <slot />
+  <template v-if="props.isModal">
+    <n-drawer v-model:show="showForm" :width="wSize" :mask-closable="!showConfirmBtn" @after-enter="() => (formLoading = false)">
+      <n-drawer-content>
+        <template #header> {{ formTypeTitleMap[formType || ''] || '' }} </template>
+        <n-spin :show="formLoading">
+          <slot name="top" />
+          <div :style="{ minHeight: '500px' }">
+            <div v-if="!formLoading">
+              <n-form ref="formRef" v-bind="props.formProps" :model="formData" label-placement="left" :inline="cols !== 1" label-width="auto">
+                <n-grid :cols="cols" :x-gap="12">
+                  <n-form-item-gi v-for="item in jsonScheme" :key="item.path || item.key" v-bind="createFormItemProps(item)">
+                    <component :is="createInpComp(item)" />
+                  </n-form-item-gi>
+                </n-grid>
+              </n-form>
+              <slot />
+            </div>
           </div>
-        </div>
-      </n-spin>
-      <template #footer>
-        <n-space>
-          <n-button type="default" secondary @click="() => close()">关闭</n-button>
-          <n-button v-if="showConfirmBtn" type="primary" secondary :loading="formLoading" @click="submitHandle">保存</n-button>
-        </n-space>
-      </template>
-    </n-drawer-content>
-  </n-drawer>
+        </n-spin>
+        <template #footer>
+          <div class="e-form-bottom" justify="space-between" style="width: 100%" :wrap-item="false">
+            <div class="e-form-bottom-left">
+              <n-space>
+                <n-button v-if="showConfirmBtn" type="primary" secondary :loading="formLoading" @click="submitHandle">保存</n-button>
+                <n-button type="default" secondary @click="() => close()">关闭</n-button>
+              </n-space>
+            </div>
+            <div class="e-form-bottom-right">
+              <slot name="bottom" />
+            </div>
+          </div>
+        </template>
+      </n-drawer-content>
+    </n-drawer>
+  </template>
+  <template v-else>
+    <slot name="top" />
+    <n-form ref="formRef" v-bind="props.formProps" :model="formData" label-placement="left" :inline="cols !== 1" label-width="auto">
+      <n-grid :cols="cols" :x-gap="12">
+        <n-form-item-gi v-for="item in jsonScheme" :key="item.path || item.key" v-bind="createFormItemProps(item)">
+          <component :is="createInpComp(item)" />
+        </n-form-item-gi>
+      </n-grid>
+    </n-form>
+    <slot />
+  </template>
 </template>
 
 <script lang="ts" setup generic="T extends BaseModel">
@@ -53,6 +74,7 @@
   })
 
   const props = withDefaults(defineProps<EFormProps<T>>(), {
+    isModal: true,
     formProps: () => ({
       size: appSetting.formSize
     }),
@@ -126,6 +148,10 @@
   const open = (type: IFormType, fData?: IFormData<T>) => {
     console.debug(`form show: type = ${type}, data = `, fData || {})
     fData && (formData.value = cloneDeep(fData))
+    formData.value = cloneDeep({
+      ...(props.defauleData || {}),
+      ...(fData || {})
+    }) as IFormData<T>
     formType.value = type
     showForm.value = true
     formLoading.value = true
@@ -148,29 +174,34 @@
 
   const submitHandle = async () => {
     formLoading.value = true
-    const formDataClone = props.formatFormData(formData.value, formType.value)
-    let resp: any
     try {
-      switch (formType.value) {
-        case FormType.ADD:
-          resp = await save(formDataClone)
-          break
-        case FormType.EDIT:
-          resp = await update(formDataClone)
-          break
-        default:
-          close()
-          break
+      const formDataClone = await props.formatFormData(formData.value, formType.value)
+      let resp: any
+      try {
+        switch (formType.value) {
+          case FormType.ADD:
+            resp = await save(formDataClone)
+            break
+          case FormType.EDIT:
+            resp = await update(formDataClone)
+            break
+          default:
+            close()
+            break
+        }
+      } catch (error) {
+        emits('error', error, resp, formType.value)
+        window.$message.error(error ? (error as Error).message : typeof resp.data === 'string' ? resp.data : resp.message)
+        formLoading.value = false
+        return
       }
-    } catch (error) {
-      emits('error', error, resp, formType.value)
-      window.$message.error(error ? (error as Error).message : typeof resp.data === 'string' ? resp.data : resp.message)
-      formLoading.value = false
-      return
+      emits('success', resp, formType.value)
+      window.$message.success(typeof resp.data === 'string' ? resp.data : resp.message)
+      close(true)
+    } catch (e) {
+      close(true)
     }
-    emits('success', resp, formType.value)
-    window.$message.success(typeof resp.data === 'string' ? resp.data : resp.message)
-    close(true)
+    // if (formDataClone === false) return
   }
 
   /**
@@ -190,6 +221,19 @@
     close,
     ...expose
   })
+
+  defineSlots<{
+    top?: (props?: {}) => any
+    default?: (props?: {}) => any
+    bottom?: (props?: {}) => any
+  }>()
 </script>
 
-<style scoped lang="less"></style>
+<style scoped lang="less">
+  .e-form-bottom {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    overflow: hidden;
+  }
+</style>

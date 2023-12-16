@@ -7,7 +7,14 @@
       <slot />
       <template v-if="props.actions" #footer>
         <slot name="footer">
-          <action-button :actions="props.actions" @action:close="close" @action:ok="ok"></action-button>
+          <div class="e-form-bottom" justify="space-between" style="width: 100%" :wrap-item="false">
+            <div class="e-form-bottom-left">
+              <action-button :actions="props.actions" @action:close="close" @action:ok="ok"></action-button>
+            </div>
+            <div class="e-form-bottom-right">
+              <slot name="bottom" />
+            </div>
+          </div>
         </slot>
       </template>
     </n-drawer-content>
@@ -42,6 +49,15 @@
     width: 400,
     actions: () => [
       {
+        action: 'ok',
+        html: '确定',
+        secondary: true,
+        type: 'primary'
+        // handle: () => {
+        //   ok()
+        // }
+      },
+      {
         action: 'close',
         html: '关闭',
         secondary: true
@@ -50,17 +66,19 @@
         // handle: () => {
         //   close()
         // }
-      },
-      {
-        action: 'ok',
-        html: '确定',
-        secondary: true,
-        type: 'primary'
-        // handle: () => {
-        //   ok()
-        // }
       }
     ]
+  })
+
+  defineExpose<{
+    open(): void
+    close(): void
+  }>({
+    open: () => {
+      console.log('open ------ ')
+      show.value = true
+    },
+    close
   })
 </script>
 
