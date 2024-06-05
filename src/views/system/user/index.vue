@@ -24,7 +24,7 @@
   })
 
   const showFormAndFormat: ShowForm = (type, { roles, depts, ...formData }) => {
-    showForm(type, { roles: roles.map(({ id }) => id), depts: depts.map(({ id }) => id), ...formData })
+    showForm(type, { roles: roles?.map(({ id }) => id), depts: depts?.map(({ id }) => id), ...formData })
   }
 
   const foramtFormData = ({ roles, depts, ...data }: any) => {
