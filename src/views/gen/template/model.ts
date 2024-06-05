@@ -1,4 +1,5 @@
-import { FormDataType, InputType } from '@/enums/EEnum'
+import { Field, FormDataTypeEnum, InputTypeEnum, Model } from 'easy-descriptor'
+import { BaseModel } from '@/hooks/useModel'
 
 @Model('GenTemplate')
 export default class GenTemplate extends BaseModel {
@@ -6,33 +7,33 @@ export default class GenTemplate extends BaseModel {
    * 文件名
    */
   @Field('文件名')
-  @DataType(FormDataType.STRING)
+  @Field.DataType(FormDataTypeEnum.STRING)
   fileName?: string
   /**
    * 模板类型
    */
   @Field('模板类型')
-  @DataType(FormDataType.STRING)
+  @Field.DataType(FormDataTypeEnum.STRING)
   type?: string
   /**
    * 备注
    */
   @Field('备注')
-  @Hidden(['query'])
-  @DataType(FormDataType.STRING)
+  @Field.Hidden(['query'])
+  @Field.DataType(FormDataTypeEnum.STRING)
   remark?: string
   /**
    * 模板内容
    */
   @Field('模板内容', { formSpan: 5 })
-  @Hidden(['list', 'query'])
-  @DataType(FormDataType.STRING, InputType.TEXT_AREA)
+  @Field.Hidden(['list', 'query'])
+  @Field.DataType(FormDataTypeEnum.STRING, InputTypeEnum.TEXT_AREA)
   context?: string
   /**
    * 启用标记
    */
   @Field('启用标记')
-  @DataType(FormDataType.NUMBER, InputType.SWITCH)
-  @Dict()
+  @Field.DataType(FormDataTypeEnum.NUMBER, InputTypeEnum.SWITCH)
+  @Field.Dict()
   enableFlag?: number
 }

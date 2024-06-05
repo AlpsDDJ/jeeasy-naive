@@ -1,3 +1,7 @@
+import { Axios, Field, Get, Model } from 'easy-descriptor'
+import { BaseModel } from '@/hooks/useModel'
+import { BaseApi } from '@/hooks/useApi'
+
 @Model()
 export default class GenModule extends BaseModel {
   @Field('模块名称')
@@ -38,7 +42,7 @@ export default class GenModule extends BaseModel {
   files?: string[]
 }
 
-@Server('/gen/module/')
+@Axios('/gen/module/')
 export class GenModuleApi extends BaseApi {
   @Get('findByCode/{code}')
   static getModule: HttpRequest<GenModule, { code: string }>

@@ -1,100 +1,105 @@
-import { FormDataType } from '@/enums/EEnum'
-import { Rule } from '@/hooks/useModel/decorator/Field'
-import { getRules, Rules } from '@/utils/validateRules'
+// import { Rule } from '@/hooks/useModel/decorator/Field'
+// import { getRules, Rules } from '@/utils/validateRules'
 import { GeneratorData } from '@/views/gen/module/model'
+import { Field, Model, Post, FormDataTypeEnum, InputTypeEnum, Axios } from 'easy-descriptor'
+import type { FieldAttrHandler, FormData } from 'easy-descriptor'
+import { BaseModel } from '@/hooks/useModel'
+import { BaseApi } from '@/hooks/useApi'
 
-const hiddenIfNotTree = ({ izTree }) => !izTree
+const hiddenIfNotTree: FieldAttrHandler = (formData: FormData<GenTable>) => {
+  return !formData.izTree as any
+}
 
 @Model()
 export default class GenTable extends BaseModel {
   @Field('表名')
-  @Disabled(['edit'])
+  @Field.Disabled(['edit'])
   name?: string
 
   @Field('表描述')
-  @Rule(Rules.username)
+  // @Field.Rule(Rules.username)
   description?: string
 
   @Field('表类型')
-  @Dict('TableType')
+  @Field.Dict('TableType')
   tableType?: string
 
   @Field('数据源')
   dataSource?: string
 
   @Field('同步数据库')
-  @Dict('Boolean')
-  @DataType(FormDataType.NUMBER)
-  @Hidden(['form'])
+  @Field.Dict('Boolean')
+  @Field.DataType(FormDataTypeEnum.NUMBER)
+  @Field.Hidden(['form'])
   izSync?: number
 
   @Field('简单查询')
-  @Dict('Boolean')
-  @DataType(FormDataType.NUMBER)
-  @Hidden(['list', 'query'])
+  @Field.Dict('Boolean')
+  @Field.DataType(FormDataTypeEnum.NUMBER)
+  @Field.Hidden(['list', 'query'])
   izSimpleQuery?: number
 
   @Field('分页')
-  @Dict('Boolean')
-  @DataType(FormDataType.NUMBER)
-  @Hidden(['list', 'query'])
+  @Field.Dict('Boolean')
+  @Field.DataType(FormDataTypeEnum.NUMBER)
+  @Field.Hidden(['list', 'query'])
   izPage?: number
 
   @Field('树形表单')
-  @Dict('Boolean')
-  @DataType(FormDataType.NUMBER)
+  @Field.Dict('Boolean')
+  @Field.DataType(FormDataTypeEnum.NUMBER)
   izTree?: number
 
   @Field('树PID')
-  @Hidden(['list', 'query'], hiddenIfNotTree)
-  // @Hidden(['list', 'query'])
+  @Field.Hidden(['list', 'query'], hiddenIfNotTree)
+  // @Field.Hidden(['list', 'query'])
   treePid?: string
 
   @Field('树名称字段')
-  @Hidden(['list', 'query'], hiddenIfNotTree)
+  @Field.Hidden(['list', 'query'], hiddenIfNotTree)
   treeNameField?: string
 
   @Field('表单风格')
-  @Dict('TableStyle')
-  @DataType(FormDataType.NUMBER)
+  @Field.Dict('TableStyle')
+  @Field.DataType(FormDataTypeEnum.NUMBER)
   formType?: number
 
   @Field('主表')
-  @Hidden()
+  @Field.Hidden()
   mainTable?: string
 
   @Field('从表')
-  @Hidden()
+  @Field.Hidden()
   slaveTable?: string
 
   @Field('主表字段')
-  @Hidden()
+  @Field.Hidden()
   mainColumn?: string
 
   @Field('主表字段code')
-  @Hidden()
+  @Field.Hidden()
   mainColumnCode?: string
 
   @Field('从表字段')
-  @Hidden()
+  @Field.Hidden()
   slaveColumn?: string
 
   @Field('从表字段code')
-  @Hidden()
+  @Field.Hidden()
   slaveColumnCode?: string
 
   @Field('映射关系')
-  @Dict('RelationType')
-  @Hidden(['list', 'query'], ({ tableType }) => tableType === 'single')
+  @Field.Dict('RelationType')
+  @Field.Hidden(['list', 'query'], ({ tableType }) => (tableType === 'single') as any)
   relationType?: string
 
   @Field('子表')
-  @Hidden()
+  @Field.Hidden()
   subTableStr?: string
 
   @Field('附表排序')
-  @DataType(FormDataType.NUMBER)
-  @Hidden()
+  @Field.DataType(FormDataTypeEnum.NUMBER)
+  @Field.Hidden()
   tabOrderNum?: number
 
   /**
@@ -110,11 +115,11 @@ export default class GenTable extends BaseModel {
 @Model()
 export class GenTableField extends BaseModel {
   @Field('表ID')
-  @Hidden()
+  @Field.Hidden()
   tableId?: string
 }
 
-const disableIfId = ({ columnName }) => columnName === 'id'
+const disableIfId: FieldAttrHandler = ({ columnName }) => (columnName === 'id') as any
 
 /**
  * 数据库属性
@@ -124,14 +129,14 @@ export class GenTableFieldForDB extends GenTableField {
   @Field('列名', {
     width: 180
   })
-  @Disabled([], disableIfId)
+  @Field.Disabled([], disableIfId)
   columnName?: string
 
   @Field('字段描述', {
     width: 180
   })
-  @Disabled([], disableIfId)
-  @Rule(getRules('required'))
+  @Field.Disabled([], disableIfId)
+  // @Rule(getRules('required'))
   description?: string
 
   @Field('数据类型', {
@@ -141,34 +146,34 @@ export class GenTableFieldForDB extends GenTableField {
       filterable: true
     }
   })
-  @Disabled([], disableIfId)
+  @Field.Disabled([], disableIfId)
   jdbcType?: string
 
   @Field('字段名')
-  @Hidden()
-  @Disabled([], disableIfId)
+  @Field.Hidden()
+  @Field.Disabled([], disableIfId)
   fieldName?: string
 
   @Field('字段长度', {
     width: 100,
     align: 'center'
   })
-  @Disabled([], disableIfId)
-  @DataType(FormDataType.NUMBER)
+  @Field.Disabled([], disableIfId)
+  @Field.DataType(FormDataTypeEnum.NUMBER)
   length?: number
 
   @Field('小数位', {
     width: 100,
     align: 'center'
   })
-  @Disabled([], disableIfId)
-  @DataType(FormDataType.NUMBER)
+  @Field.Disabled([], disableIfId)
+  @Field.DataType(FormDataTypeEnum.NUMBER)
   decimalPlaces?: number
 
   @Field('默认值', {
     width: 150
   })
-  @Disabled([], disableIfId)
+  @Field.Disabled([], disableIfId)
   defaultValue?: string
 
   @Field('主键', {
@@ -176,17 +181,17 @@ export class GenTableFieldForDB extends GenTableField {
     align: 'center',
     dict: 'Boolean'
   })
-  @Disabled([], disableIfId)
-  @DataType(FormDataType.NUMBER, InputType.SWITCH)
+  @Field.Disabled([], disableIfId)
+  @Field.DataType(FormDataTypeEnum.NUMBER, InputTypeEnum.SWITCH)
   primaryKey?: number
 
   @Field('允许空值', {
     width: 100,
     align: 'center'
   })
-  @Disabled([], disableIfId)
-  @Dict('Boolean')
-  @DataType(FormDataType.NUMBER, InputType.SWITCH)
+  @Field.Disabled([], disableIfId)
+  @Field.Dict('Boolean')
+  @Field.DataType(FormDataTypeEnum.NUMBER, InputTypeEnum.SWITCH)
   allowNull?: number
 }
 
@@ -198,100 +203,100 @@ export class GenTableFieldForPage extends GenTableField {
   @Field('列名', {
     width: 180
   })
-  @Disabled()
+  @Field.Disabled()
   columnName?: string
 
   @Field('字段描述', {
     width: 180
   })
-  @Disabled()
+  @Field.Disabled()
   description?: string
 
   @Field('字段名')
-  @Disabled([], disableIfId)
+  @Field.Disabled([], disableIfId)
   fieldName?: string
 
   @Field('java类型')
-  @Disabled([], disableIfId)
+  @Field.Disabled([], disableIfId)
   javaType?: string
 
   @Field('页面配置')
-  @Hidden()
+  @Field.Hidden()
   viewOptionsJson?: string
 
   @Field('新增显示', {
     width: 100,
     align: 'center'
   })
-  @Dict('Boolean')
-  @Disabled([], disableIfId)
-  @DataType(FormDataType.NUMBER, InputType.SWITCH)
+  @Field.Dict('Boolean')
+  @Field.Disabled([], disableIfId)
+  @Field.DataType(FormDataTypeEnum.NUMBER, InputTypeEnum.SWITCH)
   showAdd?: number
 
   @Field('修改显示', {
     width: 100,
     align: 'center'
   })
-  @Dict('Boolean')
-  @Disabled([], disableIfId)
-  @DataType(FormDataType.NUMBER, InputType.SWITCH)
+  @Field.Dict('Boolean')
+  @Field.Disabled([], disableIfId)
+  @Field.DataType(FormDataTypeEnum.NUMBER, InputTypeEnum.SWITCH)
   showEdit?: number
 
   @Field('列表显示', {
     width: 100,
     align: 'center'
   })
-  @Dict('Boolean')
-  @Disabled([], disableIfId)
-  @DataType(FormDataType.NUMBER, InputType.SWITCH)
+  @Field.Dict('Boolean')
+  @Field.Disabled([], disableIfId)
+  @Field.DataType(FormDataTypeEnum.NUMBER, InputTypeEnum.SWITCH)
   showTable?: number
 
   @Field('新增时禁用', {
     width: 100,
     align: 'center'
   })
-  @Dict('Boolean')
-  @Disabled([], disableIfId)
-  @DataType(FormDataType.NUMBER, InputType.SWITCH)
+  @Field.Dict('Boolean')
+  @Field.Disabled([], disableIfId)
+  @Field.DataType(FormDataTypeEnum.NUMBER, InputTypeEnum.SWITCH)
   disableOnAdd?: number
 
   @Field('修改时禁用', {
     width: 100,
     align: 'center'
   })
-  @Dict('Boolean')
-  @Disabled([], disableIfId)
-  @DataType(FormDataType.NUMBER, InputType.SWITCH)
+  @Field.Dict('Boolean')
+  @Field.Disabled([], disableIfId)
+  @Field.DataType(FormDataTypeEnum.NUMBER, InputTypeEnum.SWITCH)
   disableOnEdit?: number
 
   @Field('行内编辑禁用', {
     width: 120
   })
-  @Dict('Boolean')
-  @Disabled([], disableIfId)
-  @DataType(FormDataType.NUMBER, InputType.SWITCH)
+  @Field.Dict('Boolean')
+  @Field.Disabled([], disableIfId)
+  @Field.DataType(FormDataTypeEnum.NUMBER, InputTypeEnum.SWITCH)
   disableOnTableEdit?: number
 
   @Field('控件类型', {
     width: 180
   })
-  @Disabled([], disableIfId)
+  @Field.Disabled([], disableIfId)
   formType?: string
 
   @Field('是否查询', {
     width: 100,
     align: 'center'
   })
-  @Dict('Boolean')
-  @Disabled([], disableIfId)
-  @DataType(FormDataType.NUMBER, InputType.SWITCH)
+  @Field.Dict('Boolean')
+  @Field.Disabled([], disableIfId)
+  @Field.DataType(FormDataTypeEnum.NUMBER, InputTypeEnum.SWITCH)
   showSearch?: number
 
   @Field('搜索类型', {
     width: 180,
     dict: 'SearchType'
   })
-  @Disabled([], disableIfId)
+  @Field.Disabled([], disableIfId)
   searchType?: string
 }
 
@@ -303,40 +308,40 @@ export class GenTableFieldForRule extends GenTableField {
   @Field('列名', {
     width: 180
   })
-  @Disabled()
+  @Field.Disabled()
   columnName?: string
 
   @Field('字段描述', {
     width: 180
   })
-  @Disabled()
+  @Field.Disabled()
   description?: string
 
   @Field('校验路径', {
     width: 180
   })
-  @Disabled([], disableIfId)
+  @Field.Disabled([], disableIfId)
   fieldPath?: string
 
   @Field('必填', {
     width: 100,
     align: 'center'
   })
-  @Dict('Boolean')
-  @Disabled([], disableIfId)
-  @DataType(FormDataType.NUMBER, InputType.SWITCH)
+  @Field.Dict('Boolean')
+  @Field.Disabled([], disableIfId)
+  @Field.DataType(FormDataTypeEnum.NUMBER, InputTypeEnum.SWITCH)
   required?: number
 
   @Field('校验规则', {
     width: 180
   })
-  @Disabled([], disableIfId)
+  @Field.Disabled([], disableIfId)
   rule?: string
 
   @Field('字典编码', {
     width: 180
   })
-  @Disabled([], disableIfId)
+  @Field.Disabled([], disableIfId)
   dictCode?: string
 }
 
@@ -348,25 +353,25 @@ export class GenTableFieldForFk extends GenTableField {
   @Field('列名', {
     width: 180
   })
-  @Disabled()
+  @Field.Disabled()
   columnName?: string
 
   @Field('字段描述', {
     width: 180
   })
-  @Disabled()
+  @Field.Disabled()
   description?: string
 
   @Field('主表', {
     width: 180
   })
-  @Disabled([], disableIfId)
+  @Field.Disabled([], disableIfId)
   mainTable?: string
 
   @Field('主表字段', {
     width: 180
   })
-  @Disabled([], disableIfId)
+  @Field.Disabled([], disableIfId)
   mainTableField?: string
 }
 
@@ -376,7 +381,7 @@ export class GenTableFieldForFk extends GenTableField {
 @Model()
 export class GenTableIndex extends BaseModel {
   @Field('表ID')
-  @Hidden()
+  @Field.Hidden()
   tableId?: string
 
   @Field('索引名称')
@@ -392,7 +397,7 @@ export class GenTableIndex extends BaseModel {
   indexType?: string
 }
 
-@Server('/gen')
+@Axios('/gen')
 export class GeneratorApi extends BaseApi {
   @Post('/generator')
   static generator: HttpRequest<string, GeneratorData>

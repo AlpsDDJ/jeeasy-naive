@@ -39,18 +39,20 @@
 
 <script lang="ts" setup generic="T extends BaseModel">
   import { h } from 'vue'
-  import type { DataTableColumn, DataTableInst, GlobalThemeOverrides, PaginationProps } from 'naive-ui'
-  import type { ETableInst, ETableProps, ETableSlots, IFormData, IFormType, LoadData, TableScrollToOption } from './types'
-  import type { ColumnKey, FilterState, SortOrder } from 'naive-ui/es/data-table/src/interface'
+  import type { DataTableInst, GlobalThemeOverrides, PaginationProps } from 'naive-ui'
+  import { FormItemGiProps, NFormItem, useThemeVars } from 'naive-ui'
+  import type { ColumnKey, FilterState, SortOrder, TableColumn } from 'naive-ui/es/data-table/src/interface'
   import type { ActionOption } from '@/components/ActionButton/commonActions'
   import ActionButton from '@/components/ActionButton/index.vue'
-  import { useThemeVars, NFormItem, FormItemGiProps } from 'naive-ui'
   import { cloneDeep, isArray } from 'lodash-es'
   import { BaseModel } from '@/hooks/useModel'
   import { useModelApi } from '@/hooks/useApi'
   import { appSetting } from '@/config/app.config'
   import { createInputComponent } from '@/components/ext/index'
-  import { FormType } from '@/enums/EEnum'
+  import type { ETableProps, LoadData, ETableInst, TableScrollToOption, ETableSlots } from './types'
+  import type { FieldOption, FormType, TreeField, FormData } from 'easy-descriptor'
+  import { FormTypeEnum, useModelOptions } from 'easy-descriptor'
+  import { CsvOptionsType } from 'naive-ui/es/data-table/src/interface'
 
   defineOptions({
     name: 'ETable'
@@ -66,18 +68,18 @@
   })
   const tableEditFormRef = ref()
 
-  const modelState = ref(useModel<T>(props.instance))
+  const modelState = ref(useModelOptions<T>(props.instance))
   const actions = props.actions
 
   const handleAdd = () => {
-    showForm({}, FormType.ADD)
+    showForm({}, FormTypeEnum.ADD)
   }
   const handleDelete = ({ row, index }) => {
     console.log(`删除第${index} 行，id = ${row.id}`)
   }
   const handleEdit = ({ row, index }) => {
     console.log(`编辑第${index} 行，id = ${row.id}`)
-    showForm(row, FormType.EDIT)
+    showForm(row, FormTypeEnum.EDIT)
   }
 
   const defaultActions: ActionOption[] = [
@@ -160,11 +162,11 @@
    */
   const createFormItemProps = (field: FieldOption<T>): FormItemGiProps => {
     const { key, path, rule, rulePath, required, formSpan, label } = field
-    const _rule: EFormItemRule[] = []
+    const _rule: any[] = []
     if (rule) {
       if (isArray(rule)) {
-        _rule.push(...rule.filter(({ formTypes }) => !formTypes || formTypes.includes(FormType.EDIT_TABLE as any)))
-      } else if (!rule.formTypes || rule.formTypes.includes(FormType.EDIT_TABLE as any)) {
+        _rule.push(...rule.filter(({ formTypes }) => !formTypes || formTypes.includes(FormTypeEnum.EDIT_TABLE as any)))
+      } else if (!rule.formTypes || rule.formTypes.includes(FormTypeEnum.EDIT_TABLE as any)) {
         _rule.push(rule)
       }
     }
@@ -179,8 +181,9 @@
         if (props.enableEdit) {
           return {
             ...col,
+            title: col.leabel,
             render: (_, index: number) => {
-              const child = createInputComponent<T>(col, toRef((tableData.value || [])[index]), FormType.EDIT_TABLE)
+              const child = createInputComponent<T>(col, toRef((tableData.value || [])[index] as any), FormTypeEnum.EDIT_TABLE)
               const disabled = child.props?.disabled
               return h(
                 NFormItem,
@@ -191,9 +194,9 @@
                 () => child
               )
             }
-          }
+          } as TableColumn
         } else {
-          return col
+          return { ...col, title: col.label } as TableColumn
         }
       })
   )
@@ -201,18 +204,17 @@
   // const showFormEmit = defineEmits<{ (evt: 'showForm', formData: any, type: IFormType): void }>()
 
   const emit = defineEmits<{
-    (evt: 'showForm', type: IFormType, formData: IFormData<T>): void
+    (evt: 'showForm', type: FormType, formData: FormData<T>): void
     (evt: 'pageChange', page: PaginationProps | false): void
   }>()
 
-  const showForm = (formData: any, type: IFormType) => {
+  const showForm = (formData: any, type: FormType) => {
     emit('showForm', type, formData)
   }
 
   // const slots = useSlots()
 
   const pagination = defineModel<PaginationProps>('page', {
-    local: true,
     default: {
       page: 1,
       pageSize: appSetting.pageSizes[0] || 10,
@@ -305,6 +307,9 @@
     },
     clearFilter: () => {
       tableRef.value!.clearFilter()
+    },
+    downloadCsv: (options?: CsvOptionsType) => {
+      tableRef.value!.downloadCsv(options)
     }
   }
 
@@ -321,7 +326,7 @@
         const colKey = slotName.replace('#', '')
         const col = columns.value?.find((column) => column['key'] === colKey)
         if (col) {
-          ;(col as DataTableColumn)['render'] = (row: any, index: number) => slotsTmp[slotName]?.(row, index)
+          ;(col as TableColumn)['render'] = (row: any, index: number) => slotsTmp[slotName]?.(row, index)
         }
       }
     })

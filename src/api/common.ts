@@ -1,7 +1,20 @@
-import { BaseApi } from '@/hooks/useApi'
 import { DictData } from '@/components/ext/input/types'
+import { Axios, AxiosDescriptorBuilder, AxiosDescriptorConfig, Get, Post } from 'easy-descriptor'
+import { AxiosInstance } from 'axios'
+import http from '@/utils/http'
 
-export class CommonApi extends BaseApi {
+/**
+ * 定义一个MyAxiosDescriptorConfig类，用于配置默认Axios实例。
+ * 该类实现了AxiosDescriptorConfig接口。
+ */
+@AxiosDescriptorBuilder()
+export class MyAxiosDescriptorConfig implements AxiosDescriptorConfig {
+  // 可选的Axios实例，默认使用空配置创建一个Axios实例
+  http?: AxiosInstance = http
+}
+
+@Axios()
+export class CommonApi {
   /**
    * 静态属性调用：
    * CommonApi.login()

@@ -22,12 +22,14 @@
 
 <script setup lang="ts" generic="T extends BaseModel">
   import { BaseModel } from '@/hooks/useModel'
-  import type { EQueryInst, EQueryProps, FormData } from './types'
+  import type { EQueryProps, EQueryInst } from './types'
   import { createInputComponent } from '@/components/ext/index'
   import { appSetting } from '@/config/app.config'
   import type { FormInst } from 'naive-ui'
   import type { FormValidateCallback, ShouldRuleBeApplied } from 'naive-ui/es/form/src/interface'
   import { cloneDeep } from 'lodash-es'
+  import { FormTypeEnum, useModelOptions } from 'easy-descriptor'
+  import type { FieldOption, FormData } from 'easy-descriptor'
 
   defineOptions({
     name: 'ESearch'
@@ -56,11 +58,11 @@
 
   // const modelState = ref<ModelState<T>>(useModel<T>(props.instance))
   const queryScheme = computed<FieldOption<T>[]>(() =>
-    Object.values(useModel<T>(props.instance)?.fields || []).filter(({ hidden }) => !(hidden === true || (hidden && hidden?.includes('query'))))
+    Object.values(useModelOptions<T>(props.instance)?.fields || []).filter(({ hidden }) => !(hidden === true || (hidden && hidden?.includes('query'))))
   )
 
   const createInpComp = (field: FieldOption<T>) => {
-    return createInputComponent<T>(field, queryData, FormType.SEARCH)
+    return createInputComponent<T>(field, queryData, FormTypeEnum.SEARCH)
   }
 
   const resetHandle = () => {

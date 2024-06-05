@@ -1,4 +1,5 @@
-import { FormDataType } from '@/enums/EEnum'
+import { Field, FormDataTypeEnum, InputTypeEnum, Model } from 'easy-descriptor'
+import { BaseModel } from '@/hooks/useModel'
 
 @Model('MbBrand')
 class MbBrand extends BaseModel {
@@ -9,8 +10,8 @@ class MbBrand extends BaseModel {
   code?: string
 
   @Field('启用标记')
-  @DataType(FormDataType.NUMBER, InputType.SWITCH)
-  @Dict()
+  @Field.DataType(FormDataTypeEnum.NUMBER, InputTypeEnum.SWITCH)
+  @Field.Dict()
   enableFlag?: number
 }
 

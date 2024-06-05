@@ -51,11 +51,14 @@
   import { BaseModel } from '@/hooks/useModel'
   import type { FormInst, FormItemGiProps } from 'naive-ui'
   import type { FormValidateCallback, ShouldRuleBeApplied } from 'naive-ui/es/form/src/interface'
-  import type { EFormInst, EFormProps, IFormData, IFormType } from './types'
   import { createInputComponent } from './index'
   import { appSetting, formTypeTitleMap } from '@/config/app.config'
   import { cloneDeep, isArray } from 'lodash-es'
   import { useModelApi } from '@/hooks/useApi'
+  import type { FieldOption, FormType, FormData } from 'easy-descriptor'
+  import type { EFormInst, EFormProps } from './types'
+  import { FormTypeEnum, useModelOptions } from 'easy-descriptor'
+  import { EzModelOptions } from 'easy-descriptor/dist/types'
 
   defineOptions({
     name: 'EForm'
@@ -66,10 +69,9 @@
    * 表单类型
    * @see FormType
    */
-  const formType = ref<IFormType>()
+  const formType = ref<FormType>()
 
-  const formData = defineModel<IFormData<T>>({
-    local: true,
+  const formData = defineModel<FormData<T>>({
     default: {}
   })
 
@@ -78,10 +80,10 @@
     formProps: () => ({
       size: appSetting.formSize
     }),
-    formatFormData: (data: IFormData<T>) => cloneDeep(data)
+    formatFormData: async (data: FormData<T>) => cloneDeep(data)
   })
 
-  const modelState = ref<ModelState<T>>(useModel<T>(props.instance))
+  const modelState = ref<EzModelOptions<T>>(useModelOptions<T>(props.instance))
   const { save, update } = useModelApi<T>(modelState.value.api)
 
   const jsonScheme = computed<FieldOption<T>[]>(() =>
@@ -115,12 +117,12 @@
   /**
    * 是否展示确认按钮：查看表单不展示
    */
-  const showConfirmBtn = computed<boolean>(() => formType.value !== FormType.VIEW)
+  const showConfirmBtn = computed<boolean>(() => formType.value !== FormTypeEnum.VIEW)
 
   /**
    * 表单显示状态
    */
-  const showForm = defineModel<boolean>('showForm', { local: true, default: false })
+  const showForm = defineModel<boolean>('showForm', { default: false })
 
   const createInpComp = (field: FieldOption<T>) => {
     return createInputComponent<T>(field, formData, formType.value)
@@ -128,7 +130,7 @@
 
   const createFormItemProps = (field: FieldOption<T>): FormItemGiProps => {
     const { key, path, rule, rulePath, required, formSpan, label } = field
-    const _rule: EFormItemRule[] = []
+    const _rule: any[] = []
     if (rule) {
       if (isArray(rule)) {
         _rule.push(...rule.filter(({ formTypes }) => !formTypes || formTypes.includes(formType.value as any)))
@@ -145,13 +147,13 @@
    * @param type
    * @param fData
    */
-  const open = (type: IFormType, fData?: IFormData<T>) => {
+  const open = (type: FormType, fData?: FormData<T>) => {
     console.debug(`form show: type = ${type}, data = `, fData || {})
     fData && (formData.value = cloneDeep(fData))
     formData.value = cloneDeep({
       ...(props.defauleData || {}),
       ...(fData || {})
-    }) as IFormData<T>
+    }) as FormData<T>
     formType.value = type
     showForm.value = true
     formLoading.value = true
@@ -168,8 +170,8 @@
   }
 
   const emits = defineEmits<{
-    (e: 'success', resp?: R, formType?: IFormType): void
-    (e: 'error', error: unknown, resp?: R, formType?: IFormType): void
+    (e: 'success', resp?: R, formType?: FormType): void
+    (e: 'error', error: unknown, resp?: R, formType?: FormType): void
   }>()
 
   const submitHandle = async () => {
@@ -179,10 +181,10 @@
       let resp: any
       try {
         switch (formType.value) {
-          case FormType.ADD:
+          case FormTypeEnum.ADD:
             resp = await save(formDataClone)
             break
-          case FormType.EDIT:
+          case FormTypeEnum.EDIT:
             resp = await update(formDataClone)
             break
           default:
