@@ -8,12 +8,7 @@ module.exports = {
       jsx: true
     }
   },
-  extends: [
-    'plugin:vue/vue3-recommended',
-    'plugin:@typescript-eslint/recommended',
-    'prettier',
-    'plugin:prettier/recommended'
-  ],
+  extends: ['plugin:vue/vue3-recommended', 'plugin:@typescript-eslint/recommended', 'prettier', 'plugin:prettier/recommended'],
   rules: {
     'vue/multi-word-component-names': 'off',
     '@typescript-eslint/ban-ts-ignore': 'off',

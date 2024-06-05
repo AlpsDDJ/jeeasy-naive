@@ -1,4 +1,5 @@
-import { FormDataType, InputType } from '@/enums/EEnum'
+import { Field, FormDataTypeEnum, InputTypeEnum, Model } from 'easy-descriptor'
+import { BaseModel } from '@/hooks/useModel'
 
 @Model()
 class SysUser extends BaseModel {
@@ -6,11 +7,11 @@ class SysUser extends BaseModel {
   username?: String
 
   @Field('用户编号')
-  // @DataType(FormDataType.NUMBER)
+  // @Field.DataType(FormDataTypeEnum.NUMBER)
   userNo?: string
 
   @Field('密码')
-  @Hidden(['list', 'query'])
+  @Field.Hidden(['list', 'query'])
   password?: string
 
   @Field('手机号')
@@ -20,12 +21,12 @@ class SysUser extends BaseModel {
   realName?: string
 
   @Field('性别', { dict: 'Sex' })
-  @Dict('Sex')
-  @DataType(FormDataType.NUMBER)
+  @Field.Dict('Sex')
+  @Field.DataType(FormDataTypeEnum.NUMBER)
   sex?: number
 
   @Field('生日')
-  @DataType(FormDataType.DATE)
+  @Field.DataType(FormDataTypeEnum.DATE)
   birthday?: string
 
   @Field('邮箱')
@@ -35,8 +36,8 @@ class SysUser extends BaseModel {
   avatar?: string
 
   @Field('角色', { render: ({ roles }) => roles?.map?.(({ roleName }) => roleName)?.join(','), formSpan: 2 })
-  @DataType(FormDataType.ARRAY)
-  @Dict('#sys_role')
+  @Field.DataType(FormDataTypeEnum.ARRAY)
+  @Field.Dict('#sys_role')
   roles?: string[]
 
   @Field('部门', {
@@ -44,13 +45,13 @@ class SysUser extends BaseModel {
     formSpan: 2,
     inputProps: { topPid: '0', async: false }
   })
-  @DataType(FormDataType.ARRAY, InputType.TREE_SELECT)
-  @Dict('#sys_dept')
+  @Field.DataType(FormDataTypeEnum.ARRAY, InputTypeEnum.TREE_SELECT)
+  @Field.Dict('#sys_dept')
   depts?: string[]
 
   @Field('状态')
-  @Dict('SysUserStatus')
-  @DataType(FormDataType.NUMBER, InputType.SWITCH)
+  @Field.Dict('SysUserStatus')
+  @Field.DataType(FormDataTypeEnum.NUMBER, InputTypeEnum.SWITCH)
   status?: number
 }
 

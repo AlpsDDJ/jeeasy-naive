@@ -1,3 +1,5 @@
+import { FormTypeEnum } from 'easy-descriptor'
+
 export const appConfig: AppState = {
   siteName: 'Jeeasy',
   darkTheme: true,
@@ -20,7 +22,7 @@ export const appSetting: AppSetting = {
 }
 
 export const formTypeTitleMap = {
-  [FormType.ADD]: '新增',
-  [FormType.EDIT]: '编辑',
-  [FormType.VIEW]: '查看'
+  [FormTypeEnum.ADD]: '新增',
+  [FormTypeEnum.EDIT]: '编辑',
+  [FormTypeEnum.VIEW]: '查看'
 }

@@ -1,6 +1,7 @@
 // 导入接口和基类
-import { IFormData } from '@/components/ext/types'
 import { BaseModel } from '@/hooks/useModel'
+import { Axios, Delete, Get, Post, Put } from 'easy-descriptor'
+import type { FormData } from 'easy-descriptor'
 
 /**
  * 定义基础API类，提供模块化的基本操作。
@@ -8,13 +9,16 @@ import { BaseModel } from '@/hooks/useModel'
 export class BaseApi {
   protected static module = '' // 用于定义API的基础模块路径
   protected modelPath = '' // 用于存储模型路径
-  constructor() {} // 构造函数，初始化实例
+  constructor(modelPath?: string) {
+    this.modelPath = modelPath ?? ''
+  } // 构造函数，初始化实例
 }
 
 /**
  * 定义基于模型的API类，继承自BaseApi，提供具体的CRUD操作。
  * @template T 继承自BaseModel的模型类
  */
+@Axios()
 export class ModelApi<T extends BaseModel> extends BaseApi {
   // 使用GET方法定义分页查询的HTTP请求
   @Get()
@@ -26,11 +30,11 @@ export class ModelApi<T extends BaseModel> extends BaseApi {
 
   // 使用PUT方法定义更新信息的HTTP请求
   @Put()
-  declare update: HttpRequest<string, IFormData<T>>
+  declare update: HttpRequest<string, FormData<T>>
 
   // 使用POST方法定义保存信息的HTTP请求
   @Post()
-  declare save: HttpRequest<string, IFormData<T>>
+  declare save: HttpRequest<string, FormData<T>>
 
   // 使用DELETE方法定义根据ID删除信息的HTTP请求
   @Delete('/{id}')
@@ -45,8 +49,7 @@ export class ModelApi<T extends BaseModel> extends BaseApi {
    * @param modelPath 模型的路径，用于构建API的路径
    */
   constructor(modelPath: string) {
-    super()
-    super.modelPath = modelPath // 将模型路径赋值给父类的modelPath属性
+    super(modelPath)
   }
 }
 

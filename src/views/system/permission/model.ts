@@ -1,4 +1,7 @@
-import { FormDataType, InputType } from '@/enums/EEnum'
+// import { FormDataType, InputType } from '@/enums/EEnum'
+
+import { Field, FormDataTypeEnum, InputTypeEnum, Model } from 'easy-descriptor'
+import { BaseModel } from '@/hooks/useModel'
 
 @Model({
   name: 'SysPermission',
@@ -9,9 +12,9 @@ export default class SysPermission extends BaseModel {
   name?: string
 
   @Field('上级菜单', { inputProps: { topPid: '0', async: false } })
-  @Hidden(['list'])
-  @Dict('#sys_permission')
-  @DataType(FormDataType.STRING, InputType.TREE_SELECT)
+  @Field.Hidden(['list'])
+  @Field.Dict('#sys_permission')
+  @Field.DataType(FormDataTypeEnum.STRING, InputTypeEnum.TREE_SELECT)
   parentId?: string
 
   @Field('路径')
@@ -27,75 +30,75 @@ export default class SysPermission extends BaseModel {
   component?: string
 
   @Field('组件名称')
-  @Hidden(['list'])
+  @Field.Hidden(['list'])
   componentName?: string
 
   @Field('一级菜单路由地址')
-  @Hidden()
+  @Field.Hidden()
   redirect?: string
 
   @Field('菜单类型')
-  @Dict()
-  @DataType(FormDataType.NUMBER)
+  @Field.Dict()
+  @Field.DataType(FormDataTypeEnum.NUMBER)
   menuType?: number
 
   @Field('权限策略')
-  @Dict()
-  @DataType(FormDataType.NUMBER)
+  @Field.Dict()
+  @Field.DataType(FormDataTypeEnum.NUMBER)
   permsType?: number
 
   @Field('聚合子路由')
-  @Dict('boolean')
-  @Hidden(['list'])
-  @DataType(FormDataType.NUMBER, InputType.SWITCH)
+  @Field.Dict('boolean')
+  @Field.Hidden(['list'])
+  @Field.DataType(FormDataTypeEnum.NUMBER, InputTypeEnum.SWITCH)
   alwaysShow?: number
 
   @Field('路由菜单')
-  @Dict('boolean')
-  @DataType(FormDataType.NUMBER, InputType.SWITCH)
+  @Field.Dict('boolean')
+  @Field.DataType(FormDataTypeEnum.NUMBER, InputTypeEnum.SWITCH)
   route?: number
 
   @Field('叶子节点')
-  @Dict('boolean')
-  @DataType(FormDataType.NUMBER, InputType.SWITCH)
-  @Hidden()
+  @Field.Dict('boolean')
+  @Field.DataType(FormDataTypeEnum.NUMBER, InputTypeEnum.SWITCH)
+  @Field.Hidden()
   leaf?: number
 
   @Field('缓存页面')
-  @Dict('boolean')
-  @DataType(FormDataType.NUMBER, InputType.SWITCH)
+  @Field.Dict('boolean')
+  @Field.DataType(FormDataTypeEnum.NUMBER, InputTypeEnum.SWITCH)
   keepAlive?: number
 
   @Field('隐藏路由')
-  @Dict('boolean')
-  @DataType(FormDataType.NUMBER, InputType.SWITCH)
+  @Field.Dict('boolean')
+  @Field.DataType(FormDataTypeEnum.NUMBER, InputTypeEnum.SWITCH)
   hidden?: number
 
   @Field('添加数据权限')
-  @Dict('boolean')
-  @Hidden(['list'])
-  @DataType(FormDataType.NUMBER, InputType.SWITCH)
+  @Field.Dict('boolean')
+  @Field.Hidden(['list'])
+  @Field.DataType(FormDataTypeEnum.NUMBER, InputTypeEnum.SWITCH)
   ruleFlag?: number
 
   @Field('外链打开方式')
-  @Dict('LinkOpenType')
-  @Hidden(['query'])
-  @DataType(FormDataType.NUMBER)
+  @Field.Dict('LinkOpenType')
+  @Field.Hidden(['query'])
+  @Field.DataType(FormDataTypeEnum.NUMBER)
   internalOrExternal?: number
 
   @Field('菜单排序')
-  @Hidden(['query'])
-  @DataType(FormDataType.NUMBER)
+  @Field.Hidden(['query'])
+  @Field.DataType(FormDataTypeEnum.NUMBER)
   sortNo?: number
 
   @Field('描述', { formSpan: 3 })
-  @Hidden(['list', 'query'])
-  @DataType(FormDataType.STRING, InputType.TEXT_AREA)
+  @Field.Hidden(['list', 'query'])
+  @Field.DataType(FormDataTypeEnum.STRING, InputTypeEnum.TEXT_AREA)
   description?: string
 
   @Field('启用标记')
-  @DataType(FormDataType.NUMBER, InputType.SWITCH)
-  @Dict()
+  @Field.DataType(FormDataTypeEnum.NUMBER, InputTypeEnum.SWITCH)
+  @Field.Dict()
   enableFlag?: number
 }
 

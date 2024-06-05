@@ -1,5 +1,7 @@
-import { FormDataType, InputType } from '@/enums/EEnum'
 import { BaseApi } from '@/hooks/useApi'
+
+import { Axios, Field, FormDataTypeEnum, Get, InputTypeEnum, Model, Post } from 'easy-descriptor'
+import { BaseModel } from '@/hooks/useModel'
 
 @Model('SysRole')
 export default class SysRole extends BaseModel {
@@ -13,16 +15,16 @@ export default class SysRole extends BaseModel {
   description?: string
 
   @Field('排序')
-  @Hidden()
-  // @Hidden()
+  @Field.Hidden()
+  // @Field.Hidden()
   sortNo?: string
 
   @Field('备注')
   remark?: string
 
   @Field('启用标记')
-  @DataType(FormDataType.NUMBER, InputType.SWITCH)
-  @Dict()
+  @Field.DataType(FormDataTypeEnum.NUMBER, InputTypeEnum.SWITCH)
+  @Field.Dict()
   enableFlag?: number
 }
 
@@ -37,7 +39,7 @@ export type SaveRolePermissionParams = {
   permissions: string[]
 }
 
-@Server('/sys/role/')
+@Axios('/sys/role/')
 export class SysRoleApi extends BaseApi {
   @Get('permissions/{id}')
   static getRolePermission: HttpRequest<RolePermission[], DataIdParam>

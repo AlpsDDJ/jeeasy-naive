@@ -88,6 +88,6 @@ export const Rules = {
   ]
 }
 
-export const getRules = (...keys: (keyof typeof Rules)[]): EFormItemRule[] => {
-  return keys.map((key) => Rules[key]) as EFormItemRule[]
-}
+// export const getRules = (...keys: (keyof typeof Rules)[]): EFormItemRule[] => {
+//   return keys.map((key) => Rules[key]) as EFormItemRule[]
+// }
