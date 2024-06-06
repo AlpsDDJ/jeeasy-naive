@@ -2,49 +2,42 @@
   <div>
     <e-model>
       <template #top>
-        <e-search ref="queryRef" v-model:model-value="queryData" :instance="Model" :load-data="loadData" />
+        <e-search ref="queryRef" v-bind="queryProps" />
       </template>
-      <e-table ref="tableRef" :instance="Model" :query-data="queryData" :actions="rowActions" @show-form="showFormModal">
+      <e-table ref="tableRef" v-bind="tableProps" :actions="rowActions">
         <template ##enableFlag="row">
           <n-tag :type="row.enableFlag ? 'success' : 'warning'" :bordered="false">{{ row.enableFlag_dict }}</n-tag>
         </template>
       </e-table>
       <template #bottom>
-        <e-form
-          ref="formRef"
-          v-model:model-value="formData"
-          :instance="Model"
-          :cols="6"
-          :format-form-data="async (_formData) => ({ ..._formData, tableFields, tableIndexs })"
-          @success="loadData()"
-        >
+        <e-form ref="formRef" v-bind="formProps" :cols="6" :format-form-data="async (_formData) => ({ ..._formData, tableFields, tableIndexs })">
           <n-divider />
           <n-tabs v-model:value="activeTab" type="line" animated>
             <n-tab-pane name="db" tab="数据库属性" display-directive="show">
-              <e-table v-bind="commonTableProps" :instance="GenTableFieldForDB" :data="tableFields">
+              <e-table v-bind="commonTableProps(GenTableFieldForDB)">
                 <template ##columnName="row, index">
                   <n-input v-model:value="row.columnName" clearable @change="(value) => (tableFields[index].fieldName = camelCase(value))" />
                 </template>
               </e-table>
             </n-tab-pane>
             <n-tab-pane name="page" tab="页面属性" display-directive="show">
-              <e-table :instance="GenTableFieldForPage" v-bind="commonTableProps" :data="tableFields" />
+              <e-table v-bind="commonTableProps(GenTableFieldForPage)" />
             </n-tab-pane>
             <n-tab-pane name="rule" tab="校验字段" display-directive="show">
-              <e-table :instance="GenTableFieldForRule" v-bind="commonTableProps" :data="tableFields" />
+              <e-table v-bind="commonTableProps(GenTableFieldForRule)" />
             </n-tab-pane>
             <n-tab-pane name="fk" tab="外键" display-directive="show">
-              <e-table :instance="GenTableFieldForFk" v-bind="commonTableProps" :data="tableFields" />
+              <e-table v-bind="commonTableProps(GenTableFieldForFk)" />
             </n-tab-pane>
             <n-tab-pane name="idx" tab="索引" display-directive="show">
-              <e-table :instance="GenTableIndex" :actions="false" :show-page="false" enable-edit :data="tableIndexs" @show-form="handleAddTableIndex" />
+              <e-table v-bind="commonTableProps(GenTableIndex)" @show-form="handleAddTableIndex" />
             </n-tab-pane>
           </n-tabs>
         </e-form>
       </template>
     </e-model>
     <!--<gen-modal ref="genModalRef" />-->
-    <e-form ref="genModalRef" v-model:model-value="genData" :instance="GenModule" :format-form-data="handleGenSubmit">
+    <e-form ref="mFormRef" v-bind="mFormProps" :format-form-data="handleGenSubmit">
       <n-form-item label="生成文件">
         <n-checkbox-group v-model:value="checkedFileTypes">
           <n-space>
@@ -81,37 +74,35 @@
 </template>
 
 <script lang="ts" setup>
-  import Model, {
-    GenTableField,
-    GenTableFieldForDB,
-    GenTableFieldForPage,
-    GenTableFieldForRule,
-    GenTableFieldForFk,
-    GenTableIndex,
-    GeneratorApi
-  } from './model'
+  import Model, { GeneratorApi, GenTableFieldForDB, GenTableFieldForFk, GenTableFieldForPage, GenTableFieldForRule, GenTableIndex } from './model'
   import { initModel } from '@/components/ext'
-  import { EFormProps, ETableProps, ShowForm } from '@/components/ext/types'
+  import { ETableProps, FormatFormData } from '@/components/ext/types'
   import { camelCase, cloneDeep, upperFirst } from 'lodash-es'
   import { ButtonActions } from '@/components/ActionButton/commonActions'
   import GenModule, { GeneratorData, GeneratorFile, GenModuleApi } from '@/views/gen/module/model'
   import type { IFormData } from 'easy-descriptor'
+  import { BaseModelConstructor, useModelOptions } from 'easy-descriptor'
+  import { BaseModel } from '@/hooks/useModel'
 
   defineOptions({
     name: 'GenTableList'
   })
 
-  const { tableRef, formRef, queryRef, formData, queryData, loadData, showForm } = initModel()
   const activeTab = ref<string>('db')
 
   const tableFields = ref<GenTableFieldForDB[]>([])
   const tableIndexs = ref<GenTableIndex[]>([])
-  const showFormModal: ShowForm = (type, formData) => {
-    showForm(type, formData)
+  const beforeShowForm: FormatFormData<Model> = async (formData) => {
     activeTab.value = 'db'
     tableFields.value = cloneDeep(formData?.tableFields || [])
     tableIndexs.value = cloneDeep(formData?.tableIndexs || [])
+    return formData
   }
+
+  const {
+    refs: { tableRef, formRef, queryRef },
+    props: { tableProps, formProps, queryProps }
+  } = initModel(Model, { beforeShowForm })
 
   const handleAddTableField = () => {
     console.log('handleAddTableField')
@@ -130,12 +121,16 @@
     })
   }
 
-  const commonTableProps: Omit<ETableProps<GenTableField>, 'instance'> = {
+  const commonTableProps = <T extends BaseModel>(instance: BaseModelConstructor<T>): ETableProps<T> => ({
     actions: false,
     showPage: false,
     enableEdit: true,
-    onShowForm: handleAddTableField
-  }
+    modelOptions: useModelOptions(instance),
+    onShowForm: handleAddTableField,
+    data: tableFields.value as T[],
+    autoLoad: false
+    // loadData: async () => ({ records: [], size: 0, current: 0, total: 0, pages: 0 })
+  })
 
   const genModalRef = ref()
 
@@ -184,7 +179,7 @@
     })
   }
 
-  const handleGenSubmit: EFormProps<GenModule>['formatFormData'] = async () => {
+  const handleGenSubmit: FormatFormData<GenModule> = async () => {
     console.log('genData.value ---> ', genData.value)
     const module = genData.value
     const { name: tableName = '' } = currTable.value!
@@ -232,6 +227,11 @@
     await GeneratorApi.generator(data)
     return Promise.reject()
   }
+
+  const {
+    refs: { formRef: mFormRef },
+    props: { formProps: mFormProps }
+  } = initModel(GenModule, { beforeSubmit: handleGenSubmit })
 </script>
 
 <style scoped></style>

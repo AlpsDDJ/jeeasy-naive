@@ -11,7 +11,7 @@
           :columns="columns"
           :loading="loading"
           :data="tableData"
-          :pagination="showPage && pagination"
+          :pagination="showPage === false ? false : pagination"
           :remote="true"
           :tree="!!treeField"
           @update:page="
@@ -41,21 +41,20 @@
   import { h } from 'vue'
   import type { DataTableInst, GlobalThemeOverrides, PaginationProps } from 'naive-ui'
   import { FormItemGiProps, NFormItem, useThemeVars } from 'naive-ui'
-  import type { ColumnKey, FilterState, SortOrder, TableColumn } from 'naive-ui/es/data-table/src/interface'
+  import type { TableColumn } from 'naive-ui/es/data-table/src/interface'
   import type { ActionOption } from '@/components/ActionButton/commonActions'
   import ActionButton from '@/components/ActionButton/index.vue'
   import { cloneDeep, isArray } from 'lodash-es'
   import { BaseModel } from '@/hooks/useModel'
-  import { useModelApi } from '@/hooks/useApi'
   import { appSetting } from '@/config/app.config'
   import { createInputComponent } from '@/components/ext/index'
-  import type { ETableProps, LoadData, ETableInst, TableScrollToOption, ETableSlots } from './types'
-  import type { FieldOption, FormType, TreeField, IFormData } from 'easy-descriptor'
-  import { FormTypeEnum, useModelOptions } from 'easy-descriptor'
-  import { CsvOptionsType } from 'naive-ui/es/data-table/src/interface'
+  import type { ETableInst, ETableProps, ETableSlots, LoadData } from './types'
+  import type { FieldOption, FormType, IFormData, TreeField } from 'easy-descriptor'
+  import { FormTypeEnum } from 'easy-descriptor'
 
   defineOptions({
-    name: 'ETable'
+    name: 'ETable',
+    inheritAttrs: false
   })
 
   const props = withDefaults(defineProps<ETableProps<T>>(), {
@@ -63,12 +62,13 @@
     tableProps: () => ({}),
     beforeQuery: (queryData: any) => queryData,
     data: () => [],
-    showPage: true,
-    enableEdit: false
+    showPage: undefined,
+    enableEdit: false,
+    autoLoad: true
   })
   const tableEditFormRef = ref()
 
-  const modelState = ref(useModelOptions<T>(props.instance))
+  const modelState = props.modelOptions
   const actions = props.actions
 
   const handleAdd = () => {
@@ -126,7 +126,7 @@
   }
 
   if (actions !== false) {
-    modelState.value.fields['actions'] = {
+    modelState.fields['actions'] = {
       title: '操作',
       key: 'action',
       fixed: 'right',
@@ -175,7 +175,7 @@
   }
 
   const columns = computed(() =>
-    Object.values(modelState.value?.fields || {})
+    Object.values(modelState?.fields || {})
       .filter(({ hidden }) => !(hidden === true || (hidden && hidden?.includes('list'))))
       .map((col) => {
         if (props.enableEdit) {
@@ -201,11 +201,8 @@
       })
   )
 
-  // const showFormEmit = defineEmits<{ (evt: 'showForm', formData: any, type: IFormType): void }>()
-
   const emit = defineEmits<{
     (evt: 'showForm', type: FormType, formData: IFormData<T>): void
-    (evt: 'pageChange', page: PaginationProps | false): void
   }>()
 
   const showForm = (formData: any, type: FormType) => {
@@ -213,113 +210,63 @@
   }
 
   // const slots = useSlots()
-
-  const pagination = defineModel<PaginationProps>('page', {
-    default: {
-      page: 1,
-      pageSize: appSetting.pageSizes[0] || 10,
-      pageCount: 0,
-      itemCount: 0,
-      showQuickJumper: true,
-      showSizePicker: true,
-      pageSizes: appSetting.pageSizes,
-      prefix: ({ itemCount }) => `共 ${itemCount} 项 `
-    }
-  })
-
-  const pageChangeHandle = (page: PaginationProps) => {
-    // console.log('page = ', page)
-    pagination.value = Object.assign(pagination.value, page)
-    // pageValue.value && (pageValue.value = { ...pageValue.value, ...pagination })
-    loadData()
-    emit('pageChange', { ...pagination.value, ...page })
+  const defaultPage: PaginationProps = {
+    page: 1,
+    pageSize: appSetting.pageSizes[0] || 10,
+    pageCount: 0,
+    itemCount: 0,
+    showQuickJumper: true,
+    showSizePicker: true,
+    pageSizes: appSetting.pageSizes,
+    prefix: ({ itemCount }) => `共 ${itemCount} 项 `
   }
 
-  const tableRef = ref<DataTableInst>()
+  const pagination = ref<PaginationProps>(cloneDeep(defaultPage))
+
+  const load: LoadData<T> = async (params?: any) => {
+    loading.value = true
+    if (!props.loadData) {
+      tableData.value = props.data || []
+      return {} as any
+    }
+    const pageData = await props.loadData(params).finally(() => {
+      loading.value = false
+    })
+    const { records, size, current, total, pages } = pageData
+    tableData.value = records
+
+    pagination.value = {
+      ...pagination.value,
+      page: current,
+      pageSize: size,
+      itemCount: total,
+      pageCount: pages
+    }
+    return pageData
+  }
+
+  const pageChangeHandle = (page: PaginationProps) => {
+    pagination.value = Object.assign(pagination.value, page)
+    load(page)
+  }
+
+  const tableRef = defineModel<DataTableInst>('bindRef')
 
   const loading = ref<boolean>(false)
   const tableData = ref<T[]>()
-  // if (props.data && props.data.length > 0) {
-  //   tableData.value = props.data
-  // }
   tableData.value = props.data
-  const { page: loadPage } = useModelApi<T>(modelState.value.api)
+  // const { page: loadPage } = useModelApi<T>(modelState.api)
 
-  const treeField = modelState.value.tree as TreeField<T>
+  const treeField = modelState.tree as TreeField<T>
 
-  const loadData: LoadData<T> = async (param?: any) => {
-    loading.value = true
-    const { pageSize, page } = pagination.value
-    const params = {
-      size: pageSize,
-      current: page,
-      ...(props.queryData || {}),
-      ...param
-    }
-    try {
-      const resp = await loadPage(props.beforeQuery(params))
-      const {
-        data: { records, size, current, total, pages }
-      } = resp
-      tableData.value = cloneDeep(records) as T[]
-      loading.value = false
-
-      pagination.value = {
-        ...pagination.value,
-        page: current,
-        pageSize: size,
-        itemCount: total,
-        pageCount: pages
-      }
-      return resp.data
-    } catch (err) {
-      loading.value = false
-      return Promise.reject(err || new Error('数据加载失败'))
-    }
-  }
-
-  const tableExpose: ETableInst<T> = {
-    loadData,
-    filter: (filters: FilterState | null) => {
-      tableRef.value!.filter(filters)
-    },
-    filters: (filters: FilterState | null) => {
-      tableRef.value!.filters(filters)
-    },
-    clearFilters: () => {
-      tableRef.value!.clearFilters()
-    },
-    clearSorter: () => {
-      tableRef.value!.clearSorter()
-    },
-    page: (page: number) => {
-      tableRef.value!.page(page)
-    },
-    sort: (columnKey: ColumnKey, order: SortOrder) => {
-      tableRef.value!.sort(columnKey, order)
-    },
-    scrollTo: (x: number | TableScrollToOption, y?: number) => {
-      if (typeof x === 'number') {
-        tableRef.value!.scrollTo(x, y!)
-      } else {
-        tableRef.value!.scrollTo(x as TableScrollToOption)
-      }
-    },
-    clearFilter: () => {
-      tableRef.value!.clearFilter()
-    },
-    downloadCsv: (options?: CsvOptionsType) => {
-      tableRef.value!.downloadCsv(options)
-    }
-  }
-
-  defineExpose({
-    ...tableExpose
+  defineExpose<ETableInst<T>>({
+    reload: load,
+    getPageParams: () => unref(pagination) as PaginationProps
   })
 
   const slots = defineSlots<ETableSlots<T>>()
 
-  onMounted(() => {
+  onMounted(async () => {
     const slotsTmp = toRaw(slots)
     Object.keys(slotsTmp).forEach((slotName) => {
       if (slotName.indexOf('#') === 0) {
@@ -330,6 +277,8 @@
         }
       }
     })
+    tableData.value = props.data || []
+    props.autoLoad && (await load())
   })
   const inputColorDisabled = useThemeVars().value.inputColorDisabled //computed(() => themeVars.value.inputColorDisabled)
 </script>

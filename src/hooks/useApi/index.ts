@@ -1,6 +1,6 @@
 // 导入接口和基类
 import { BaseModel } from '@/hooks/useModel'
-import type { HttpRequest, IFormData } from 'easy-descriptor'
+import type { IFormData } from 'easy-descriptor'
 import { Api, Delete, Get, Post, Put } from 'easy-descriptor'
 
 /**
@@ -22,27 +22,27 @@ export class BaseApi {
 export class ModelApi<T extends BaseModel> extends BaseApi {
   // 使用GET方法定义分页查询的HTTP请求
   @Get()
-  declare page: HttpRequest<PageData<T>>
+  declare page: HttpReq<PageData<T>>
 
   // 使用GET方法定义根据ID获取信息的HTTP请求
   @Get('/{id}')
-  declare info: HttpRequest<T, DataIdParam>
+  declare info: HttpReq<T, DataIdParam>
 
   // 使用PUT方法定义更新信息的HTTP请求
   @Put()
-  declare update: HttpRequest<string, IFormData<T>>
+  declare update: HttpReq<string, IFormData<T>>
 
   // 使用POST方法定义保存信息的HTTP请求
   @Post()
-  declare save: HttpRequest<string, IFormData<T>>
+  declare save: HttpReq<string, IFormData<T>>
 
   // 使用DELETE方法定义根据ID删除信息的HTTP请求
   @Delete('/{id}')
-  declare delete: HttpRequest<string, DataIdParam>
+  declare delete: HttpReq<string, DataIdParam>
 
   // 使用DELETE方法定义批量删除的HTTP请求
   @Delete('/batch')
-  declare batchDelete: HttpRequest<string, { ids: string }>
+  declare batchDelete: HttpReq<string, { ids: string }>
 
   /**
    * 构造函数，初始化ModelApi实例。

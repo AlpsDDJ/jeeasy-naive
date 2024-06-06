@@ -1,50 +1,116 @@
-import { h, Ref } from 'vue'
+import { h, Raw } from 'vue'
 import { BaseModel } from '@/hooks/useModel'
-import { EFormInst, EModelState, ETableInst } from '@/components/ext/types'
-import { NDatePicker, NInput, NSwitch, NTimePicker } from 'naive-ui'
+import { EFormInst, EFormProps, EModelState, EQueryProps, ETableInst, ETableProps, FormatFormData, InitModelConfig, LoadData } from '@/components/ext/types'
+import { DataTableInst, FormInst, NDatePicker, NInput, NSwitch, NTimePicker } from 'naive-ui'
 import EDictInput from '@/components/ext/input/EDictInput.vue'
-import type { FieldOption, IFormData, FormType } from 'easy-descriptor'
-import { FormDataTypeEnum, FormTypeEnum, InputTypeEnum } from 'easy-descriptor'
+import type { EzModelOptions, FormType, IFormData } from 'easy-descriptor'
+import { BaseModelConstructor, FormDataTypeEnum, FormTypeEnum, InputTypeEnum, useModelOptions } from 'easy-descriptor'
+import { useModelApi } from '@/hooks/useApi'
+import { EzFieldOption } from '@/hooks/useModel/types'
 
-export const initModel = <T extends BaseModel>(): EModelState<T> => {
+export const initModel = <T extends BaseModel>(instance: BaseModelConstructor<T>, config?: InitModelConfig): EModelState<T> => {
   // const tableRef = ref<DataTableInst>()
   const tableRef = ref<ETableInst<T>>()
+  const nTableRef = ref<DataTableInst>()
   const formRef = ref<EFormInst<T>>()
+  const nFormRef = ref<FormInst>()
   const queryRef = ref<EFormInst<T>>()
-  // const formData = ref<IFormData<T>>()
-  const formData = ref<IFormData<T>>({})
-  const queryData = ref<IFormData<T>>({})
+  const nQueryRef = ref<FormInst>()
 
-  const loadData = (params: any = {}) => {
-    return tableRef.value!.loadData({ ...queryData.value, ...params })
+  const modelOptions: Raw<EzModelOptions<T>> = markRaw(useModelOptions<T>(instance))
+  const { page: loadPage } = useModelApi<T>(modelOptions.api)
+
+  const loadData: LoadData<T> = async (param?: any) => {
+    // tableLoading.value = true
+    const pagination = tableRef.value?.getPageParams() || {}
+    const queryData = queryRef.value?.getFormData() || {}
+    const { pageSize, page } = pagination
+    const params = {
+      size: pageSize,
+      current: page,
+      ...(queryData || {}),
+      ...param
+    }
+    const resp = await loadPage(config?.beforeQuery ? await config?.beforeQuery(params) : params).catch((err) => {
+      return Promise.reject(err || new Error('数据加载失败'))
+    })
+    return resp.data
   }
 
-  const showForm = (type: FormType, formData?: any) => {
-    formRef.value!.open(type, formData)
+  const showForm = async (type: FormType, formData?: any) => {
+    console.log('formData --> ', formData)
+    formRef.value!.open(type, config?.beforeShowForm ? await config.beforeShowForm(formData) : formData)
+  }
+
+  const reload: LoadData<T> = async (params?: any) => {
+    return await tableRef.value!.reload(params)
+  }
+
+  const tableProps: ETableProps<T> = {
+    'onUpdate:bindRef': (val: DataTableInst) => {
+      nTableRef.value = val
+    },
+    loadData,
+    instance,
+    modelOptions,
+    onShowForm: showForm
+    // 'on-show-form': showFormAndFormat
+  }
+
+  const formProps: EFormProps<T> = {
+    'onUpdate:bindRef': (val: FormInst) => {
+      nFormRef.value = val
+    },
+    instance,
+    modelOptions,
+    formatFormData: config?.beforeSubmit as FormatFormData<T>,
+    onSuccess: reload
+    // 'on-show-form': showFormAndFormat
+  }
+  const queryProps: EQueryProps<T> = {
+    'onUpdate:bindRef': (val: FormInst) => {
+      nFormRef.value = val
+    },
+    loadData: reload,
+    formProps: {
+      labelWidth: 80
+    },
+    instance,
+    modelOptions
   }
 
   return {
-    tableRef,
-    formRef,
-    queryRef,
-    formData: formData as Ref<IFormData<T>>,
-    queryData,
+    refs: {
+      tableRef,
+      nTableRef,
+      formRef,
+      nFormRef,
+      queryRef,
+      nQueryRef
+    },
+    modelOptions,
+    props: {
+      tableProps,
+      formProps,
+      queryProps
+    },
     loadData,
     showForm
-    // showForm
   }
 }
 
-export const createInputComponent = <T extends BaseModel>(field: FieldOption<T>, formData: Ref<IFormData<T>>, formType?: FormType, props?: any) => {
+export const createInputComponent = <T extends BaseModel>(field: EzFieldOption, formData: IFormData<T>, formType?: FormType, props?: any) => {
   const { key, path, label, inputType, inputProps = {}, queryInputProps = {}, disabled, disabledHandler } = field
   const query = formType === FormTypeEnum.SEARCH
   let component: any
-  const fieldValue = formData.value?.[path || key || '']
+  const dataKey: string = (path || key || '').toString()
+  const fieldValue = formData?.[dataKey]
+  const refFormData = ref<IFormData<T>>(formData)
   const compProps: Record<string, any> = {
     placeholder: label,
     value: fieldValue === undefined ? null : fieldValue,
     'onUpdate:value': (val: any) => {
-      formData.value[path || key || ''] = val
+      refFormData.value[dataKey] = val
     },
     clearable: true,
     filterable: true,
@@ -56,7 +122,7 @@ export const createInputComponent = <T extends BaseModel>(field: FieldOption<T>,
   if (
     disabled === true ||
     (disabled && formType && disabled.includes(formType as any)) ||
-    (disabledHandler && disabledHandler(formData.value as IFormData<T>, formType))
+    (disabledHandler && disabledHandler(refFormData.value as IFormData<T>, formType))
   ) {
     compProps.disabled = true
   }
@@ -103,5 +169,5 @@ export const createInputComponent = <T extends BaseModel>(field: FieldOption<T>,
     }
   }
   // console.log('compProps -->', compProps)
-  return h(component, compProps)
+  return markRaw(h(component, compProps))
 }

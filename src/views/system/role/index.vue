@@ -1,20 +1,18 @@
 <template>
-  <div>
-    <e-model>
-      <template #top>
-        <e-search ref="queryRef" v-model:model-value="queryData" :instance="Model" :load-data="loadData" />
+  <e-model>
+    <template #top>
+      <e-search ref="queryRef" v-bind="queryProps" />
+    </template>
+    <e-table ref="tableRef" v-bind="tableProps" :actions="rowActions">
+      <template ##status="row">
+        <n-tag :type="row.enableFlag ? 'success' : 'warning'" :bordered="false">{{ row.enableFlag_dict }}</n-tag>
       </template>
-      <e-table ref="tableRef" :instance="Model" :query-data="queryData" :actions="rowActions" @show-form="showForm">
-        <template ##enableFlag="row">
-          <n-tag :type="row.enableFlag ? 'success' : 'warning'" :bordered="false">{{ row.enableFlag_dict }}</n-tag>
-        </template>
-      </e-table>
-      <template #bottom>
-        <e-form ref="formRef" v-model="formData" :instance="Model" @success="loadData()" />
-      </template>
-    </e-model>
+    </e-table>
+    <template #bottom>
+      <e-form ref="formRef" v-bind="formProps" />
+    </template>
     <auth-modal ref="authModalRef" />
-  </div>
+  </e-model>
 </template>
 
 <script lang="ts" setup>
@@ -27,7 +25,9 @@
     name: 'SysRoleList'
   })
 
-  const { tableRef, formRef, queryRef, formData, queryData, loadData, showForm } = initModel()
+  const { refs, props } = initModel(Model)
+  const { tableRef, formRef, queryRef } = refs
+  const { tableProps, formProps, queryProps } = props
 
   const authModalRef = ref()
 
