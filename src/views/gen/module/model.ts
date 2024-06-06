@@ -1,4 +1,4 @@
-import { Axios, Field, Get, Model } from 'easy-descriptor'
+import { Api, Field, Get, Model } from 'easy-descriptor'
 import { BaseModel } from '@/hooks/useModel'
 import { BaseApi } from '@/hooks/useApi'
 
@@ -42,7 +42,7 @@ export default class GenModule extends BaseModel {
   files?: string[]
 }
 
-@Axios('/gen/module/')
+@Api('/gen/module/')
 export class GenModuleApi extends BaseApi {
   @Get('findByCode/{code}')
   static getModule: HttpRequest<GenModule, { code: string }>

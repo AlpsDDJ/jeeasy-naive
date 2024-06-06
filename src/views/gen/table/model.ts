@@ -1,13 +1,10 @@
-// import { Rule } from '@/hooks/useModel/decorator/Field'
-// import { getRules, Rules } from '@/utils/validateRules'
 import { GeneratorData } from '@/views/gen/module/model'
-import { Field, Model, Post, FormDataTypeEnum, InputTypeEnum, Axios } from 'easy-descriptor'
-import type { FieldAttrHandler, FormData } from 'easy-descriptor'
+import type { FieldAttrHandler, HttpRequest } from 'easy-descriptor'
+import { Api, Field, FormDataTypeEnum, InputTypeEnum, Model, Post } from 'easy-descriptor'
 import { BaseModel } from '@/hooks/useModel'
-import { BaseApi } from '@/hooks/useApi'
 
-const hiddenIfNotTree: FieldAttrHandler = (formData: FormData<GenTable>) => {
-  return !formData.izTree as any
+const hiddenIfNotTree: FieldAttrHandler<boolean, GenTable> = (formData) => {
+  return !formData.izTree
 }
 
 @Model()
@@ -390,14 +387,15 @@ export class GenTableIndex extends BaseModel {
   @Field('索引字段')
   indexFields?: string
 
-  @Field('索引类型', {
+  @Field<BaseModel>('索引类型', {
     width: 180,
-    dict: 'IndexType'
+    dict: 'IndexType',
+    test2: 123
   })
   indexType?: string
 }
 
-@Axios('/gen')
+@Api('/gen')
 export class GeneratorApi extends BaseApi {
   @Post('/generator')
   static generator: HttpRequest<string, GeneratorData>

@@ -1,6 +1,6 @@
 import { BaseApi } from '@/hooks/useApi'
 
-import { Axios, Field, FormDataTypeEnum, Get, InputTypeEnum, Model, Post } from 'easy-descriptor'
+import { Api, Field, FormDataTypeEnum, Get, InputTypeEnum, Model, Post } from 'easy-descriptor'
 import { BaseModel } from '@/hooks/useModel'
 
 @Model('SysRole')
@@ -39,7 +39,7 @@ export type SaveRolePermissionParams = {
   permissions: string[]
 }
 
-@Axios('/sys/role/')
+@Api('/sys/role/')
 export class SysRoleApi extends BaseApi {
   @Get('permissions/{id}')
   static getRolePermission: HttpRequest<RolePermission[], DataIdParam>

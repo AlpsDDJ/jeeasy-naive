@@ -2,8 +2,8 @@ import { Ref } from 'vue'
 import { DataTableInst, DataTableProps, FormInst, FormProps } from 'naive-ui'
 import { ButtonActions } from '@/components/ActionButton/commonActions'
 // import { FormDataType, FormType, InputType } from '@/enums/EEnum'
+import { BaseModelConstructor, FormType } from 'easy-descriptor'
 import { BaseModel } from '@/hooks/useModel'
-import { FormType } from 'easy-descriptor'
 
 // export type IFormType = EnumTypes<FormType>
 // export type IFormDataType = EnumTypes<FormDataType>
@@ -19,7 +19,7 @@ import { FormType } from 'easy-descriptor'
 // }
 
 export interface EFormInst<T extends BaseModel> extends FormInst {
-  open: (type: FormType, fData?: FormData<T>) => void
+  open: (type: FormType, fData?: IFormData<T>) => void
   close: () => Promise<void>
 }
 
@@ -28,10 +28,10 @@ export interface ETableProps<T extends BaseModel> {
   data?: T[]
   // modelState: ModelState<T>
   actions?: ButtonActions | false
-  onShowForm?: (type: FormType, fData?: FormData<T>) => void
+  onShowForm?: (type: FormType, fData?: IFormData<T>) => void
   formInst?: EFormInst<T>
-  queryData?: FormData<T>
-  beforeQuery?: (queryData: FormData<T>) => FormData<T>
+  queryData?: IFormData<T>
+  beforeQuery?: (queryData: IFormData<T>) => IFormData<T>
   tableProps?: DataTableProps
   showPage?: boolean
   enableEdit?: boolean
@@ -41,11 +41,11 @@ export interface ETableProps<T extends BaseModel> {
 export interface EFormProps<T extends BaseModel> {
   instance: BaseModelConstructor<T>
   isModal?: boolean
-  defauleData?: FormData<T>
+  defauleData?: IFormData<T>
   wSize?: number | string
   cols?: number
   formProps?: FormProps
-  formatFormData?: (fData: FormData<T>, type?: FormType) => Promise<FormData<T>>
+  formatFormData?: (fData: IFormData<T>, type?: FormType) => Promise<IFormData<T>>
 }
 //
 export interface EQueryInst<T extends BaseModel> extends FormInst {
@@ -56,7 +56,7 @@ export interface EQueryInst<T extends BaseModel> extends FormInst {
 export interface EQueryProps<T extends BaseModel> {
   instance: BaseModelConstructor<T>
   loadData: LoadData<T>
-  defauleData?: FormData<T>
+  defauleData?: IFormData<T>
   autoQuery?: boolean
   resetAndQuery?: boolean
   formProps?: FormProps
@@ -96,20 +96,20 @@ export interface EModelState<T extends BaseModel> {
   tableRef: Ref<ETableInst<T> | undefined>
   formRef: Ref<EFormInst<T> | undefined>
   queryRef: Ref<EFormInst<T> | undefined>
-  formData: Ref<FormData<T>>
-  queryData: Ref<FormData<T>>
+  formData: Ref<IFormData<T>>
+  queryData: Ref<IFormData<T>>
   loadData: LoadData<T>
   showForm: ShowForm
 }
 //
-// export interface FormData<T extends BaseModel> extends IFormData<T> {}
+// export interface IFormData<T extends BaseModel> extends IFormData<T> {}
 //
 // export interface FormatFormData<T extends BaseModel> {
 //   (fData: IFormData<T>, type?: IFormType): IFormData<T>
 // }
 //
 // export interface FormatQueryData<T extends BaseModel> {
-//   (fData: FormData<T>): FormData<T>
+//   (fData: IFormData<T>): IFormData<T>
 // }
 //
 // export interface InitModelOptions {
