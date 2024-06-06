@@ -1,5 +1,3 @@
-import { AxiosRequestConfig } from 'axios'
-
 declare global {
   type DataKey = string | symbol
   type InternalRowData = Record<string, any | unknown>
@@ -18,19 +16,10 @@ declare global {
     total: number
     pages: number
   }
-  // type TreeData<T> = T[]
-
-  export type HttpRequest<T = any, P = any> = {
-    (data?: P, config?: AxiosRequestConfig<P>): Promise<R<T>>
-  }
 
   export type DataIdParam = {
     id: string
   }
-
-  type EnumTypes<T extends string | number> = keyof { [k in T]: unknown }
-
-  type BaseModelConstructor<T> = typeof BaseModel & { new (...args: any[]): T }
 }
 
 export default {}

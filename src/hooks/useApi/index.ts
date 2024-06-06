@@ -1,7 +1,7 @@
 // 导入接口和基类
 import { BaseModel } from '@/hooks/useModel'
-import { Axios, Delete, Get, Post, Put } from 'easy-descriptor'
-import type { FormData } from 'easy-descriptor'
+import type { HttpRequest, IFormData } from 'easy-descriptor'
+import { Api, Delete, Get, Post, Put } from 'easy-descriptor'
 
 /**
  * 定义基础API类，提供模块化的基本操作。
@@ -18,7 +18,7 @@ export class BaseApi {
  * 定义基于模型的API类，继承自BaseApi，提供具体的CRUD操作。
  * @template T 继承自BaseModel的模型类
  */
-@Axios()
+@Api()
 export class ModelApi<T extends BaseModel> extends BaseApi {
   // 使用GET方法定义分页查询的HTTP请求
   @Get()
@@ -30,11 +30,11 @@ export class ModelApi<T extends BaseModel> extends BaseApi {
 
   // 使用PUT方法定义更新信息的HTTP请求
   @Put()
-  declare update: HttpRequest<string, FormData<T>>
+  declare update: HttpRequest<string, IFormData<T>>
 
   // 使用POST方法定义保存信息的HTTP请求
   @Post()
-  declare save: HttpRequest<string, FormData<T>>
+  declare save: HttpRequest<string, IFormData<T>>
 
   // 使用DELETE方法定义根据ID删除信息的HTTP请求
   @Delete('/{id}')
@@ -59,6 +59,4 @@ export class ModelApi<T extends BaseModel> extends BaseApi {
  * @param modelPath 模型的路径，用于构建API的路径
  * @returns 返回一个初始化后的ModelApi<T>实例
  */
-export const useModelApi = <T extends BaseModel>(modelPath: string) => {
-  return new ModelApi<T>(modelPath)
-}
+export const useModelApi = <T extends BaseModel>(modelPath: string) => new ModelApi<T>(modelPath)

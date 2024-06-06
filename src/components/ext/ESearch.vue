@@ -29,7 +29,7 @@
   import type { FormValidateCallback, ShouldRuleBeApplied } from 'naive-ui/es/form/src/interface'
   import { cloneDeep } from 'lodash-es'
   import { FormTypeEnum, useModelOptions } from 'easy-descriptor'
-  import type { FieldOption, FormData } from 'easy-descriptor'
+  import type { FieldOption, IFormData } from 'easy-descriptor'
 
   defineOptions({
     name: 'ESearch'
@@ -49,7 +49,7 @@
   })
 
   const cols = ref('1 600:2 900:3 1200:4 1500:5')
-  const queryData = defineModel<FormData<T>>({
+  const queryData = defineModel<IFormData<T>>({
     local: true,
     default: {}
   })

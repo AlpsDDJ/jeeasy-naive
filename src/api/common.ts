@@ -1,5 +1,6 @@
 import { DictData } from '@/components/ext/input/types'
-import { Axios, AxiosDescriptorBuilder, AxiosDescriptorConfig, Get, Post } from 'easy-descriptor'
+import type { AxiosDescriptorConfig, HttpRequest } from 'easy-descriptor'
+import { Api, AxiosDescriptorConifg, Get, Post } from 'easy-descriptor'
 import { AxiosInstance } from 'axios'
 import http from '@/utils/http'
 
@@ -7,13 +8,13 @@ import http from '@/utils/http'
  * 定义一个MyAxiosDescriptorConfig类，用于配置默认Axios实例。
  * 该类实现了AxiosDescriptorConfig接口。
  */
-@AxiosDescriptorBuilder()
+@AxiosDescriptorConifg()
 export class MyAxiosDescriptorConfig implements AxiosDescriptorConfig {
   // 可选的Axios实例，默认使用空配置创建一个Axios实例
   http?: AxiosInstance = http
 }
 
-@Axios()
+@Api()
 export class CommonApi {
   /**
    * 静态属性调用：

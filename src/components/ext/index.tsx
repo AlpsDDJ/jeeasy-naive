@@ -3,7 +3,7 @@ import { BaseModel } from '@/hooks/useModel'
 import { EFormInst, EModelState, ETableInst } from '@/components/ext/types'
 import { NDatePicker, NInput, NSwitch, NTimePicker } from 'naive-ui'
 import EDictInput from '@/components/ext/input/EDictInput.vue'
-import type { FieldOption, FormData, FormType } from 'easy-descriptor'
+import type { FieldOption, IFormData, FormType } from 'easy-descriptor'
 import { FormDataTypeEnum, FormTypeEnum, InputTypeEnum } from 'easy-descriptor'
 
 export const initModel = <T extends BaseModel>(): EModelState<T> => {
@@ -12,8 +12,8 @@ export const initModel = <T extends BaseModel>(): EModelState<T> => {
   const formRef = ref<EFormInst<T>>()
   const queryRef = ref<EFormInst<T>>()
   // const formData = ref<IFormData<T>>()
-  const formData = ref<FormData<T>>({})
-  const queryData = ref<FormData<T>>({})
+  const formData = ref<IFormData<T>>({})
+  const queryData = ref<IFormData<T>>({})
 
   const loadData = (params: any = {}) => {
     return tableRef.value!.loadData({ ...queryData.value, ...params })
@@ -27,7 +27,7 @@ export const initModel = <T extends BaseModel>(): EModelState<T> => {
     tableRef,
     formRef,
     queryRef,
-    formData: formData as Ref<FormData<T>>,
+    formData: formData as Ref<IFormData<T>>,
     queryData,
     loadData,
     showForm
@@ -35,7 +35,7 @@ export const initModel = <T extends BaseModel>(): EModelState<T> => {
   }
 }
 
-export const createInputComponent = <T extends BaseModel>(field: FieldOption<T>, formData: Ref<FormData<T>>, formType?: FormType, props?: any) => {
+export const createInputComponent = <T extends BaseModel>(field: FieldOption<T>, formData: Ref<IFormData<T>>, formType?: FormType, props?: any) => {
   const { key, path, label, inputType, inputProps = {}, queryInputProps = {}, disabled, disabledHandler } = field
   const query = formType === FormTypeEnum.SEARCH
   let component: any
@@ -56,7 +56,7 @@ export const createInputComponent = <T extends BaseModel>(field: FieldOption<T>,
   if (
     disabled === true ||
     (disabled && formType && disabled.includes(formType as any)) ||
-    (disabledHandler && disabledHandler(formData.value as FormData<T>, formType))
+    (disabledHandler && disabledHandler(formData.value as IFormData<T>, formType))
   ) {
     compProps.disabled = true
   }

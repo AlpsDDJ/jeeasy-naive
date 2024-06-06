@@ -50,7 +50,7 @@
   import { appSetting } from '@/config/app.config'
   import { createInputComponent } from '@/components/ext/index'
   import type { ETableProps, LoadData, ETableInst, TableScrollToOption, ETableSlots } from './types'
-  import type { FieldOption, FormType, TreeField, FormData } from 'easy-descriptor'
+  import type { FieldOption, FormType, TreeField, IFormData } from 'easy-descriptor'
   import { FormTypeEnum, useModelOptions } from 'easy-descriptor'
   import { CsvOptionsType } from 'naive-ui/es/data-table/src/interface'
 
@@ -204,7 +204,7 @@
   // const showFormEmit = defineEmits<{ (evt: 'showForm', formData: any, type: IFormType): void }>()
 
   const emit = defineEmits<{
-    (evt: 'showForm', type: FormType, formData: FormData<T>): void
+    (evt: 'showForm', type: FormType, formData: IFormData<T>): void
     (evt: 'pageChange', page: PaginationProps | false): void
   }>()
 

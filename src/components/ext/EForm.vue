@@ -55,7 +55,7 @@
   import { appSetting, formTypeTitleMap } from '@/config/app.config'
   import { cloneDeep, isArray } from 'lodash-es'
   import { useModelApi } from '@/hooks/useApi'
-  import type { FieldOption, FormType, FormData } from 'easy-descriptor'
+  import type { FieldOption, FormType, IFormData } from 'easy-descriptor'
   import type { EFormInst, EFormProps } from './types'
   import { FormTypeEnum, useModelOptions } from 'easy-descriptor'
   import { EzModelOptions } from 'easy-descriptor/dist/types'
@@ -71,7 +71,7 @@
    */
   const formType = ref<FormType>()
 
-  const formData = defineModel<FormData<T>>({
+  const formData = defineModel<IFormData<T>>({
     default: {}
   })
 
@@ -80,7 +80,7 @@
     formProps: () => ({
       size: appSetting.formSize
     }),
-    formatFormData: async (data: FormData<T>) => cloneDeep(data)
+    formatFormData: async (data: IFormData<T>) => cloneDeep(data)
   })
 
   const modelState = ref<EzModelOptions<T>>(useModelOptions<T>(props.instance))
@@ -147,13 +147,13 @@
    * @param type
    * @param fData
    */
-  const open = (type: FormType, fData?: FormData<T>) => {
+  const open = (type: FormType, fData?: IFormData<T>) => {
     console.debug(`form show: type = ${type}, data = `, fData || {})
     fData && (formData.value = cloneDeep(fData))
     formData.value = cloneDeep({
       ...(props.defauleData || {}),
       ...(fData || {})
-    }) as FormData<T>
+    }) as IFormData<T>
     formType.value = type
     showForm.value = true
     formLoading.value = true

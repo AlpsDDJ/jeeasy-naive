@@ -91,10 +91,11 @@
     GeneratorApi
   } from './model'
   import { initModel } from '@/components/ext'
-  import { EFormProps, ETableProps, IFormData, ShowForm } from '@/components/ext/types'
+  import { EFormProps, ETableProps, ShowForm } from '@/components/ext/types'
   import { camelCase, cloneDeep, upperFirst } from 'lodash-es'
   import { ButtonActions } from '@/components/ActionButton/commonActions'
   import GenModule, { GeneratorData, GeneratorFile, GenModuleApi } from '@/views/gen/module/model'
+  import type { IFormData } from 'easy-descriptor'
 
   defineOptions({
     name: 'GenTableList'
