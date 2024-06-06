@@ -1,5 +1,5 @@
 <template>
-  <n-form ref="formRef" v-bind="props.formProps" :model="queryData" label-placement="left" :show-feedback="false" inline label-width="auto">
+  <n-form ref="nFormRef" v-bind="{ ...defaultFormProps, ...formProps }" :model="queryData" label-placement="left" :show-feedback="false" inline>
     <n-grid :cols="cols" :y-gap="8" :x-gap="12" :collapsed="queryCollapsed">
       <n-form-item-gi v-for="item in queryScheme" :key="item.path || item.key" :label="item.label">
         <component :is="createInpComp(item)" v-model="queryData[item.path || item.key || '']" />
@@ -25,10 +25,9 @@
   import type { EQueryProps, EQueryInst } from './types'
   import { createInputComponent } from '@/components/ext/index'
   import { appSetting } from '@/config/app.config'
-  import type { FormInst } from 'naive-ui'
-  import type { FormValidateCallback, ShouldRuleBeApplied } from 'naive-ui/es/form/src/interface'
+  import type { FormInst, FormProps } from 'naive-ui'
   import { cloneDeep } from 'lodash-es'
-  import { FormTypeEnum, useModelOptions } from 'easy-descriptor'
+  import { FormTypeEnum } from 'easy-descriptor'
   import type { FieldOption, IFormData } from 'easy-descriptor'
 
   defineOptions({
@@ -36,67 +35,54 @@
     // inheritAttrs: true,
     // extends: NForm
   })
-  const formRef = ref<FormInst>()
+
+  const defaultFormProps: FormProps = {
+    size: appSetting.formSize
+  }
 
   const props = withDefaults(defineProps<EQueryProps<T>>(), {
-    size: 'medium',
     autoQuery: true,
     resetAndQuery: true,
     formProps: () => ({
       size: appSetting.formSize
     }),
-    defaultData: {}
+    defaultData: () => ({})
   })
 
-  const cols = ref('1 600:2 900:3 1200:4 1500:5')
-  const queryData = defineModel<IFormData<T>>({
-    local: true,
-    default: {}
-  })
-  // const queryData = ref<QueryData<T>>({})
-  const queryCollapsed = defineModel<boolean>('collapsed', { local: true, default: true })
+  console.log('props.formProps -->  ', props.formProps)
 
-  // const modelState = ref<ModelState<T>>(useModel<T>(props.instance))
+  const nFormRef = defineModel<FormInst>('nFormRef')
+  const modelState = props.modelOptions
+
+  const cols = ref<string>('1 600:2 900:3 1200:4 1500:5')
+  const queryData = ref<IFormData<BaseModel>>({})
+  const queryCollapsed = defineModel<boolean>('collapsed', { default: true })
   const queryScheme = computed<FieldOption<T>[]>(() =>
-    Object.values(useModelOptions<T>(props.instance)?.fields || []).filter(({ hidden }) => !(hidden === true || (hidden && hidden?.includes('query'))))
+    Object.values(modelState.fields || []).filter(({ hidden }) => !(hidden === true || (hidden && hidden?.includes('query'))))
   )
 
   const createInpComp = (field: FieldOption<T>) => {
-    return createInputComponent<T>(field, queryData, FormTypeEnum.SEARCH)
+    return createInputComponent<T>(field, queryData.value as IFormData<T>, FormTypeEnum.SEARCH)
   }
 
   const resetHandle = () => {
-    queryData.value = cloneDeep(props.defauleData || {})
+    props.defaultData && (queryData.value = cloneDeep(props.defaultData))
     props.resetAndQuery &&
       nextTick().then(() => {
         props.loadData()
       })
   }
 
-  /**
-   * 对外暴漏表单方法
-   */
-  const expose: EQueryInst<T> = {
-    restoreValidation: () => {
-      formRef.value!.restoreValidation()
-    },
-    validate: (callback?: FormValidateCallback, shouldRuleBeApplied?: ShouldRuleBeApplied) => {
-      return formRef.value!.validate(callback, shouldRuleBeApplied)
-    },
+  defineExpose<EQueryInst<T>>({
+    getFormData: () => queryData.value as IFormData<T>,
     query: (params?: any) => props.loadData(params),
     reset: resetHandle
-  }
-
-  defineExpose<EQueryInst<T>>({
-    ...expose
   })
 
   onMounted(() => {
-    if (props.defauleData) {
-      queryData.value = cloneDeep(props.defauleData)
-    }
+    props.defaultData && (queryData.value = cloneDeep(props.defaultData))
     // tableRef.value!.page(2)
-    props.autoQuery && props.loadData(props.defauleData || {})
+    // props.autoQuery && props.loadData(props.defaultData || {})
   })
 </script>
 

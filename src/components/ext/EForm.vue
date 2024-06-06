@@ -1,5 +1,5 @@
 <template>
-  <template v-if="props.isModal">
+  <template v-if="isModal">
     <n-drawer v-model:show="showForm" :width="wSize" :mask-closable="!showConfirmBtn" @after-enter="() => (formLoading = false)">
       <n-drawer-content>
         <template #header> {{ formTypeTitleMap[formType || ''] || '' }} </template>
@@ -7,7 +7,7 @@
           <slot name="top" />
           <div :style="{ minHeight: '500px' }">
             <div v-if="!formLoading">
-              <n-form ref="formRef" v-bind="props.formProps" :model="formData" label-placement="left" :inline="cols !== 1" label-width="auto">
+              <n-form ref="formRef" v-bind="formProps" :model="formData" label-placement="left" :inline="cols !== 1" label-width="auto">
                 <n-grid :cols="cols" :x-gap="12">
                   <n-form-item-gi v-for="item in jsonScheme" :key="item.path || item.key" v-bind="createFormItemProps(item)">
                     <component :is="createInpComp(item)" />
@@ -36,7 +36,7 @@
   </template>
   <template v-else>
     <slot name="top" />
-    <n-form ref="formRef" v-bind="props.formProps" :model="formData" label-placement="left" :inline="cols !== 1" label-width="auto">
+    <n-form ref="formRef" v-bind="formProps" :model="formData" label-placement="left" :inline="cols !== 1" label-width="auto">
       <n-grid :cols="cols" :x-gap="12">
         <n-form-item-gi v-for="item in jsonScheme" :key="item.path || item.key" v-bind="createFormItemProps(item)">
           <component :is="createInpComp(item)" />
@@ -50,15 +50,13 @@
 <script lang="ts" setup generic="T extends BaseModel">
   import { BaseModel } from '@/hooks/useModel'
   import type { FormInst, FormItemGiProps } from 'naive-ui'
-  import type { FormValidateCallback, ShouldRuleBeApplied } from 'naive-ui/es/form/src/interface'
   import { createInputComponent } from './index'
   import { appSetting, formTypeTitleMap } from '@/config/app.config'
   import { cloneDeep, isArray } from 'lodash-es'
   import { useModelApi } from '@/hooks/useApi'
   import type { FieldOption, FormType, IFormData } from 'easy-descriptor'
+  import { FormTypeEnum } from 'easy-descriptor'
   import type { EFormInst, EFormProps } from './types'
-  import { FormTypeEnum, useModelOptions } from 'easy-descriptor'
-  import { EzModelOptions } from 'easy-descriptor/dist/types'
 
   defineOptions({
     name: 'EForm'
@@ -71,9 +69,7 @@
    */
   const formType = ref<FormType>()
 
-  const formData = defineModel<IFormData<T>>({
-    default: {}
-  })
+  const formData = ref<IFormData<T>>()
 
   const props = withDefaults(defineProps<EFormProps<T>>(), {
     isModal: true,
@@ -82,14 +78,14 @@
     }),
     formatFormData: async (data: IFormData<T>) => cloneDeep(data)
   })
+  const modelState = props.modelOptions
 
-  const modelState = ref<EzModelOptions<T>>(useModelOptions<T>(props.instance))
-  const { save, update } = useModelApi<T>(modelState.value.api)
+  const { save, update } = useModelApi<T>(modelState.api)
 
   const jsonScheme = computed<FieldOption<T>[]>(() =>
-    Object.values(modelState.value?.fields || []).filter(({ hidden, hiddenHandler }) => {
+    Object.values(modelState?.fields || []).filter(({ hidden, hiddenHandler }) => {
       const flag1 = !(hidden === true || (hidden && hidden?.includes('form')) || (formType?.value && hidden && hidden?.includes(formType as any)))
-      const flag2 = !hiddenHandler || !hiddenHandler(formData.value, formType.value)
+      const flag2 = !hiddenHandler || !hiddenHandler(formData.value as IFormData<T>, formType.value)
       return flag1 && flag2
     })
   )
@@ -125,7 +121,7 @@
   const showForm = defineModel<boolean>('showForm', { default: false })
 
   const createInpComp = (field: FieldOption<T>) => {
-    return createInputComponent<T>(field, formData, formType.value)
+    return createInputComponent<T>(field, formData.value as IFormData<T>, formType.value)
   }
 
   const createFormItemProps = (field: FieldOption<T>): FormItemGiProps => {
@@ -177,7 +173,7 @@
   const submitHandle = async () => {
     formLoading.value = true
     try {
-      const formDataClone = await props.formatFormData(formData.value, formType.value)
+      const formDataClone = await props.formatFormData(formData.value as IFormData<T>, formType.value)
       let resp: any
       try {
         switch (formType.value) {
@@ -206,22 +202,10 @@
     // if (formDataClone === false) return
   }
 
-  /**
-   * 对外暴漏表单方法
-   */
-  const expose = {
-    restoreValidation: () => {
-      formRef.value!.restoreValidation()
-    },
-    validate: (callback?: FormValidateCallback, shouldRuleBeApplied?: ShouldRuleBeApplied) => {
-      return formRef.value!.validate(callback, shouldRuleBeApplied)
-    }
-  }
-
   defineExpose<EFormInst<T>>({
     open,
     close,
-    ...expose
+    getFormData: () => formData.value as IFormData<T>
   })
 
   defineSlots<{

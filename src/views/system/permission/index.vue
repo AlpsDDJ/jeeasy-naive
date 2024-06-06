@@ -1,9 +1,9 @@
 <template>
   <e-model>
     <template #top>
-      <e-search ref="queryRef" v-model:model-value="queryData" :instance="Model" :load-data="loadData" :defaule-data="{ parentId: '0' }" />
+      <e-search ref="queryRef" v-bind="queryProps" />
     </template>
-    <e-table ref="tableRef" :instance="Model" :query-data="queryData" @show-form="showForm">
+    <e-table ref="tableRef" v-bind="tableProps">
       <template ##icon="row">
         <icon v-if="row.icon" :icon-name="row.icon"></icon>
       </template>
@@ -16,7 +16,7 @@
       </template>
     </e-table>
     <template #bottom>
-      <e-form ref="formRef" v-model:model-value="formData" :instance="Model" @success="loadData()" />
+      <e-form ref="formRef" v-bind="formProps" />
     </template>
   </e-model>
 </template>
@@ -29,7 +29,9 @@
     name: 'SysPermissionList'
   })
 
-  const { tableRef, formRef, queryRef, formData, queryData, loadData, showForm } = initModel()
+  const { refs, props } = initModel(Model)
+  const { tableRef, formRef, queryRef } = refs
+  const { tableProps, formProps, queryProps } = props
 </script>
 
 <style scoped></style>

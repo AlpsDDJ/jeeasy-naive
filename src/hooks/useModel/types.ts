@@ -3,6 +3,7 @@ import { TableColumn, TableExpandColumn, TableSelectionColumn } from 'naive-ui/e
 
 export type EzFieldOption = FieldOption &
   Omit<TableColumn, 'key' | 'type'> & {
+    path?: string
     key?: DataKey
     type?: TableSelectionColumn['type'] | TableExpandColumn['type'] | never
     test2?: number

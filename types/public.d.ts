@@ -1,6 +1,7 @@
+import { HttpRequest } from 'easy-descriptor'
+
 declare global {
   type DataKey = string | symbol
-  type InternalRowData = Record<string, any | unknown>
 
   type R<T = any> = {
     code: number
@@ -9,6 +10,9 @@ declare global {
     message?: string
     timestamp?: number
   }
+
+  type HttpReq<T, P = any> = HttpRequest<R<T>, P>
+
   type PageData<T> = {
     records: T[]
     size: number
