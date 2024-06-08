@@ -42,8 +42,8 @@ export type SaveRolePermissionParams = {
 @Api('/sys/role/')
 export class SysRoleApi extends BaseApi {
   @Get('permissions/{id}')
-  static getRolePermission: HttpRequest<RolePermission[], DataIdParam>
+  static getRolePermission: HttpReq<RolePermission[], DataIdParam>
 
   @Post('permissions')
-  static saveRolePermission: HttpRequest<string, SaveRolePermissionParams>
+  static saveRolePermission: HttpReq<string, SaveRolePermissionParams>
 }

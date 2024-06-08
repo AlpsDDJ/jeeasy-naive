@@ -9,6 +9,9 @@ const hiddenIfNotTree: FieldAttrHandler<boolean, GenTable> = (formData) => {
 
 @Model()
 export default class GenTable extends BaseModel {
+  @Field<BaseModel>('', { type: 'selection', hidden: ['query', 'form'] })
+  selection?: boolean
+
   @Field('表名')
   @Field.Disabled(['edit'])
   name?: string
@@ -108,14 +111,6 @@ export default class GenTable extends BaseModel {
    */
   tableIndexs?: GenTableIndex[]
 }
-
-// @Model()
-// export class GenTableField extends BaseModel {
-//   @Field('表ID')
-//   @Field.Hidden()
-//   tableId?: string
-// }
-
 const disableIfId: FieldAttrHandler = ({ columnName }) => columnName === 'id'
 
 /**
@@ -123,11 +118,14 @@ const disableIfId: FieldAttrHandler = ({ columnName }) => columnName === 'id'
  */
 @Model()
 export class GenTableFieldForDB extends BaseModel {
+  @Field<BaseModel>('', { type: 'selection', hidden: ['query', 'form'] })
+  selection?: boolean
+
   @Field('表ID')
   @Field.Hidden()
   tableId?: string
 
-  @Field('列名', {
+  @Field('字段名', {
     width: 180
   })
   @Field.Disabled([], disableIfId)
@@ -150,7 +148,7 @@ export class GenTableFieldForDB extends BaseModel {
   @Field.Disabled([], disableIfId)
   jdbcType?: string
 
-  @Field('字段名')
+  @Field('属性名')
   @Field.Hidden()
   @Field.Disabled([], disableIfId)
   fieldName?: string
@@ -186,7 +184,7 @@ export class GenTableFieldForDB extends BaseModel {
   @Field.DataType(FormDataTypeEnum.NUMBER, InputTypeEnum.SWITCH)
   primaryKey?: number
 
-  @Field('允许空值', {
+  @Field<BaseModel>('允许空值', {
     width: 100,
     align: 'center'
   })
@@ -205,7 +203,7 @@ export class GenTableFieldForPage extends BaseModel {
   @Field.Hidden()
   tableId?: string
 
-  @Field('列名', {
+  @Field('字段名', {
     width: 180
   })
   @Field.Disabled()
@@ -217,7 +215,7 @@ export class GenTableFieldForPage extends BaseModel {
   @Field.Disabled()
   description?: string
 
-  @Field('字段名')
+  @Field('属性名')
   @Field.Disabled([], disableIfId)
   fieldName?: string
 
@@ -314,7 +312,7 @@ export class GenTableFieldForRule extends BaseModel {
   @Field.Hidden()
   tableId?: string
 
-  @Field('列名', {
+  @Field('字段名', {
     width: 180
   })
   @Field.Disabled()
@@ -363,7 +361,7 @@ export class GenTableFieldForFk extends BaseModel {
   @Field.Hidden()
   tableId?: string
 
-  @Field('列名', {
+  @Field('字段名', {
     width: 180
   })
   @Field.Disabled()
@@ -387,6 +385,8 @@ export class GenTableFieldForFk extends BaseModel {
   @Field.Disabled([], disableIfId)
   mainTableField?: string
 }
+
+export interface GenTableField extends GenTableFieldForRule, GenTableFieldForRule, GenTableFieldForDB, GenTableFieldForFk {}
 
 /**
  * 索引配置

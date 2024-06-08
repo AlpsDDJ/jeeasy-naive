@@ -207,7 +207,10 @@
   defineExpose<EFormInst<T>>({
     open,
     close,
-    getFormData: () => formData.value as IFormData<T>
+    getFormData: () => formData.value as IFormData<T>,
+    setFormData: (data: IFormData<T>) => {
+      formData.value = { ...formData.value, ...data }
+    }
   })
 
   defineSlots<{
