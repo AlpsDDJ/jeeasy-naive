@@ -5,6 +5,6 @@ export type EzFieldOption = FieldOption &
   Omit<TableColumn, 'key' | 'type'> & {
     path?: string
     key?: DataKey
-    type?: TableSelectionColumn['type'] | TableExpandColumn['type'] | never
+    type?: TableSelectionColumn['type'] | TableExpandColumn['type'] | 'index' | never
     test2?: number
   }

@@ -15,6 +15,7 @@ export interface EFormInst<T extends BaseModel> {
   open: (type: FormType, fData?: IFormData<T>) => Promise<void>
   close: () => Promise<void>
   getFormData: () => IFormData<T>
+  setFormData: (data: IFormData<T>) => void
 }
 
 interface BindRefProps<T> {

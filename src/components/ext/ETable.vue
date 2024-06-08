@@ -12,6 +12,7 @@
           :loading="loading"
           :data="tableData"
           :pagination="showPage === false ? false : pagination"
+          :row-key="({ id }) => id"
           :remote="true"
           :tree="!!treeField"
           @update:page="

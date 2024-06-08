@@ -16,7 +16,19 @@
             <n-tab-pane name="db" tab="数据库属性" display-directive="show">
               <e-table ref="dbTableRef" v-bind="dbTableProps" :data="tableFields">
                 <template ##columnName="row, index">
-                  <n-input v-model:value="row.columnName" clearable @change="(value) => (tableFields[index].fieldName = camelCase(value))" />
+                  <n-auto-complete
+                    v-model:value="row.columnName"
+                    :input-props="{
+                      autocomplete: 'disabled'
+                    }"
+                    :options="columnNameOptions(index)"
+                    clearable
+                    @change="
+                      (event: Event) => {
+                        columnNameChangeHandle(event, index)
+                      }
+                    "
+                  />
                 </template>
               </e-table>
             </n-tab-pane>
@@ -36,7 +48,6 @@
         </e-form>
       </template>
     </e-model>
-    <!--<gen-modal ref="genModalRef" />-->
     <e-form ref="mFormRef" v-bind="mFormProps" :before-submit="handleGenSubmit">
       <n-form-item label="生成文件">
         <n-checkbox-group v-model:value="checkedFileTypes">
@@ -69,19 +80,27 @@
         </n-form-item>
       </template>
     </e-form>
-    <!--<e-form ref="genModalRef" :instance="GenModule" />-->
   </div>
 </template>
 
 <script lang="ts" setup>
-  import Model, { GeneratorApi, GenTableFieldForDB, GenTableFieldForFk, GenTableFieldForPage, GenTableFieldForRule, GenTableIndex } from './model'
+  import Model, {
+    GeneratorApi,
+    GenTableField,
+    GenTableFieldForDB,
+    GenTableFieldForFk,
+    GenTableFieldForPage,
+    GenTableFieldForRule,
+    GenTableIndex
+  } from './model'
   import { initModel } from '@/components/ext'
   import { EModelCommProps, FormatFormData } from '@/components/ext/types'
-  import { camelCase, cloneDeep, upperFirst } from 'lodash-es'
+  import { camelCase, cloneDeep, upperFirst, snakeCase, uniqueId } from 'lodash-es'
   import { ButtonActions } from '@/components/ActionButton/commonActions'
   import GenModule, { GeneratorData, GeneratorFile, GenModuleApi } from '@/views/gen/module/model'
   import type { IFormData } from 'easy-descriptor'
   import { FormTypeEnum } from '../../../../.yalc/easy-descriptor'
+  import { commonFields } from '@/views/gen/table/commonFields'
 
   defineOptions({
     name: 'GenTableList'
@@ -89,16 +108,39 @@
 
   const activeTab = ref<string>('db')
 
-  const tableFields = ref<GenTableFieldForDB[]>([])
+  const tableFields = ref<GenTableField[]>([])
   const tableIndexs = ref<GenTableIndex[]>([])
+
+  const columnNameOptions = computed(() => (rowIndex: number) => {
+    const name = tableFields.value[rowIndex].columnName
+    return commonFields
+      .map(({ columnName }) => ({ label: columnName, value: columnName }))
+      .filter(
+        ({ value }) =>
+          name && value?.toLocaleLowerCase().includes(name.toLocaleLowerCase()) && !tableFields.value.some(({ columnName }) => columnName === value)
+      )
+  })
+
+  const columnNameChangeHandle = (event: Event, rowIndex: number) => {
+    const intputElement = event.target as HTMLInputElement
+    const value = intputElement.value
+    if (commonFields.some(({ columnName }) => columnName === value)) {
+      tableFields.value[rowIndex] = commonFields.find(({ columnName }) => columnName === value)!
+    } else {
+      tableFields.value[rowIndex].fieldName = camelCase(value)
+      tableFields.value[rowIndex].columnName = snakeCase(value)
+    }
+  }
+
   const beforeSubmit: FormatFormData<Model> = async (formData) => {
-    // activeTab.value = 'db'
-    // tableFields.value = cloneDeep(formData?.tableFields || [])
-    // tableIndexs.value = cloneDeep(formData?.tableIndexs || [])
-    return { ...formData, tableFields: tableFields.value, tableIndexs: tableIndexs.value }
+    activeTab.value = 'db'
+    return {
+      ...formData,
+      tableFields: tableFields.value.map(({ id, ...fields }) => ({ ...fields, id: id?.startsWith('tmp_') ? undefined : id })),
+      tableIndexs: tableIndexs.value.map(({ id, ...indexs }) => ({ ...indexs, id: id?.startsWith('tmp_') ? undefined : id }))
+    }
   }
   const formatFormData: FormatFormData<Model> = async (formData) => {
-    console.log('formData --->>>> ', formData)
     activeTab.value = 'db'
     tableFields.value = cloneDeep(formData?.tableFields || [])
     tableIndexs.value = cloneDeep(formData?.tableIndexs || [])
@@ -111,8 +153,8 @@
   } = initModel(Model)
 
   const handleAddTableField = (formData: IFormData<GenTableFieldForDB>) => {
-    console.log('handleAddTableField')
     tableFields.value.push({
+      id: uniqueId('tmp_'),
       ...formData,
       length: 0,
       decimalPlaces: 0,
@@ -135,7 +177,10 @@
     enableEdit: true,
     autoLoad: false,
     // data: tableFields,
-    onShowForm: handleAddTableField
+    onShowForm: handleAddTableField,
+    tableProps: {
+      singleLine: false
+    }
   }
 
   const indexTableProps: EModelCommProps<GenTableFieldForDB>['tableProps'] = {
@@ -168,27 +213,6 @@
     refs: { tableRef: idxTableRef },
     commProps: { tableProps: idxTableProps }
   } = initModel(GenTableIndex, { tableProps: indexTableProps })
-
-  // const commonTableProps = computed(
-  //   () =>
-  //     <T extends BaseModel>(
-  //       instance: BaseModelConstructor<T>,
-  //       _data?: T[]
-  //     ): ETableProps<T> & {
-  //       onShowForm?: ShowForm
-  //     } => ({
-  //       actions: false,
-  //       showPage: false,
-  //       enableEdit: true,
-  //       modelOptions: useModelOptions(instance),
-  //       onShowForm: _data ? handleAddTableIndex : handleAddTableField,
-  //       data: _data || (tableFields.value as T[]),
-  //       autoLoad: false
-  //       // loadData: async () => ({ records: [], size: 0, current: 0, total: 0, pages: 0 })
-  //     })
-  // )
-
-  // const genModalRef = ref()
 
   const handleGen = (data) => {
     // genModalRef.value.open(id)
@@ -229,10 +253,11 @@
           module[key] && (genData.value[key] = module[key].replace(/{\s*(.*?)\s*}/g, (_, key) => replaceParams[key]))
         })
         console.log('genData.value ---> ', genData.value)
-        // genData.value = {
-        //   ...genData.value,
-        //   ...module
-        // }
+        genData.value = {
+          ...genData.value,
+          ...module
+        }
+        mFormRef.value?.setFormData(genData.value)
       }
     })
   }
@@ -281,7 +306,6 @@
         return file
       })
     }
-    console.log('GeneratorData ----> ', data)
     await GeneratorApi.generator(data)
     return Promise.reject()
   }
@@ -292,4 +316,11 @@
   } = initModel(GenModule)
 </script>
 
-<style scoped></style>
+<style scoped lang="less">
+  :deep(.n-data-table-td--center-align) {
+    .n-form-item-blank {
+      display: flex;
+      justify-content: center;
+    }
+  }
+</style>
