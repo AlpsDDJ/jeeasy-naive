@@ -10,34 +10,34 @@
         </template>
       </e-table>
       <template #bottom>
-        <e-form ref="formRef" v-bind="formProps" :cols="6" :format-form-data="async (_formData) => ({ ..._formData, tableFields, tableIndexs })">
+        <e-form ref="formRef" v-bind="formProps" :cols="6" :before-submit="beforeSubmit" :format-form-data="formatFormData">
           <n-divider />
           <n-tabs v-model:value="activeTab" type="line" animated>
             <n-tab-pane name="db" tab="数据库属性" display-directive="show">
-              <e-table v-bind="commonTableProps(GenTableFieldForDB)">
+              <e-table ref="dbTableRef" v-bind="dbTableProps" :data="tableFields">
                 <template ##columnName="row, index">
                   <n-input v-model:value="row.columnName" clearable @change="(value) => (tableFields[index].fieldName = camelCase(value))" />
                 </template>
               </e-table>
             </n-tab-pane>
             <n-tab-pane name="page" tab="页面属性" display-directive="show">
-              <e-table v-bind="commonTableProps(GenTableFieldForPage)" />
+              <e-table ref="pageTableRef" v-bind="pageTableProps" :data="tableFields" />
             </n-tab-pane>
             <n-tab-pane name="rule" tab="校验字段" display-directive="show">
-              <e-table v-bind="commonTableProps(GenTableFieldForRule)" />
+              <e-table ref="ruleTableRef" v-bind="ruleTableProps" :data="tableFields" />
             </n-tab-pane>
             <n-tab-pane name="fk" tab="外键" display-directive="show">
-              <e-table v-bind="commonTableProps(GenTableFieldForFk)" />
+              <e-table ref="fkTableRef" v-bind="fkTableProps" :data="tableFields" />
             </n-tab-pane>
             <n-tab-pane name="idx" tab="索引" display-directive="show">
-              <e-table v-bind="commonTableProps(GenTableIndex)" @show-form="handleAddTableIndex" />
+              <e-table ref="idxTableRef" v-bind="idxTableProps" :data="tableIndexs" />
             </n-tab-pane>
           </n-tabs>
         </e-form>
       </template>
     </e-model>
     <!--<gen-modal ref="genModalRef" />-->
-    <e-form ref="mFormRef" v-bind="mFormProps" :format-form-data="handleGenSubmit">
+    <e-form ref="mFormRef" v-bind="mFormProps" :before-submit="handleGenSubmit">
       <n-form-item label="生成文件">
         <n-checkbox-group v-model:value="checkedFileTypes">
           <n-space>
@@ -76,13 +76,12 @@
 <script lang="ts" setup>
   import Model, { GeneratorApi, GenTableFieldForDB, GenTableFieldForFk, GenTableFieldForPage, GenTableFieldForRule, GenTableIndex } from './model'
   import { initModel } from '@/components/ext'
-  import { ETableProps, FormatFormData } from '@/components/ext/types'
+  import { EModelCommProps, FormatFormData } from '@/components/ext/types'
   import { camelCase, cloneDeep, upperFirst } from 'lodash-es'
   import { ButtonActions } from '@/components/ActionButton/commonActions'
   import GenModule, { GeneratorData, GeneratorFile, GenModuleApi } from '@/views/gen/module/model'
   import type { IFormData } from 'easy-descriptor'
-  import { BaseModelConstructor, useModelOptions } from 'easy-descriptor'
-  import { BaseModel } from '@/hooks/useModel'
+  import { FormTypeEnum } from '../../../../.yalc/easy-descriptor'
 
   defineOptions({
     name: 'GenTableList'
@@ -92,21 +91,29 @@
 
   const tableFields = ref<GenTableFieldForDB[]>([])
   const tableIndexs = ref<GenTableIndex[]>([])
-  const beforeShowForm: FormatFormData<Model> = async (formData) => {
+  const beforeSubmit: FormatFormData<Model> = async (formData) => {
+    // activeTab.value = 'db'
+    // tableFields.value = cloneDeep(formData?.tableFields || [])
+    // tableIndexs.value = cloneDeep(formData?.tableIndexs || [])
+    return { ...formData, tableFields: tableFields.value, tableIndexs: tableIndexs.value }
+  }
+  const formatFormData: FormatFormData<Model> = async (formData) => {
+    console.log('formData --->>>> ', formData)
     activeTab.value = 'db'
     tableFields.value = cloneDeep(formData?.tableFields || [])
     tableIndexs.value = cloneDeep(formData?.tableIndexs || [])
-    return formData
+    return { ...formData, tableFields: tableFields.value, tableIndexs: tableIndexs.value }
   }
 
   const {
     refs: { tableRef, formRef, queryRef },
-    props: { tableProps, formProps, queryProps }
-  } = initModel(Model, { beforeShowForm })
+    commProps: { tableProps, formProps, queryProps }
+  } = initModel(Model)
 
-  const handleAddTableField = () => {
+  const handleAddTableField = (formData: IFormData<GenTableFieldForDB>) => {
     console.log('handleAddTableField')
     tableFields.value.push({
+      ...formData,
       length: 0,
       decimalPlaces: 0,
       allowNull: 1,
@@ -114,29 +121,80 @@
     })
   }
 
-  const handleAddTableIndex = () => {
+  const handleAddTableIndex = (formData: IFormData<GenTableIndex>) => {
     console.log('handleAddTableIndex')
     tableIndexs.value.push({
+      ...formData,
       id: '1'
     })
   }
 
-  const commonTableProps = <T extends BaseModel>(instance: BaseModelConstructor<T>): ETableProps<T> => ({
+  const commonTableProps: EModelCommProps<GenTableFieldForDB>['tableProps'] = {
     actions: false,
     showPage: false,
     enableEdit: true,
-    modelOptions: useModelOptions(instance),
-    onShowForm: handleAddTableField,
-    data: tableFields.value as T[],
-    autoLoad: false
-    // loadData: async () => ({ records: [], size: 0, current: 0, total: 0, pages: 0 })
-  })
+    autoLoad: false,
+    // data: tableFields,
+    onShowForm: handleAddTableField
+  }
 
-  const genModalRef = ref()
+  const indexTableProps: EModelCommProps<GenTableFieldForDB>['tableProps'] = {
+    ...commonTableProps,
+    // data: tableIndexs.value,
+    onShowForm: handleAddTableIndex
+  }
 
-  const handleGen = ({ row }) => {
+  const {
+    refs: { tableRef: dbTableRef },
+    commProps: { tableProps: dbTableProps }
+  } = initModel(GenTableFieldForDB, { tableProps: commonTableProps })
+
+  const {
+    refs: { tableRef: pageTableRef },
+    commProps: { tableProps: pageTableProps }
+  } = initModel(GenTableFieldForPage, { tableProps: commonTableProps })
+
+  const {
+    refs: { tableRef: ruleTableRef },
+    commProps: { tableProps: ruleTableProps }
+  } = initModel(GenTableFieldForRule, { tableProps: commonTableProps })
+
+  const {
+    refs: { tableRef: fkTableRef },
+    commProps: { tableProps: fkTableProps }
+  } = initModel(GenTableFieldForFk, { tableProps: commonTableProps })
+
+  const {
+    refs: { tableRef: idxTableRef },
+    commProps: { tableProps: idxTableProps }
+  } = initModel(GenTableIndex, { tableProps: indexTableProps })
+
+  // const commonTableProps = computed(
+  //   () =>
+  //     <T extends BaseModel>(
+  //       instance: BaseModelConstructor<T>,
+  //       _data?: T[]
+  //     ): ETableProps<T> & {
+  //       onShowForm?: ShowForm
+  //     } => ({
+  //       actions: false,
+  //       showPage: false,
+  //       enableEdit: true,
+  //       modelOptions: useModelOptions(instance),
+  //       onShowForm: _data ? handleAddTableIndex : handleAddTableField,
+  //       data: _data || (tableFields.value as T[]),
+  //       autoLoad: false
+  //       // loadData: async () => ({ records: [], size: 0, current: 0, total: 0, pages: 0 })
+  //     })
+  // )
+
+  // const genModalRef = ref()
+
+  const handleGen = (data) => {
     // genModalRef.value.open(id)
-    genModalRef.value!.open('edit', {})
+    const { row } = data
+    console.log('data ---> ', data)
+    mFormRef.value!.open(FormTypeEnum.EDIT, row)
     currTable.value = row
   }
 
@@ -180,7 +238,7 @@
   }
 
   const handleGenSubmit: FormatFormData<GenModule> = async () => {
-    console.log('genData.value ---> ', genData.value)
+    console.log('currTable.value ---> ', currTable.value)
     const module = genData.value
     const { name: tableName = '' } = currTable.value!
     const getOutFileName = (type: string, pkg: string) => {
@@ -230,8 +288,8 @@
 
   const {
     refs: { formRef: mFormRef },
-    props: { formProps: mFormProps }
-  } = initModel(GenModule, { beforeSubmit: handleGenSubmit })
+    commProps: { formProps: mFormProps }
+  } = initModel(GenModule)
 </script>
 
 <style scoped></style>

@@ -25,9 +25,9 @@
     name: 'SysRoleList'
   })
 
-  const { refs, props } = initModel(Model)
+  const { refs, commProps } = initModel(Model)
   const { tableRef, formRef, queryRef } = refs
-  const { tableProps, formProps, queryProps } = props
+  const { tableProps, formProps, queryProps } = commProps
 
   const authModalRef = ref()
 

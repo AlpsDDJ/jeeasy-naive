@@ -45,7 +45,7 @@ export default class GenModule extends BaseModel {
 @Api('/gen/module/')
 export class GenModuleApi extends BaseApi {
   @Get('findByCode/{code}')
-  static getModule: HttpRequest<GenModule, { code: string }>
+  static getModule: HttpReq<GenModule, { code: string }>
 }
 
 export type GeneratorFile = {

@@ -55,14 +55,14 @@
   const modelState = props.modelOptions
 
   const cols = ref<string>('1 600:2 900:3 1200:4 1500:5')
-  const queryData = ref<IFormData<BaseModel>>({})
+  const queryData = ref<IFormData<T>>()
   const queryCollapsed = defineModel<boolean>('collapsed', { default: true })
   const queryScheme = computed<FieldOption<T>[]>(() =>
     Object.values(modelState.fields || []).filter(({ hidden }) => !(hidden === true || (hidden && hidden?.includes('query'))))
   )
 
   const createInpComp = (field: FieldOption<T>) => {
-    return createInputComponent<T>(field, queryData.value as IFormData<T>, FormTypeEnum.SEARCH)
+    return createInputComponent<T>(field, queryData, FormTypeEnum.SEARCH)
   }
 
   const resetHandle = () => {

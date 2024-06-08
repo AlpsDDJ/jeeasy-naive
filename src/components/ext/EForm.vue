@@ -76,11 +76,10 @@
     formProps: () => ({
       size: appSetting.formSize
     }),
-    formatFormData: async (data: IFormData<T>) => cloneDeep(data)
+    formatFormData: async (data: IFormData<T>) => cloneDeep(data),
+    beforeSubmit: async (data: IFormData<T>) => cloneDeep(data)
   })
   const modelState = props.modelOptions
-
-  const { save, update } = useModelApi<T>(modelState.api)
 
   const jsonScheme = computed<FieldOption<T>[]>(() =>
     Object.values(modelState?.fields || []).filter(({ hidden, hiddenHandler }) => {
@@ -121,7 +120,7 @@
   const showForm = defineModel<boolean>('showForm', { default: false })
 
   const createInpComp = (field: FieldOption<T>) => {
-    return createInputComponent<T>(field, formData.value as IFormData<T>, formType.value)
+    return createInputComponent<T>(field, formData, formType.value)
   }
 
   const createFormItemProps = (field: FieldOption<T>): FormItemGiProps => {
@@ -143,13 +142,13 @@
    * @param type
    * @param fData
    */
-  const open = (type: FormType, fData?: IFormData<T>) => {
+  const open = async (type: FormType, fData?: IFormData<T>) => {
     console.debug(`form show: type = ${type}, data = `, fData || {})
-    fData && (formData.value = cloneDeep(fData))
-    formData.value = cloneDeep({
-      ...(props.defauleData || {}),
-      ...(fData || {})
-    }) as IFormData<T>
+    // fData && (formData.value = await props.formatFormData(fData, type))
+    formData.value = {
+      ...cloneDeep(props.defauleData),
+      ...(fData ? await props.formatFormData(fData, type) : {})
+    } as IFormData<T>
     formType.value = type
     showForm.value = true
     formLoading.value = true
@@ -170,10 +169,13 @@
     (e: 'error', error: unknown, resp?: R, formType?: FormType): void
   }>()
 
+  const { save, update } = useModelApi<T>(modelState.api)
   const submitHandle = async () => {
     formLoading.value = true
     try {
-      const formDataClone = await props.formatFormData(formData.value as IFormData<T>, formType.value)
+      const formDataClone = await props.beforeSubmit(formData.value || {}, formType.value)
+      console.log('formData.value ---->>>> ', formData.value)
+      console.log('formDataClone ---->>>> ', formDataClone)
       let resp: any
       try {
         switch (formType.value) {

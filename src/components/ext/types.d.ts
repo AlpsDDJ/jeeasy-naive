@@ -5,14 +5,14 @@ import type { BaseModelConstructor, FormType, IFormData, EzModelOptions } from '
 import { BaseModel } from '@/hooks/useModel'
 import { Raw } from 'vue'
 
-export type InitModelConfig<T extends BaseModel = BaseModel> = {
-  beforeQuery?: FormatFormData<T>
-  beforeSubmit?: FormatFormData<T>
-  beforeShowForm?: FormatFormData<T>
-}
+// export type InitModelConfig<T extends BaseModel = BaseModel> = {
+//   beforeQuery?: FormatFormData<T>
+//   beforeSubmit?: FormatFormData<T>
+//   formatFormData?: FormatFormData<T>
+// }
 
 export interface EFormInst<T extends BaseModel> {
-  open: (type: FormType, fData?: IFormData<T>) => void
+  open: (type: FormType, fData?: IFormData<T>) => Promise<void>
   close: () => Promise<void>
   getFormData: () => IFormData<T>
 }
@@ -23,38 +23,40 @@ interface BindRefProps<T> {
 
 interface ECommProps<T extends BaseModel> {
   modelOptions: EzModelOptions<T>
+  instance: BaseModelConstructor<T>
 }
 
 interface FormatFormData<T extends BaseModel> {
   (formData: IFormData<T>, type?: FormType): Promise<IFormData<T>>
 }
 
+export interface EModelProps extends Partial<Omit<EModelState<T>, 'modelOptions' | 'loadData'>>, EModelCommProps<T> {}
+
 export interface ETableProps<T extends BaseModel> extends ECommProps<T>, BindRefProps<DataTableInst> {
-  instance?: BaseModelConstructor<T>
   loadData?: LoadData<T>
   data?: T[]
   // modelState: ModelState<T>
   actions?: ButtonActions | false
-  onShowForm?: (type: FormType, fData?: IFormData<T>) => void
-  formInst?: EFormInst<T>
+  // onShowForm?: (type: FormType, fData?: IFormData<T>) => void
+  formInst?: Ref<EFormInst<T> | undefined>
   queryData?: IFormData<T>
-  beforeQuery?: (queryData: IFormData<T>) => IFormData<T>
+  beforeQuery?: FormatFormData<T>
   tableProps?: DataTableProps
   showPage?: false
   enableEdit?: boolean
-  onShowForm?: FormatFormData<T>
+  // onShowForm?: FormatFormData<T>
   autoLoad?: boolean
   // actions?: ButtonActions
 }
 
 export interface EFormProps<T extends BaseModel> extends ECommProps<T>, BindRefProps<FormInst> {
-  instance: BaseModelConstructor<T>
   isModal?: boolean
   defauleData?: IFormData<T>
   wSize?: number | string
   cols?: number
   formProps?: FormProps
   formatFormData?: FormatFormData<T>
+  beforeSubmit?: FormatFormData<T>
   onSuccess?: LoadData<T>
 }
 //
@@ -65,7 +67,6 @@ export interface EQueryInst<T extends BaseModel> {
 }
 //
 export interface EQueryProps<T extends BaseModel> extends ECommProps<T>, BindRefProps<FormInst> {
-  instance: BaseModelConstructor<T>
   loadData: LoadData<T>
   defaultData?: IFormData<T>
   resetAndQuery?: boolean
@@ -100,7 +101,13 @@ export interface TableScrollToOption {
 }
 //
 export interface ShowForm {
-  (type: FormType, formData?: any): void
+  (formData: any, type: FormType): void
+}
+
+export interface EModelCommProps<T extends BaseModel> {
+  tableProps?: Partial<ETableProps<T>> & Record<string, any>
+  formProps?: Partial<EFormProps<T>> & Record<string, any>
+  queryProps?: Partial<EQueryProps<T>> & Record<string, any>
 }
 //
 export interface EModelState<T extends BaseModel> {
@@ -112,14 +119,14 @@ export interface EModelState<T extends BaseModel> {
     nQueryRef: Ref<FormInst | undefined>
     nFormRef: Ref<FormInst | undefined>
   }
-  props: {
+  commProps: {
     tableProps: ETableProps<T>
     formProps: EFormProps<T>
     queryProps: EQueryProps<T>
   }
   modelOptions: Raw<EzModelOptions<T>>
   loadData: LoadData<T>
-  showForm: ShowForm
+  // showForm: ShowForm
 }
 //
 // export interface IFormData<T extends BaseModel> extends IFormData<T> {}
