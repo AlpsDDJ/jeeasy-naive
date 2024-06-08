@@ -50,7 +50,8 @@
   import { createInputComponent } from '@/components/ext/index'
   import type { ETableInst, ETableProps, ETableSlots, LoadData } from './types'
   import type { FieldOption, FormType, IFormData, TreeField } from 'easy-descriptor'
-  import { FormTypeEnum } from 'easy-descriptor'
+  import { EzModelOptions, FormTypeEnum } from 'easy-descriptor'
+  import { EzFieldOption } from '@/hooks/useModel/types'
 
   defineOptions({
     name: 'ETable',
@@ -60,7 +61,7 @@
   const props = withDefaults(defineProps<ETableProps<T>>(), {
     actions: 'default',
     tableProps: () => ({}),
-    beforeQuery: (queryData: any) => queryData,
+    beforeQuery: async (queryData: IFormData<T>) => queryData,
     data: () => [],
     showPage: undefined,
     enableEdit: false,
@@ -68,11 +69,14 @@
   })
   const tableEditFormRef = ref()
 
-  const modelState = props.modelOptions
+  const modelState = ref<EzModelOptions<T>>(props.modelOptions)
   const actions = props.actions
 
   const handleAdd = () => {
     showForm({}, FormTypeEnum.ADD)
+    // if (props.enableEdit) {
+    //   tableData.value?.push(new props.instance())
+    // }
   }
   const handleDelete = ({ row, index }) => {
     console.log(`删除第${index} 行，id = ${row.id}`)
@@ -126,13 +130,15 @@
   }
 
   if (actions !== false) {
-    modelState.fields['actions'] = {
-      title: '操作',
+    console.log('modelState.value --11--> ', modelState.value)
+    modelState.value.fields['actions'] = {
+      label: '操作',
       key: 'action',
       fixed: 'right',
       width: actions === 'default' ? 140 : typeof actions !== 'boolean' ? actions.length * 70 : 0,
       render: actionRender
-    }
+    } as EzFieldOption
+    console.log('modelState.value --22--> ', modelState.value)
   }
 
   const editTableThemeOverrides = ref<GlobalThemeOverrides>({
@@ -175,15 +181,16 @@
   }
 
   const columns = computed(() =>
-    Object.values(modelState?.fields || {})
+    Object.values(modelState.value?.fields || {})
       .filter(({ hidden }) => !(hidden === true || (hidden && hidden?.includes('list'))))
       .map((col) => {
         if (props.enableEdit) {
           return {
             ...col,
-            title: col.leabel,
+            title: col.label,
             render: (_, index: number) => {
-              const child = createInputComponent<T>(col, toRef((tableData.value || [])[index] as any), FormTypeEnum.EDIT_TABLE)
+              const fData = ref<IFormData<T> | undefined>(tableData.value?.[index])
+              const child = createInputComponent<T>(col, fData as any, FormTypeEnum.EDIT_TABLE)
               const disabled = child.props?.disabled
               return h(
                 NFormItem,
@@ -200,14 +207,6 @@
         }
       })
   )
-
-  const emit = defineEmits<{
-    (evt: 'showForm', type: FormType, formData: IFormData<T>): void
-  }>()
-
-  const showForm = (formData: any, type: FormType) => {
-    emit('showForm', type, formData)
-  }
 
   // const slots = useSlots()
   const defaultPage: PaginationProps = {
@@ -229,7 +228,7 @@
       tableData.value = props.data || []
       return {} as any
     }
-    const pageData = await props.loadData(params).finally(() => {
+    const pageData = await props.loadData(await props.beforeQuery(params)).finally(() => {
       loading.value = false
     })
     const { records, size, current, total, pages } = pageData
@@ -257,7 +256,20 @@
   tableData.value = props.data
   // const { page: loadPage } = useModelApi<T>(modelState.api)
 
-  const treeField = modelState.tree as TreeField<T>
+  const treeField = modelState.value.tree as TreeField<T>
+
+  const emit = defineEmits<{
+    (evt: 'showForm', formData: IFormData<T>, type: FormType): void
+  }>()
+
+  const showForm = (formData: any, type: FormType) => {
+    emit('showForm', formData, type)
+    if (props.formInst?.value) {
+      props.formInst.value.open(type, formData)
+    } else {
+      !props.enableEdit && console.warn(`${props.modelOptions.name}: formInst is not defined`)
+    }
+  }
 
   defineExpose<ETableInst<T>>({
     reload: load,

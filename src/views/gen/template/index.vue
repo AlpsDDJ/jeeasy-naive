@@ -1,15 +1,7 @@
 <template>
-  <e-model>
-    <template #top>
-      <e-search ref="queryRef" v-model:model-value="queryData" :instance="Model" :load-data="loadData" />
-    </template>
-    <e-table ref="tableRef" :instance="Model" :query-data="queryData" @show-form="showForm">
-      <template ##enableFlag="row">
-        <n-tag :type="row.enableFlag ? 'success' : 'warning'" :bordered="false">{{ row.enableFlag_dict }}</n-tag>
-      </template>
-    </e-table>
-    <template #bottom>
-      <e-form ref="formRef" v-model:model-value="formData" :instance="Model" :cols="5" @success="loadData()" />
+  <e-model v-bind="opts">
+    <template ##enableFlag="row">
+      <n-tag :type="row.enableFlag ? 'success' : 'warning'" :bordered="false">{{ row.enableFlag_dict }}</n-tag>
     </template>
   </e-model>
 </template>
@@ -22,7 +14,7 @@
     name: 'GenTemplateList'
   })
 
-  const { tableRef, formRef, queryRef, formData, queryData, loadData, showForm } = initModel()
+  const opts = initModel(Model)
 </script>
 
 <style scoped></style>

@@ -1,15 +1,15 @@
 <template>
   <e-model>
     <template #top>
-      <e-search ref="queryRef" v-model:model-value="queryData" :instance="Model" :load-data="loadData" />
+      <e-search ref="queryRef" v-bind="queryProps" />
     </template>
-    <e-table ref="tableRef" :instance="Model" :query-data="queryData" @show-form="showForm">
-      <template ##enableFlag="row">
+    <e-table ref="tableRef" v-bind="tableProps">
+      <!--<template ##enableFlag="row">
         <n-tag :type="row.enableFlag ? 'success' : 'warning'" :bordered="false">{{ row.enableFlag_dict }}</n-tag>
-      </template>
+      </template>-->
     </e-table>
     <template #bottom>
-      <e-form ref="formRef" v-model:model-value="formData" :instance="Model" :cols="2" :defaule-data="defaultData" @success="loadData()" />
+      <e-form ref="formRef" v-bind="formProps" :cols="2" :defaule-data="defaultData" />
     </template>
   </e-model>
 </template>
@@ -25,13 +25,15 @@
     pkg: 'org.jeeasy',
     entity: 'domain',
     mapper: 'mapper',
-    xml: 'mapper.xml',
+    mapperXml: 'mapper.xml',
     service: 'service',
     serviceImpl: 'service.impl',
     controller: 'controller'
   }
 
-  const { tableRef, formRef, queryRef, formData, queryData, loadData, showForm } = initModel()
+  const { refs, commProps } = initModel(Model)
+  const { tableRef, formRef, queryRef } = refs
+  const { tableProps, formProps, queryProps } = commProps
 </script>
 
 <style scoped></style>

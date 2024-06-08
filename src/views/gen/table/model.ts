@@ -109,20 +109,24 @@ export default class GenTable extends BaseModel {
   tableIndexs?: GenTableIndex[]
 }
 
-@Model()
-export class GenTableField extends BaseModel {
-  @Field('表ID')
-  @Field.Hidden()
-  tableId?: string
-}
+// @Model()
+// export class GenTableField extends BaseModel {
+//   @Field('表ID')
+//   @Field.Hidden()
+//   tableId?: string
+// }
 
-const disableIfId: FieldAttrHandler = ({ columnName }) => (columnName === 'id') as any
+const disableIfId: FieldAttrHandler = ({ columnName }) => columnName === 'id'
 
 /**
  * 数据库属性
  */
 @Model()
-export class GenTableFieldForDB extends GenTableField {
+export class GenTableFieldForDB extends BaseModel {
+  @Field('表ID')
+  @Field.Hidden()
+  tableId?: string
+
   @Field('列名', {
     width: 180
   })
@@ -196,7 +200,11 @@ export class GenTableFieldForDB extends GenTableField {
  * 页面属性
  */
 @Model()
-export class GenTableFieldForPage extends GenTableField {
+export class GenTableFieldForPage extends BaseModel {
+  @Field('表ID')
+  @Field.Hidden()
+  tableId?: string
+
   @Field('列名', {
     width: 180
   })
@@ -301,7 +309,11 @@ export class GenTableFieldForPage extends GenTableField {
  * 校验属性
  */
 @Model()
-export class GenTableFieldForRule extends GenTableField {
+export class GenTableFieldForRule extends BaseModel {
+  @Field('表ID')
+  @Field.Hidden()
+  tableId?: string
+
   @Field('列名', {
     width: 180
   })
@@ -346,7 +358,11 @@ export class GenTableFieldForRule extends GenTableField {
  * 外键配置
  */
 @Model()
-export class GenTableFieldForFk extends GenTableField {
+export class GenTableFieldForFk extends BaseModel {
+  @Field('表ID')
+  @Field.Hidden()
+  tableId?: string
+
   @Field('列名', {
     width: 180
   })
