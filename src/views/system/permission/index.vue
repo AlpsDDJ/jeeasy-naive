@@ -4,12 +4,12 @@
       <e-search ref="queryRef" v-bind="queryProps" />
     </template>
     <e-table ref="tableRef" v-bind="tableProps">
-      <template ##icon="row">
-        <icon v-if="row.icon" :icon-name="row.icon"></icon>
-      </template>
       <template ##name="row">
-        <n-tag v-if="row.menuType === 3" :bordered="false">{{ row.name }}</n-tag>
-        <span v-else>{{ row.name }}</span>
+        <div class="permission-name">
+          <icon v-if="row.icon" :icon-name="row.icon" style="margin-right: 4px"></icon>
+          <n-tag v-if="row.menuType === 3" :bordered="false" :type="row.perms?.includes('delete') ? 'error' : 'primary'">{{ row.name }}</n-tag>
+          <template v-else>{{ row.name }}</template>
+        </div>
       </template>
       <template ##enableFlag="row">
         <n-tag :type="row.enableFlag ? 'success' : 'warning'" :bordered="false">{{ row.enableFlag_dict }}</n-tag>
@@ -34,4 +34,10 @@
   const { tableProps, formProps, queryProps } = commProps
 </script>
 
-<style scoped></style>
+<style scoped lang="less">
+  .permission-name {
+    padding-top: 6px;
+    display: inline-flex;
+    align-items: center;
+  }
+</style>

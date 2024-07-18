@@ -25,3 +25,5 @@ dist-ssr
 yarn.lock
 /types/auto-import.d.ts
 /types/components.d.ts
+.yalc/
+yalc.lock
