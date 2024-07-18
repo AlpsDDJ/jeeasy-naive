@@ -82,10 +82,10 @@
   const modelState = props.modelOptions
 
   const jsonScheme = computed<FieldOption<T>[]>(() =>
-    Object.values(modelState?.fields || []).filter(({ hidden, hiddenHandler }) => {
+    Object.values(modelState?.fields || []).filter(({ hidden, hiddenHandler, key }) => {
       const flag1 = !(hidden === true || (hidden && hidden?.includes('form')) || (formType?.value && hidden && hidden?.includes(formType as any)))
       const flag2 = !hiddenHandler || !hiddenHandler(formData.value as IFormData<T>, formType.value)
-      return flag1 && flag2
+      return flag1 && flag2 && !(key as string).startsWith('$')
     })
   )
   /**

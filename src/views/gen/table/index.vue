@@ -132,12 +132,14 @@
     }
   }
 
+  const tempIdPrefix = 'tmp_'
+
   const beforeSubmit: FormatFormData<Model> = async (formData) => {
     activeTab.value = 'db'
     return {
       ...formData,
-      tableFields: tableFields.value.map(({ id, ...fields }) => ({ ...fields, id: id?.startsWith('tmp_') ? undefined : id })),
-      tableIndexs: tableIndexs.value.map(({ id, ...indexs }) => ({ ...indexs, id: id?.startsWith('tmp_') ? undefined : id }))
+      tableFields: tableFields.value.map(({ id, ...fields }) => ({ ...fields, id: id?.startsWith(tempIdPrefix) ? undefined : id })),
+      tableIndexs: tableIndexs.value.map(({ id, ...indexs }) => ({ ...indexs, id: id?.startsWith(tempIdPrefix) ? undefined : id }))
     }
   }
   const formatFormData: FormatFormData<Model> = async (formData) => {
@@ -154,7 +156,7 @@
 
   const handleAddTableField = (formData: IFormData<GenTableFieldForDB>) => {
     tableFields.value.push({
-      id: uniqueId('tmp_'),
+      id: uniqueId(tempIdPrefix),
       ...formData,
       length: 0,
       decimalPlaces: 0,

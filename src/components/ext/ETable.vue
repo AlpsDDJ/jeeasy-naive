@@ -1,7 +1,21 @@
 <template>
   <n-space vertical>
     <slot name="toolBar">
-      <action-button :actions="['add']" @action:add="handleAdd" />
+      <n-space>
+        <action-button :actions="['add']" @action:add="handleAdd" />
+        <div v-if="checkedRowKeys && checkedRowKeys.length > 0">
+          <n-button
+            secondary
+            type="error"
+            @click="
+              () => {
+                handleDelete(...(checkedRowKeys || []))
+              }
+            "
+            >删除</n-button
+          >
+        </div>
+      </n-space>
     </slot>
     <n-config-provider :theme-overrides="enableEdit ? editTableThemeOverrides : {}">
       <n-form ref="tableEditFormRef" :model="tableData" :show-label="false" inline :show-feedback="false">
@@ -15,6 +29,7 @@
           :row-key="({ id }) => id"
           :remote="true"
           :tree="!!treeField"
+          @update:checked-row-keys="(val) => (checkedRowKeys = val as string[])"
           @update:page="
             (page) => {
               pageChangeHandle({ page })
@@ -55,9 +70,9 @@
   import { EzFieldOption } from '@/hooks/useModel/types'
 
   defineOptions({
-    name: 'ETable',
-    inheritAttrs: false
+    name: 'ETable'
   })
+  // useModel() called with prop "checked-row-keys" which is not declared.
 
   const props = withDefaults(defineProps<ETableProps<T>>(), {
     actions: 'default',
@@ -69,6 +84,7 @@
     autoLoad: true
   })
   const tableEditFormRef = ref()
+  const checkedRowKeys = defineModel<string[]>('checkedRowKeys', { default: () => [] })
 
   const modelState = ref<EzModelOptions<T>>(props.modelOptions)
   const actions = props.actions
@@ -79,8 +95,8 @@
     //   tableData.value?.push(new props.instance())
     // }
   }
-  const handleDelete = ({ row, index }) => {
-    console.log(`删除第${index} 行，id = ${row.id}`)
+  const handleDelete = (...ids: DataKey[]) => {
+    console.log(`删除第行，id = ${ids}`)
   }
   const handleEdit = ({ row, index }) => {
     console.log(`编辑第${index} 行，id = ${row.id}`)
@@ -181,10 +197,35 @@
     return { path: _key, rule: _rule, rulePath, required, label, span: formSpan }
   }
 
+  const commonFields: Record<'$index' | '$selection', EzFieldOption> = {
+    $index: {
+      key: 'index',
+      title: '#',
+      hidden: ['query', 'form'],
+      width: 50,
+      align: 'center',
+      render: (_, index) => h('div', { class: 'index-column' }, index + 1)
+    },
+    $selection: {
+      type: 'selection',
+      key: 'selection',
+      width: 50,
+      align: 'center',
+      hidden: ['query', 'form']
+    }
+  }
+
   const columns = computed(() =>
     Object.values(modelState.value?.fields || {})
       .filter(({ hidden }) => !(hidden === true || (hidden && hidden?.includes('list'))))
       .map((col) => {
+        if (col.key && commonFields[col.key]) {
+          return {
+            ...commonFields[col.key],
+            ...col
+          }
+        }
+
         if (props.enableEdit) {
           return {
             ...col,
@@ -274,7 +315,8 @@
 
   defineExpose<ETableInst<T>>({
     reload: load,
-    getPageParams: () => unref(pagination) as PaginationProps
+    getPageParams: () => unref(pagination) as PaginationProps,
+    getCheckedRows: () => tableData.value?.filter(({ id }) => id && checkedRowKeys.value?.includes(id)) || []
   })
 
   const slots = defineSlots<ETableSlots<T>>()
