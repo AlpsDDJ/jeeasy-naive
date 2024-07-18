@@ -85,6 +85,7 @@ export interface LoadData<T extends BaseModel> {
 export interface ETableInst<T extends BaseModel> {
   reload: LoadData<T>
   getPageParams: () => PaginationProps
+  getCheckedRows: () => T[]
 }
 //
 export type ETableSlots<T> = {

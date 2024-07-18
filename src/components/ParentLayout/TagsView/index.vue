@@ -131,22 +131,42 @@
       cursor: default;
       padding: 0 10px;
     }
-  }
-</style>
-<style lang="less">
-  .tags-view {
-    .n-scrollbar-rail__scrollbar {
+    :deep(.n-scrollbar-rail__scrollbar) {
       display: none;
     }
-    .tag {
+    :deep(.tag) {
       padding: 0 10px 0 12px;
       .n-base-close {
-        display: none;
+        width: 0;
+        animation: hiddenClose 0.2s linear forwards;
+        .n-base-icon {
+          display: none;
+        }
       }
       &:hover {
         cursor: pointer;
         .n-base-close {
-          display: block;
+          animation: showClose 0.2s linear forwards;
+
+          .n-base-icon {
+            display: block;
+          }
+        }
+      }
+      @keyframes hiddenClose {
+        from {
+          width: 14px;
+        }
+        to {
+          width: 0;
+        }
+      }
+      @keyframes showClose {
+        from {
+          width: 0;
+        }
+        to {
+          width: 14px;
         }
       }
     }

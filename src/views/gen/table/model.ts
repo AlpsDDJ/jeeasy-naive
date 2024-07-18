@@ -9,8 +9,14 @@ const hiddenIfNotTree: FieldAttrHandler<boolean, GenTable> = (formData) => {
 
 @Model()
 export default class GenTable extends BaseModel {
-  @Field<BaseModel>('', { type: 'selection', hidden: ['query', 'form'] })
-  selection?: boolean
+  // @Field<BaseModel>('', { type: 'selection', hidden: ['query', 'form'] })
+  // selection?: boolean
+
+  @Field()
+  $selection?: boolean
+
+  @Field()
+  $index?: number
 
   @Field('表名')
   @Field.Disabled(['edit'])
@@ -118,8 +124,11 @@ const disableIfId: FieldAttrHandler = ({ columnName }) => columnName === 'id'
  */
 @Model()
 export class GenTableFieldForDB extends BaseModel {
-  @Field<BaseModel>('', { type: 'selection', hidden: ['query', 'form'] })
-  selection?: boolean
+  @Field()
+  $selection?: boolean
+
+  @Field()
+  $index?: number
 
   @Field('表ID')
   @Field.Hidden()
