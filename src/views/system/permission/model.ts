@@ -1,5 +1,3 @@
-// import { FormDataType, InputType } from '@/enums/EEnum'
-
 import { Field, FormDataTypeEnum, InputTypeEnum, Model } from 'easy-descriptor'
 import { BaseModel } from '@/hooks/useModel'
 
@@ -8,10 +6,10 @@ import { BaseModel } from '@/hooks/useModel'
   tree: true
 })
 export default class SysPermission extends BaseModel {
-  @Field('资源名称')
+  @Field<BaseModel>('资源名称', { width: 150 })
   name?: string
 
-  @Field('上级菜单', { inputProps: { topPid: '0', async: false } })
+  @Field<BaseModel>('上级菜单', { inputProps: { topPid: '0', async: false } })
   @Field.Hidden(['list'])
   @Field.Dict('#sys_permission')
   @Field.DataType(FormDataTypeEnum.STRING, InputTypeEnum.TREE_SELECT)
@@ -24,7 +22,8 @@ export default class SysPermission extends BaseModel {
   perms?: string
 
   @Field('菜单图标')
-  icon?: number
+  @Field.Hidden(['list'])
+  icon?: string
 
   @Field('组件')
   component?: string
@@ -39,6 +38,7 @@ export default class SysPermission extends BaseModel {
 
   @Field('菜单类型')
   @Field.Dict()
+  @Field.Hidden(['list'])
   @Field.DataType(FormDataTypeEnum.NUMBER)
   menuType?: number
 
@@ -74,17 +74,17 @@ export default class SysPermission extends BaseModel {
   @Field.DataType(FormDataTypeEnum.NUMBER, InputTypeEnum.SWITCH)
   hidden?: number
 
-  @Field('添加数据权限')
-  @Field.Dict('boolean')
-  @Field.Hidden(['list'])
-  @Field.DataType(FormDataTypeEnum.NUMBER, InputTypeEnum.SWITCH)
-  ruleFlag?: number
+  // @Field('添加数据权限')
+  // @Field.Dict('boolean')
+  // @Field.Hidden(['list'])
+  // @Field.DataType(FormDataTypeEnum.NUMBER, InputTypeEnum.SWITCH)
+  // ruleFlag?: number
 
-  @Field('外链打开方式')
-  @Field.Dict('LinkOpenType')
-  @Field.Hidden(['query'])
-  @Field.DataType(FormDataTypeEnum.NUMBER)
-  internalOrExternal?: number
+  // @Field('外链打开方式')
+  // @Field.Dict('LinkOpenType')
+  // @Field.Hidden(['query'])
+  // @Field.DataType(FormDataTypeEnum.NUMBER)
+  // internalOrExternal?: number
 
   @Field('菜单排序')
   @Field.Hidden(['query'])

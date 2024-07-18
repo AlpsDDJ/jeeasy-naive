@@ -87,9 +87,14 @@ export interface ETableInst<T extends BaseModel> {
   getPageParams: () => PaginationProps
   getCheckedRows: () => T[]
 }
+
+export type RecordType<T extends BaseModel> = Record<string, any> & {
+  [K in keyof T]: T[K]
+}
+
 //
 export type ETableSlots<T> = {
-  [K in keyof T & string as `#${K}`]: (row: any, index: number) => void
+  [K in keyof T & string as `#${K}`]: (row: RecordType<T>, index: number) => void
   // [key in keyof T]: any
 } & {
   loading: any
