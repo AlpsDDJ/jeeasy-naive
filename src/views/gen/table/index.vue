@@ -99,8 +99,8 @@
   import { ButtonActions } from '@/components/ActionButton/commonActions'
   import GenModule, { GeneratorData, GeneratorFile, GenModuleApi } from '@/views/gen/module/model'
   import type { IFormData } from 'easy-descriptor'
-  import { FormTypeEnum } from '../../../../.yalc/easy-descriptor'
   import { commonFields } from '@/views/gen/table/commonFields'
+  import { FormTypeEnum } from 'easy-descriptor'
 
   defineOptions({
     name: 'GenTableList'
