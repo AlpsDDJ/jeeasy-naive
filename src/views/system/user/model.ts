@@ -2,7 +2,7 @@ import { Field, FormDataTypeEnum, InputTypeEnum, Model } from 'easy-descriptor'
 import { BaseModel } from '@/hooks/useModel'
 
 @Model()
-class SysUser extends BaseModel {
+export class SysUser extends BaseModel {
   @Field('用户名', { booleanFlags: ['sorter'] })
   username?: String
 
@@ -55,4 +55,4 @@ class SysUser extends BaseModel {
   status?: number
 }
 
-export default SysUser
+// export default SysUser

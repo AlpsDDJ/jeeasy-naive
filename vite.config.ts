@@ -54,6 +54,14 @@ export default () =>
         '/#/': path.resolve(__dirname, 'types')
       }
     },
+    build: {
+      minify: 'terser',
+      terserOptions: {
+        // mangle: false, // 禁止重命名
+        keep_classnames: true // 保留类名
+        // keep_fnames: true // 保留函数名
+      }
+    },
     server: {
       port: 3333, //启动端口
       hmr: {
