@@ -1,7 +1,7 @@
 import { Field, FormDataTypeEnum, InputTypeEnum, Model } from 'easy-descriptor'
 import { BaseModel } from '@/hooks/useModel'
 
-@Model()
+@Model('SysUser')
 export class SysUser extends BaseModel {
   @Field('用户名', { booleanFlags: ['sorter'] })
   username?: String

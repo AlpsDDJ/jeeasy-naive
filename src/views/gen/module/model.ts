@@ -2,7 +2,7 @@ import { Api, Field, Get, Model } from 'easy-descriptor'
 import { BaseModel } from '@/hooks/useModel'
 import { BaseApi } from '@/hooks/useApi'
 
-@Model()
+@Model('GenModule')
 export default class GenModule extends BaseModel {
   @Field('模块名称')
   name?: string

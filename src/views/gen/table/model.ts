@@ -7,7 +7,7 @@ const hiddenIfNotTree: FieldAttrHandler<boolean, GenTable> = (formData) => {
   return !formData.izTree
 }
 
-@Model()
+@Model('GenTable')
 export default class GenTable extends BaseModel {
   // @Field<BaseModel>('', { type: 'selection', hidden: ['query', 'form'] })
   // selection?: boolean
@@ -122,7 +122,7 @@ const disableIfId: FieldAttrHandler = ({ columnName }) => columnName === 'id'
 /**
  * 数据库属性
  */
-@Model()
+@Model('GenTableFieldForDB')
 export class GenTableFieldForDB extends BaseModel {
   @Field()
   $selection?: boolean
@@ -206,7 +206,7 @@ export class GenTableFieldForDB extends BaseModel {
 /**
  * 页面属性
  */
-@Model()
+@Model('GenTableFieldForPage')
 export class GenTableFieldForPage extends BaseModel {
   @Field('表ID')
   @Field.Hidden()
@@ -315,7 +315,7 @@ export class GenTableFieldForPage extends BaseModel {
 /**
  * 校验属性
  */
-@Model()
+@Model('GenTableFieldForRule')
 export class GenTableFieldForRule extends BaseModel {
   @Field('表ID')
   @Field.Hidden()
@@ -364,7 +364,7 @@ export class GenTableFieldForRule extends BaseModel {
 /**
  * 外键配置
  */
-@Model()
+@Model('GenTableFieldForFk')
 export class GenTableFieldForFk extends BaseModel {
   @Field('表ID')
   @Field.Hidden()
@@ -400,7 +400,7 @@ export interface GenTableField extends GenTableFieldForRule, GenTableFieldForRul
 /**
  * 索引配置
  */
-@Model()
+@Model('GenTableIndex')
 export class GenTableIndex extends BaseModel {
   @Field('表ID')
   @Field.Hidden()
