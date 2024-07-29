@@ -123,9 +123,21 @@
     return createInputComponent<T>(field, formData, formType.value)
   }
 
+  /**
+   * 根据字段选项创建表单项的属性对象。
+   *
+   * 该函数用于根据提供的字段选项（FieldOption）生成表单项（FormItem）所需的属性（FormItemGiProps）。
+   * 这些属性包括表单项的路径、验证规则、是否必填、标签等信息，用于在表单中正确渲染和验证表单项。
+   *
+   * @param field 字段选项对象，包含表单项的各种配置信息，如键名、路径、验证规则等。
+   * @returns 返回一个对象，包含表单项在表单中的各种属性，如路径、验证规则、是否必填、标签和占据的栅格数。
+   */
   const createFormItemProps = (field: FieldOption<T>): FormItemGiProps => {
-    const { key, path, rule, rulePath, required, formSpan, label } = field
+    // 解构字段选项中的关键属性
+    const { key, path, rule, rulePath, required, formSpan, label, formItemProps } = field
+    // 初始化规则数组
     const _rule: any[] = []
+    // 根据规则的类型和适用的表单类型，过滤并构建有效的验证规则数组
     if (rule) {
       if (isArray(rule)) {
         _rule.push(...rule.filter(({ formTypes }) => !formTypes || formTypes.includes(formType.value as any)))
@@ -133,8 +145,10 @@
         _rule.push(rule)
       }
     }
+    // 生成并转换表单项的路径或键名，确保其为字符串类型
     const _key = (path || key).toString()
-    return { path: _key, rule: _rule, rulePath, required, label, span: formSpan }
+    // 返回表单项的属性对象
+    return { path: _key, rule: _rule, rulePath, required, label, span: formSpan, ...formItemProps }
   }
 
   /**

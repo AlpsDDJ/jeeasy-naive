@@ -2,7 +2,7 @@
   <n-space vertical>
     <slot name="toolBar">
       <n-space>
-        <action-button :actions="['add']" @action:add="handleAdd" />
+        <action-button :actions="topActions" @action:add="handleAdd" />
         <div v-if="checkedRowKeys && checkedRowKeys.length > 0">
           <n-button
             secondary
@@ -26,7 +26,7 @@
           :loading="loading"
           :data="tableData"
           :pagination="showPage === false ? false : pagination"
-          :row-key="({ id }) => id"
+          :row-key="(row) => row[dateKey ?? 'id'] ?? row?.toString()"
           :remote="true"
           :tree="!!treeField"
           @update:checked-row-keys="(val) => (checkedRowKeys = val as string[])"
@@ -76,12 +76,14 @@
 
   const props = withDefaults(defineProps<ETableProps<T>>(), {
     actions: 'default',
+    topActions: () => ['add'],
     tableProps: () => ({}),
     beforeQuery: async (queryData: IFormData<T>) => queryData,
     data: () => [],
     showPage: undefined,
     enableEdit: false,
-    autoLoad: true
+    autoLoad: true,
+    dataKey: 'id'
   })
   const tableEditFormRef = ref()
   const checkedRowKeys = defineModel<string[]>('checkedRowKeys', { default: () => [] })
@@ -123,7 +125,7 @@
     }
   ]
 
-  const actionRender = (row, index) => {
+  const rowActionRender = (row, index) => {
     let _actions: ActionOption[] = []
     if (typeof actions === 'object') {
       actions.forEach((act) => {
@@ -153,7 +155,7 @@
       key: 'action',
       fixed: 'right',
       width: actions === 'default' ? 140 : typeof actions !== 'boolean' ? actions.length * 70 : 0,
-      render: actionRender
+      render: rowActionRender
     } as EzFieldOption
     console.log('modelState.value --22--> ', modelState.value)
   }

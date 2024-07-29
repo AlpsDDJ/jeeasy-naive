@@ -395,7 +395,7 @@ export class GenTableFieldForFk extends BaseModel {
   mainTableField?: string
 }
 
-export interface GenTableField extends GenTableFieldForRule, GenTableFieldForRule, GenTableFieldForDB, GenTableFieldForFk {}
+export interface GenTableField extends GenTableFieldForRule, GenTableFieldForDB, GenTableFieldForFk {}
 
 /**
  * 索引配置
@@ -414,8 +414,7 @@ export class GenTableIndex extends BaseModel {
 
   @Field<BaseModel>('索引类型', {
     width: 180,
-    dict: 'IndexType',
-    test2: 123
+    dict: 'IndexType'
   })
   indexType?: string
 }
@@ -424,4 +423,15 @@ export class GenTableIndex extends BaseModel {
 export class GeneratorApi extends BaseApi {
   @Post('/generator')
   static generator: HttpRequest<string, GeneratorData>
+}
+
+@Model('GenAiForm')
+export class GenAiForm extends BaseModel {
+  @Field('表名')
+  tableName?: string
+  @Field<BaseModel>('功能描述', { formSpan: 3, formCompProps: { rows: 15 } })
+  @Field.DataType(FormDataTypeEnum.STRING, InputTypeEnum.TEXT_AREA)
+  tableDesc?: string
+  // @Field('表ID')
+  // dbType?: string
 }

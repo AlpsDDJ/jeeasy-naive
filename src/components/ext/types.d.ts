@@ -38,6 +38,7 @@ export interface ETableProps<T extends BaseModel> extends ECommProps<T>, BindRef
   data?: T[]
   // modelState: ModelState<T>
   actions?: ButtonActions | false
+  topActions?: ButtonActions | false
   // onShowForm?: (type: FormType, fData?: IFormData<T>) => void
   formInst?: Ref<EFormInst<T> | undefined>
   queryData?: IFormData<T>
@@ -47,6 +48,7 @@ export interface ETableProps<T extends BaseModel> extends ECommProps<T>, BindRef
   enableEdit?: boolean
   // onShowForm?: FormatFormData<T>
   autoLoad?: boolean
+  dateKey?: DataKey
   // actions?: ButtonActions
 }
 

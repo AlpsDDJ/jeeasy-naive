@@ -109,6 +109,8 @@ export const initModel = <T extends BaseModel>(instance: BaseModelConstructor<T>
 
 export const createInputComponent = <T extends BaseModel>(field: EzFieldOption, formData: Ref<IFormData<T> | undefined>, formType?: FormType, props?: any) => {
   const { key, path, label, inputType, inputProps = {}, queryInputProps = {}, disabled, disabledHandler } = field
+  const { formCompProps = {} } = field
+
   const query = formType === FormTypeEnum.SEARCH
   let component: any
   const dataKey = (path || key || '').toString() as keyof IFormData<T>
@@ -128,7 +130,8 @@ export const createInputComponent = <T extends BaseModel>(field: EzFieldOption, 
     showButton: formType !== FormTypeEnum.EDIT_TABLE,
     ...inputProps,
     ...(query ? queryInputProps : {}),
-    ...(props || {})
+    ...(props || {}),
+    ...formCompProps
   }
   if (
     disabled === true ||

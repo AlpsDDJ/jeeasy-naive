@@ -14,7 +14,7 @@
           <n-divider />
           <n-tabs v-model:value="activeTab" type="line" animated>
             <n-tab-pane name="db" tab="数据库属性" display-directive="show">
-              <e-table ref="dbTableRef" v-bind="dbTableProps" :data="tableFields">
+              <e-table ref="dbTableRef" v-bind="dbTableProps" :data="tableFields" data-key="columnName">
                 <template ##columnName="row, index">
                   <n-auto-complete
                     v-model:value="row.columnName"
@@ -33,16 +33,16 @@
               </e-table>
             </n-tab-pane>
             <n-tab-pane name="page" tab="页面属性" display-directive="show">
-              <e-table ref="pageTableRef" v-bind="pageTableProps" :data="tableFields" />
+              <e-table ref="pageTableRef" v-bind="pageTableProps" :data="tableFields" data-key="columnName" />
             </n-tab-pane>
             <n-tab-pane name="rule" tab="校验字段" display-directive="show">
-              <e-table ref="ruleTableRef" v-bind="ruleTableProps" :data="tableFields" />
+              <e-table ref="ruleTableRef" v-bind="ruleTableProps" :data="tableFields" data-key="columnName" />
             </n-tab-pane>
             <n-tab-pane name="fk" tab="外键" display-directive="show">
-              <e-table ref="fkTableRef" v-bind="fkTableProps" :data="tableFields" />
+              <e-table ref="fkTableRef" v-bind="fkTableProps" :data="tableFields" data-key="columnName" />
             </n-tab-pane>
             <n-tab-pane name="idx" tab="索引" display-directive="show">
-              <e-table ref="idxTableRef" v-bind="idxTableProps" :data="tableIndexs" />
+              <e-table ref="idxTableRef" v-bind="idxTableProps" :data="tableIndexs" data-key="columnName" />
             </n-tab-pane>
           </n-tabs>
         </e-form>
@@ -80,6 +80,7 @@
         </n-form-item>
       </template>
     </e-form>
+    <gen-ai-modal ref="genAiModalRef" />
   </div>
 </template>
 
@@ -101,6 +102,7 @@
   import type { IFormData } from 'easy-descriptor'
   import { commonFields } from '@/views/gen/table/commonFields'
   import { FormTypeEnum } from 'easy-descriptor'
+  import GenAiModal from '@/views/gen/table/comp/GenAiModal.vue'
 
   defineOptions({
     name: 'GenTableList'
@@ -110,6 +112,8 @@
 
   const tableFields = ref<GenTableField[]>([])
   const tableIndexs = ref<GenTableIndex[]>([])
+
+  const genAiModalRef = ref()
 
   const columnNameOptions = computed(() => (rowIndex: number) => {
     const name = tableFields.value[rowIndex].columnName
@@ -175,6 +179,18 @@
 
   const commonTableProps: EModelCommProps<GenTableFieldForDB>['tableProps'] = {
     actions: false,
+    topActions: [
+      'add',
+      {
+        action: 'aiAdd',
+        html: 'Ai生成',
+        position: 'top',
+        type: 'primary',
+        handle: () => {
+          genAiModalRef.value.show()
+        }
+      }
+    ],
     showPage: false,
     enableEdit: true,
     autoLoad: false,
@@ -268,10 +284,12 @@
     console.log('currTable.value ---> ', currTable.value)
     const module = genData.value
     const { name: tableName = '' } = currTable.value!
+    const javaFileName = upperFirst(camelCase(tableName))
+    const moduleName = camelCase(tableName.substring(tableName.indexOf('_') + 1))
     const getOutFileName = (type: string, pkg: string) => {
-      const javaFileName = upperFirst(camelCase(tableName))
-      const webFileName = camelCase(tableName.substring(tableName.indexOf('_') + 1))
-      let fileName = `${module.moduleCode}/${webFileName}/`
+      console.log('webFileName --> ', moduleName)
+      console.log('javaFileName --> ', javaFileName)
+      let fileName = `${module.moduleCode}/${moduleName}/`
       const filePath = pkg.replaceAll('.', '/')
       switch (type) {
         case 'entity':
@@ -290,7 +308,7 @@
           fileName += `${filePath}/${javaFileName}${upperFirst(type)}.java`
           break
       }
-      return fileName
+      return fileName.replaceAll('{module}', moduleName)
     }
     const data: GeneratorData = {
       tableId: currTable.value?.id,
@@ -299,7 +317,7 @@
         const className = outputName.substring(outputName.lastIndexOf('/') + 1, outputName.lastIndexOf('.'))
         const file: GeneratorFile = {
           type: item,
-          pkg: module.pkg + '.' + module[item],
+          pkg: (module.pkg + '.' + module[item]).replaceAll('{module}', moduleName.toLowerCase()),
           path: item,
           outputName,
           className,
@@ -308,6 +326,7 @@
         return file
       })
     }
+    console.log('module.value ---> ', module)
     await GeneratorApi.generator(data)
     return Promise.reject()
   }
