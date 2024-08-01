@@ -92,7 +92,8 @@
 </template>
 
 <script lang="ts" setup>
-  import Model, {
+  import Model from './model'
+  import GenTable, {
     GeneratorApi,
     GenTableField,
     GenTableFieldForDB,
@@ -103,14 +104,13 @@
   } from './model'
   import { initModel } from '@/components/ext'
   import { EModelCommProps, FormatFormData } from '@/components/ext/types'
-  import { camelCase, cloneDeep, upperFirst, snakeCase, uniqueId } from 'lodash-es'
+  import { camelCase, cloneDeep, snakeCase, uniqueId, upperFirst } from 'lodash-es'
   import { ButtonActions } from '@/components/ActionButton/commonActions'
   import GenModule, { GeneratorData, GeneratorFile, GenModuleApi } from '@/views/gen/module/model'
   import type { IFormData } from 'easy-descriptor'
+  import { FormTypeEnum } from 'easy-descriptor'
   import { commonFields } from '@/views/gen/table/commonFields'
-  import { FormType, FormTypeEnum } from 'easy-descriptor'
   import GenAiModal from './comp/GenAiModal.vue'
-  import GenTable from './model'
 
   defineOptions({
     name: 'GenTableList'

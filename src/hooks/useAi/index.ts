@@ -1,6 +1,5 @@
 import { ChatMessageType, sseChat } from '@/api/aiChat'
 import { FetchEventSourceInit } from '@microsoft/fetch-event-source/lib/cjs/fetch'
-import { result, split } from 'lodash-es'
 import { EventSourceMessage } from '@microsoft/fetch-event-source'
 
 type SseChatResp = {

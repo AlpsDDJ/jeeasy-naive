@@ -56,7 +56,7 @@
   import { useModelApi } from '@/hooks/useApi'
   import type { FieldOption, FormType, IFormData } from 'easy-descriptor'
   import { FormTypeEnum } from 'easy-descriptor'
-  import type { EFormInst, EFormProps, LoadData } from './types'
+  import type { EFormInst, EFormProps } from './types'
 
   defineOptions({
     name: 'EForm'

@@ -1,6 +1,5 @@
 <script setup lang="ts">
   import GenTable, { GenAiForm, GenTableField } from '@/views/gen/table/model'
-  import { IFormData } from 'easy-descriptor'
   import { useSseChat } from '@/hooks/useAi'
   import { camelCase } from 'lodash-es'
   import { FormInst } from 'naive-ui'
