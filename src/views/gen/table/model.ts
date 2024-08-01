@@ -111,7 +111,7 @@ export default class GenTable extends BaseModel {
   /**
    * 表字段列表
    */
-  tableFields?: (GenTableFieldForDB & GenTableFieldForPage)[]
+  tableFields?: GenTableField[]
   /**
    * 表索引列表
    */
@@ -395,7 +395,9 @@ export class GenTableFieldForFk extends BaseModel {
   mainTableField?: string
 }
 
-export interface GenTableField extends GenTableFieldForRule, GenTableFieldForDB, GenTableFieldForFk {}
+export interface GenTableField extends GenTableFieldForRule, GenTableFieldForPage, GenTableFieldForDB, GenTableFieldForFk {}
+
+export const field: any = {}
 
 /**
  * 索引配置
@@ -427,11 +429,14 @@ export class GeneratorApi extends BaseApi {
 
 @Model('GenAiForm')
 export class GenAiForm extends BaseModel {
-  @Field('表名')
+  @Field<BaseModel>('表名', { formSpan: 3 })
   tableName?: string
-  @Field<BaseModel>('功能描述', { formSpan: 3, formCompProps: { rows: 15 } })
+  @Field<BaseModel>('功能描述', { formSpan: 2, formCompProps: { rows: 35, style: 'white-space: pre-wrap;' } })
   @Field.DataType(FormDataTypeEnum.STRING, InputTypeEnum.TEXT_AREA)
   tableDesc?: string
+  @Field<BaseModel>('生成结果', { formSpan: 2, formCompProps: { rows: 35, style: 'white-space: pre-wrap;' } })
+  @Field.DataType(FormDataTypeEnum.STRING, InputTypeEnum.TEXT_AREA)
+  tableJson?: string
   // @Field('表ID')
   // dbType?: string
 }

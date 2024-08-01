@@ -18,7 +18,7 @@ export const appSetting: AppSetting = {
   formMaxRows: 8,
   formSize: 'medium',
   formColWidth: 318,
-  pageSizes: [5, 10, 20, 50, 100]
+  pageSizes: [10, 20, 50, 100]
 }
 
 export const formTypeTitleMap = {

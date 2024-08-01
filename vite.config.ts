@@ -66,7 +66,8 @@ export default () =>
       port: 3333, //启动端口
       hmr: {
         host: '127.0.0.1',
-        port: 8080
+        // clientPort: 8092,
+        port: 8979
       },
       // 设置 https 代理
       proxy: {

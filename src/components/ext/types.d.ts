@@ -60,7 +60,10 @@ export interface EFormProps<T extends BaseModel> extends ECommProps<T>, BindRefP
   formProps?: FormProps
   formatFormData?: FormatFormData<T>
   beforeSubmit?: FormatFormData<T>
-  onSuccess?: LoadData<T>
+  onSuccess?: (resp?: any, formType?: FormType) => void
+  title?: string
+  okBtn?: string | false
+  cancelBtn?: string | false
 }
 //
 export interface EQueryInst<T extends BaseModel> {

@@ -23,7 +23,7 @@ export const initModel = <T extends BaseModel>(instance: BaseModelConstructor<T>
 
   const loadData: LoadData<T> = async (param?: any) => {
     // tableLoading.value = true
-    const pagination = tableRef.value?.getPageParams() || {}
+    const pagination = tableRef.value!.getPageParams() || {}
     const queryData = queryRef.value?.getFormData() || {}
     const { pageSize, page } = pagination
     const params = {
@@ -70,7 +70,9 @@ export const initModel = <T extends BaseModel>(instance: BaseModelConstructor<T>
     modelOptions: cloneDeep(modelOptions),
     // formatFormData: config?.formatFormData as FormatFormData<T>,
     // beforeSubmit: config?.beforeSubmit as FormatFormData<T>,
-    onSuccess: reload,
+    onSuccess: () => {
+      reload()
+    },
     ...cProps?.formProps
     // 'on-show-form': showFormAndFormat
   }

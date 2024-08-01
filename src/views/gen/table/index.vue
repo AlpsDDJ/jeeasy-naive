@@ -5,6 +5,13 @@
         <e-search ref="queryRef" v-bind="queryProps" />
       </template>
       <e-table ref="tableRef" v-bind="tableProps" :actions="rowActions">
+        <template #toolBarEnd>
+          <n-button circle secondary type="success" @click="genAiModalRef.show()">
+            <template #icon>
+              <Icon icon-name="InfiniteOutline" />
+            </template>
+          </n-button>
+        </template>
         <template ##enableFlag="row">
           <n-tag :type="row.enableFlag ? 'success' : 'warning'" :bordered="false">{{ row.enableFlag_dict }}</n-tag>
         </template>
@@ -80,7 +87,7 @@
         </n-form-item>
       </template>
     </e-form>
-    <gen-ai-modal ref="genAiModalRef" />
+    <gen-ai-modal ref="genAiModalRef" @complete="onComplete" />
   </div>
 </template>
 
@@ -101,8 +108,9 @@
   import GenModule, { GeneratorData, GeneratorFile, GenModuleApi } from '@/views/gen/module/model'
   import type { IFormData } from 'easy-descriptor'
   import { commonFields } from '@/views/gen/table/commonFields'
-  import { FormTypeEnum } from 'easy-descriptor'
-  import GenAiModal from '@/views/gen/table/comp/GenAiModal.vue'
+  import { FormType, FormTypeEnum } from 'easy-descriptor'
+  import GenAiModal from './comp/GenAiModal.vue'
+  import GenTable from './model'
 
   defineOptions({
     name: 'GenTableList'
@@ -169,6 +177,14 @@
     })
   }
 
+  const onComplete = async (data: GenTable) => {
+    console.log('data --------------->>>>>>>>> ', data)
+    formRef.value?.open(FormTypeEnum.ADD)
+    await nextTick()
+    tableFields.value.push(...(data.tableFields || []))
+    formRef.value?.setFormData(data)
+  }
+
   const handleAddTableIndex = (formData: IFormData<GenTableIndex>) => {
     console.log('handleAddTableIndex')
     tableIndexs.value.push({
@@ -179,18 +195,6 @@
 
   const commonTableProps: EModelCommProps<GenTableFieldForDB>['tableProps'] = {
     actions: false,
-    topActions: [
-      'add',
-      {
-        action: 'aiAdd',
-        html: 'Ai生成',
-        position: 'top',
-        type: 'primary',
-        handle: () => {
-          genAiModalRef.value.show()
-        }
-      }
-    ],
     showPage: false,
     enableEdit: true,
     autoLoad: false,

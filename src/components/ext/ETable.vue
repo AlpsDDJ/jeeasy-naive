@@ -15,6 +15,7 @@
             >删除</n-button
           >
         </div>
+        <slot name="toolBarEnd" />
       </n-space>
     </slot>
     <n-config-provider :theme-overrides="enableEdit ? editTableThemeOverrides : {}">

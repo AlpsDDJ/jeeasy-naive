@@ -10,6 +10,12 @@ export default class AiChatApp extends BaseModel {
   @Field.DataType(FormDataTypeEnum.STRING)
   name?: string
   /**
+   * 应用名称
+   */
+  @Field('应用编号')
+  @Field.DataType(FormDataTypeEnum.STRING)
+  code?: string
+  /**
    * 模型
    */
   @Field('模型')

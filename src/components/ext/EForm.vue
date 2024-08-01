@@ -2,7 +2,7 @@
   <template v-if="isModal">
     <n-drawer v-model:show="showForm" :width="wSize" :mask-closable="!showConfirmBtn" @after-enter="() => (formLoading = false)">
       <n-drawer-content>
-        <template #header> {{ formTypeTitleMap[formType || ''] || '' }} </template>
+        <template #header> {{ title || formTypeTitleMap[formType || ''] || '' }} </template>
         <n-spin :show="formLoading">
           <slot name="top" />
           <div :style="{ minHeight: '500px' }">
@@ -22,8 +22,8 @@
           <div class="e-form-bottom" justify="space-between" style="width: 100%" :wrap-item="false">
             <div class="e-form-bottom-left">
               <n-space>
-                <n-button v-if="showConfirmBtn" type="primary" secondary :loading="formLoading" @click="submitHandle">保存</n-button>
-                <n-button type="default" secondary @click="() => close()">关闭</n-button>
+                <n-button v-if="showConfirmBtn" type="primary" secondary :loading="formLoading" @click="submitHandle">{{ okBtn }}</n-button>
+                <n-button type="default" secondary @click="() => close()">{{ cancelBtn }}</n-button>
               </n-space>
             </div>
             <div class="e-form-bottom-right">
@@ -56,7 +56,7 @@
   import { useModelApi } from '@/hooks/useApi'
   import type { FieldOption, FormType, IFormData } from 'easy-descriptor'
   import { FormTypeEnum } from 'easy-descriptor'
-  import type { EFormInst, EFormProps } from './types'
+  import type { EFormInst, EFormProps, LoadData } from './types'
 
   defineOptions({
     name: 'EForm'
@@ -77,7 +77,9 @@
       size: appSetting.formSize
     }),
     formatFormData: async (data: IFormData<T>) => cloneDeep(data),
-    beforeSubmit: async (data: IFormData<T>) => cloneDeep(data)
+    beforeSubmit: async (data: IFormData<T>) => cloneDeep(data),
+    okBtn: '保存',
+    cancelBtn: '关闭'
   })
   const modelState = props.modelOptions
 
@@ -112,7 +114,7 @@
   /**
    * 是否展示确认按钮：查看表单不展示
    */
-  const showConfirmBtn = computed<boolean>(() => formType.value !== FormTypeEnum.VIEW)
+  const showConfirmBtn = computed<boolean>(() => formType.value !== FormTypeEnum.VIEW && !!props.okBtn)
 
   /**
    * 表单显示状态
@@ -188,8 +190,10 @@
     formLoading.value = true
     try {
       const formDataClone = await props.beforeSubmit(formData.value || {}, formType.value)
-      console.log('formData.value ---->>>> ', formData.value)
-      console.log('formDataClone ---->>>> ', formDataClone)
+      if (!formDataClone) {
+        formLoading.value = false
+        return
+      }
       let resp: any
       try {
         switch (formType.value) {

@@ -1,5 +1,7 @@
 <template>
   <n-dialog-provider>
-    <slot />
+    <n-modal-provider>
+      <slot />
+    </n-modal-provider>
   </n-dialog-provider>
 </template>
