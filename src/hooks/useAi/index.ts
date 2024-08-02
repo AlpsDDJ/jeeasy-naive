@@ -22,6 +22,9 @@ export const useSseChat = () => {
     _split = !!split
   }
   const open = (params: ChatMessageType, config?: Partial<FetchEventSourceInit>) => {
+    _results.value = ''
+    resultIndex.value = 0
+    // sessionId.value = ''
     return new Promise<SseChatResp>(async (resolve, reject) => {
       console.log('params  --> ', params)
       await sseChat(params, {

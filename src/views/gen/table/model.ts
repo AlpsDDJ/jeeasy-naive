@@ -427,16 +427,10 @@ export class GeneratorApi extends BaseApi {
   static generator: HttpRequest<string, GeneratorData>
 }
 
-@Model('GenAiForm')
-export class GenAiForm extends BaseModel {
-  @Field<BaseModel>('表名', { formSpan: 3 })
+export interface GenAiForm {
   tableName?: string
-  @Field<BaseModel>('功能描述', { formSpan: 2, formCompProps: { rows: 35, style: 'white-space: pre-wrap;' } })
-  @Field.DataType(FormDataTypeEnum.STRING, InputTypeEnum.TEXT_AREA)
   tableDesc?: string
-  @Field<BaseModel>('生成结果', { formSpan: 2, formCompProps: { rows: 35, style: 'white-space: pre-wrap;' } })
-  @Field.DataType(FormDataTypeEnum.STRING, InputTypeEnum.TEXT_AREA)
   tableJson?: string
-  // @Field('表ID')
-  // dbType?: string
+  checkedAiFields?: string[]
+  checkedCommFields?: string[]
 }

@@ -6,10 +6,11 @@
       </template>
       <e-table ref="tableRef" v-bind="tableProps" :actions="rowActions">
         <template #toolBarEnd>
-          <n-button circle secondary type="success" @click="genAiModalRef.show()">
+          <n-button secondary type="success" @click="genAiModalRef.show()">
             <template #icon>
               <Icon icon-name="InfiniteOutline" />
             </template>
+            AI建表
           </n-button>
         </template>
         <template ##enableFlag="row">
@@ -87,7 +88,7 @@
         </n-form-item>
       </template>
     </e-form>
-    <gen-ai-modal ref="genAiModalRef" @complete="onComplete" />
+    <gen-ai-modal ref="genAiModalRef" @complete="onAiComplete" />
   </div>
 </template>
 
@@ -177,12 +178,17 @@
     })
   }
 
-  const onComplete = async (data: GenTable) => {
+  const onAiComplete = async (data: GenTable) => {
     console.log('data --------------->>>>>>>>> ', data)
     formRef.value?.open(FormTypeEnum.ADD)
     await nextTick()
-    tableFields.value.push(...(data.tableFields || []))
-    formRef.value?.setFormData(data)
+    const { tableFields: _tableFields = [], ...genTable } = data
+    tableFields.value.push(
+      ..._tableFields
+        .filter(({ columnName }) => !tableFields.value.some((item) => columnName === item.columnName))
+        .map((item) => ({ id: uniqueId(tempIdPrefix), ...item }))
+    )
+    formRef.value?.setFormData(genTable)
   }
 
   const handleAddTableIndex = (formData: IFormData<GenTableIndex>) => {

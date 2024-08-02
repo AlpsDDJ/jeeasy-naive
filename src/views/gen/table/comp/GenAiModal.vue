@@ -3,13 +3,17 @@
   import { useSseChat } from '@/hooks/useAi'
   import { camelCase } from 'lodash-es'
   import { FormInst, InputInst } from 'naive-ui'
+  import { commonFields } from '@/views/gen/table/commonFields'
 
   // const { refs, commProps } = initModel(GenAiForm)
   // const { formRef } = refs
   // const { formProps } = commProps
 
   const showModal = ref<boolean>(false)
-  const formData = ref<GenAiForm>({})
+  const formData = ref<GenAiForm>({
+    checkedCommFields: commonFields.map(({ columnName }) => columnName!)
+  })
+  const genTable = ref<GenTable>()
   const formRef = ref<FormInst>()
   const loading = ref<boolean>(false)
   const generateJsonSchema = ref<boolean>(false)
@@ -58,16 +62,22 @@
     required: 0
   }
 
-  const parseJdbcType = (jdbcType: string) => {
+  const parseJdbcType = (jdbcType: string, length?: number, decimalPlaces?: number) => {
     // 正则表达式匹配函数名和参数
     const regex = /^(\w+)(?:\((\d+)(?:,\s*(\d+))?\))?$/
     const match = jdbcType?.toLowerCase().match(regex)
 
     if (match) {
+      const _jdbcType = match[1]
+      const _length = match[2] ? Number(match[2]) : length
+      const _decimalPlaces = match[3] ? Number(match[3]) : decimalPlaces
+      if (!_length) {
+        console.log(`parseJdbcType: [${jdbcType}]: ${_jdbcType}, ${_length}, ${_decimalPlaces}`)
+      }
       return {
-        jdbcType: match[1],
-        length: match[2] && Number(match[2]),
-        decimalPlaces: match[3] && Number(match[3])
+        jdbcType: _jdbcType,
+        length: _length,
+        decimalPlaces: _decimalPlaces
       }
     } else {
       // throw new Error('Invalid function string format')
@@ -77,7 +87,11 @@
     }
   }
 
-  const replaceAiResult = (result: string): GenTable | null => {
+  const replaceAiResult = (result?: string): void => {
+    !result && (result = formData.value.tableJson)
+    if (!result || loading.value) {
+      return
+    }
     let temp = result.replaceAll('true', '1').replaceAll('false', '0')
     if (temp.startsWith('```')) {
       temp = temp.replaceAll('```', '')
@@ -93,36 +107,47 @@
         title: 'JsonSchema解析失败，需手动merge',
         content: (e as any)?.message
       })
-      return null
+      return
     }
-    table.tableFields = table.tableFields?.map(
-      (item) =>
-        ({
-          ...defField,
-          ...item,
-          ...parseJdbcType(item.jdbcType ?? ''),
-          description: item.showName ?? item.description,
-          // jdbcType: item.jdbcType?.toLowerCase(),
-          fieldName: camelCase(item.columnName)
-        }) as any
-    )
-    formRef.value?.validate()
+    table.tableFields = table.tableFields?.map((item) => {
+      formData.value.checkedAiFields = table.tableFields?.filter(({ columnName }) => columnName).map(({ columnName }) => columnName!) || []
+      return {
+        ...defField,
+        ...item,
+        ...parseJdbcType(item.jdbcType ?? '', item.length, item.decimalPlaces),
+        description: item.showName ?? item.description,
+        // jdbcType: item.jdbcType?.toLowerCase(),
+        fieldName: camelCase(item.columnName)
+      } as any
+    })
+    // formRef.value?.validate()
     formData.value.tableJson = JSON.stringify({ ...defTable, ...table }, null, 2)
     // formRef.value?.setFormData({
     //   tableJson: JSON.stringify({ ...defTable, ...table }, null, 2)
     // })
     dbTableName.value = table.name ?? ''
-    return { ...defTable, ...table } as GenTable
+    genTable.value = { ...defTable, ...table } as GenTable
+    // return { ...defTable, ...table } as GenTable
   }
 
-  const handleSubmit = async () => {
+  const handleOk = async () => {
     if (loading.value) {
       return
     }
+    if (!genTable.value) {
+      window.$message.warning('请先填写表结构')
+      return
+    }
     loading.value = true
-    emits('complete', JSON.parse(formData.value.tableJson || '{}'))
+    const { tableFields = [], ...table } = genTable.value
+    const { checkedCommFields = [], checkedAiFields = [] } = formData.value
+    const allFields: GenTable['tableFields'] = [...tableFields, ...commonFields]
+    emits('complete', {
+      ...table,
+      tableFields: allFields.filter(({ columnName }) => columnName && [...checkedCommFields, ...checkedAiFields]?.includes(columnName))
+    })
     loading.value = false
-    close()
+    // close()
     return false
   }
 
@@ -220,7 +245,7 @@
     <template #bottom>11 </template>
   </e-form>-->
   <n-modal v-model:show="showModal" size="70%" title="Ai 编码助手">
-    <n-card style="width: 75%" title="模态框" size="huge" :bordered="false" role="dialog" aria-modal="true">
+    <n-card style="width: 75%" title="Ai 编码助手" size="huge" :bordered="false" role="dialog" aria-modal="true">
       <n-form ref="formRef" :model="formData" label-placement="left" label-width="100">
         <n-grid>
           <n-form-item-gi label="表描述" path="tableName" span="13">
@@ -264,13 +289,30 @@
               type="textarea"
               style="white-space: pre-wrap"
               :rows="35"
-              @keyup.enter="handleSubmit"
+              @blur="
+                () => {
+                  replaceAiResult()
+                }
+              "
+              @keyup.enter="handleOk"
             />
+          </n-form-item-gi>
+        </n-grid>
+        <n-grid>
+          <n-form-item-gi label="公共字段" span="22" path="checkedFields">
+            <n-checkbox-group v-model:value="formData.checkedCommFields">
+              <n-checkbox v-for="field in commonFields" :key="field.columnName" :label="field.description" :value="field.columnName" />
+            </n-checkbox-group>
+          </n-form-item-gi>
+          <n-form-item-gi v-if="genTable?.tableFields" label="Ai字段" span="22" path="checkedFields">
+            <n-checkbox-group v-model:value="formData.checkedAiFields">
+              <n-checkbox v-for="field in genTable?.tableFields" :key="field.columnName" :label="field.description" :value="field.columnName" />
+            </n-checkbox-group>
           </n-form-item-gi>
         </n-grid>
       </n-form>
       <template #footer>
-        <n-button secondary type="success" class="ai-action-btn" :loading="loading" @click="handleSubmit"> 确认 </n-button>
+        <n-button secondary type="success" class="ai-action-btn" :loading="loading" @click="handleOk"> 确认 </n-button>
       </template>
     </n-card>
   </n-modal>
