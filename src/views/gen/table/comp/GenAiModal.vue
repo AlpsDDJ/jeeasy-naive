@@ -2,7 +2,7 @@
   import GenTable, { GenAiForm, GenTableField } from '@/views/gen/table/model'
   import { useSseChat } from '@/hooks/useAi'
   import { camelCase } from 'lodash-es'
-  import { FormInst } from 'naive-ui'
+  import { FormInst, InputInst } from 'naive-ui'
 
   // const { refs, commProps } = initModel(GenAiForm)
   // const { formRef } = refs
@@ -13,6 +13,10 @@
   const formRef = ref<FormInst>()
   const loading = ref<boolean>(false)
   const generateJsonSchema = ref<boolean>(false)
+  const dbTableName = ref<string>('')
+
+  const tableStructureRef = ref<InputInst>()
+  const tableJsonRef = ref<InputInst>()
 
   const show = (tableName?: string) => {
     console.log('show')
@@ -107,11 +111,17 @@
     // formRef.value?.setFormData({
     //   tableJson: JSON.stringify({ ...defTable, ...table }, null, 2)
     // })
+    dbTableName.value = table.name ?? ''
     return { ...defTable, ...table } as GenTable
   }
 
   const handleSubmit = async () => {
+    if (loading.value) {
+      return
+    }
+    loading.value = true
     emits('complete', JSON.parse(formData.value.tableJson || '{}'))
+    loading.value = false
     close()
     return false
   }
@@ -122,11 +132,16 @@
   }
 
   const generateTableStructureByAi = async () => {
+    if (loading.value) {
+      return
+    }
     const { tableName, tableDesc } = formData.value
     if (!tableName && !tableDesc) {
       window.$message.warning('至少给个提示啊！')
       return
     }
+    loading.value = true
+    tableStructureRef.value?.focus()
     generateJsonSchema.value = false
     const { open, onMsg, results } = useSseChat()
     onMsg((result) => {
@@ -139,16 +154,23 @@
     await open({
       content: tableDesc ?? `设计一个表结构，表名为：${tableName}`,
       appCode: 'code-pm'
+    }).finally(() => {
+      loading.value = false
     })
     console.log('完成: ', results.value)
   }
 
   const generateTableJsonByAi = async () => {
+    if (loading.value) {
+      return
+    }
     const { tableName, tableDesc } = formData.value
     if (!tableName && !tableDesc) {
       window.$message.warning('至少给个提示啊！')
       return
     }
+    loading.value = true
+    tableJsonRef.value?.focus()
     generateJsonSchema.value = true
     const { open, onMsg, results } = useSseChat()
     onMsg((result) => {
@@ -165,6 +187,8 @@
         tableName: tableName,
         dbType: 'MySql'
       }
+    }).finally(() => {
+      loading.value = false
     })
     replaceAiResult(results.value)
     // console.log('完成: ', results.value)
@@ -197,10 +221,10 @@
   </e-form>-->
   <n-modal v-model:show="showModal" size="70%" title="Ai 编码助手">
     <n-card style="width: 75%" title="模态框" size="huge" :bordered="false" role="dialog" aria-modal="true">
-      <n-form ref="formRef" :model="formData" label-placement="left" label-width="80">
+      <n-form ref="formRef" :model="formData" label-placement="left" label-width="100">
         <n-grid>
-          <n-form-item-gi label="表名" path="tableName" span="13">
-            <n-input v-model:value="formData.tableName" type="textarea" style="white-space: pre-wrap" rows="2" @keyup.enter="generateTableStructureByAi">
+          <n-form-item-gi label="表描述" path="tableName" span="13">
+            <n-input v-model:value="formData.tableName" type="textarea" style="white-space: pre-wrap" rows="2" @keyup.ctrl.enter="generateTableStructureByAi">
               <template #suffix>
                 <n-button circle quaternary type="success" class="ai-action-btn" :loading="loading" @click="generateTableStructureByAi">
                   <template #icon>
@@ -210,10 +234,20 @@
               </template>
             </n-input>
           </n-form-item-gi>
+          <n-form-item-gi v-if="dbTableName" label="表名" span="9" offset="1">
+            <n-input :value="dbTableName" readonly />
+          </n-form-item-gi>
         </n-grid>
         <n-grid>
           <n-form-item-gi label="功能描述" path="tableDesc" span="13">
-            <n-input v-model:value="formData.tableDesc" type="textarea" style="white-space: pre-wrap" :rows="35" @keyup.enter="generateTableJsonByAi">
+            <n-input
+              ref="tableStructureRef"
+              v-model:value="formData.tableDesc"
+              type="textarea"
+              style="white-space: pre-wrap"
+              :rows="35"
+              @keyup.enter="generateTableJsonByAi"
+            >
               <template #suffix>
                 <n-button circle quaternary type="success" class="ai-action-btn" :loading="loading" @click="generateTableJsonByAi">
                   <template #icon>
@@ -223,8 +257,15 @@
               </template>
             </n-input>
           </n-form-item-gi>
-          <n-form-item-gi label="生成结果" path="tableJson" span="9" offset="1">
-            <n-input v-model:value="formData.tableJson" type="textarea" style="white-space: pre-wrap" :rows="35" @keyup.enter="handleSubmit" />
+          <n-form-item-gi label="JsonSchema" path="tableJson" span="9" offset="1">
+            <n-input
+              ref="tableJsonRef"
+              v-model:value="formData.tableJson"
+              type="textarea"
+              style="white-space: pre-wrap"
+              :rows="35"
+              @keyup.enter="handleSubmit"
+            />
           </n-form-item-gi>
         </n-grid>
       </n-form>
