@@ -5,6 +5,7 @@ export type DictInputProps = {
   showSwitchText?: boolean
   topPid?: string | number
   async?: boolean
+  queryParams?: Record<string, any>
 }
 
 export type DictData = {

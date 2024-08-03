@@ -4,6 +4,12 @@ import { BaseModel } from '@/hooks/useModel'
 @Model('GenTemplate')
 export default class GenTemplate extends BaseModel {
   /**
+   * 模板名称
+   */
+  @Field('模板名称')
+  @Field.DataType(FormDataTypeEnum.STRING)
+  name?: string
+  /**
    * 文件名
    */
   @Field('文件名')
@@ -23,17 +29,17 @@ export default class GenTemplate extends BaseModel {
   @Field.DataType(FormDataTypeEnum.STRING)
   remark?: string
   /**
-   * 模板内容
-   */
-  @Field('模板内容', { formSpan: 5 })
-  @Field.Hidden(['list', 'query'])
-  @Field.DataType(FormDataTypeEnum.STRING, InputTypeEnum.TEXT_AREA)
-  context?: string
-  /**
    * 启用标记
    */
   @Field('启用标记')
   @Field.DataType(FormDataTypeEnum.NUMBER, InputTypeEnum.SWITCH)
   @Field.Dict()
   enableFlag?: number
+  /**
+   * 模板内容
+   */
+  @Field<GenTemplate>('模板内容', { formSpan: 5, formCompProps: { rows: 30 } })
+  @Field.Hidden(['list', 'query'])
+  @Field.DataType(FormDataTypeEnum.STRING, InputTypeEnum.TEXT_AREA)
+  context?: string
 }

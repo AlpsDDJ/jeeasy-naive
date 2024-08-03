@@ -19,7 +19,7 @@ export default class GenTable extends BaseModel {
   $index?: number
 
   @Field('表名')
-  @Field.Disabled(['edit'])
+  // @Field.Disabled(['edit'])
   name?: string
 
   @Field('表描述')

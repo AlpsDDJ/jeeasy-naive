@@ -1,14 +1,17 @@
 <template>
-  <component :is="component" v-bind="{ ...compProps, ...$attrs }" v-model:value="modelValue">
+  <component :is="inputComponent" v-bind="{ ...compProps, ...$attrs }" v-model:value="modelValue">
     <template v-if="props.showSwitchText" #checked> {{ optionMap[1] }} </template>
     <template v-if="props.showSwitchText" #unchecked> {{ optionMap[0] }} </template>
+    <n-space v-if="component === 'checkbox'">
+      <n-checkbox v-for="opt in options" :key="opt.dictCode" :value="opt.dictCode" :label="opt.dictName" />
+    </n-space>
   </component>
 </template>
 
 <script setup lang="ts">
   import { CommonApi } from '@/api/common'
   import { DictData, DictInputProps, DictInputValues } from './types'
-  import { NCheckbox, NSelect, NSwitch, NTree, NTreeSelect } from 'naive-ui'
+  import { NCheckbox, NCheckboxGroup, NSelect, NSwitch, NTree, NTreeSelect } from 'naive-ui'
   import { useCacheStore } from '@/store/modules/cache'
 
   defineOptions({
@@ -26,15 +29,17 @@
   const options = ref<DictData[]>()
   const optionMap = ref({})
 
-  const component = ref<any>()
+  const inputComponent = ref<any>()
   const compProps = ref({})
   const cacheStore = useCacheStore()
 
   const loadData = (params = {}) => {
+    console.log('props.queryParams --->> ', props.queryParams)
     const _params = {
       code: props.code,
       parentId: props.topPid,
       async: props.async,
+      ...props.queryParams,
       ...params
     }
     const cacheKey = `dict_${Object.values(_params).join('$$')}`
@@ -43,12 +48,7 @@
       return Promise.resolve(cacheValue)
     } else {
       return new Promise<DictData[]>((resolve) => {
-        CommonApi.getDicts({
-          code: props.code,
-          parentId: props.topPid,
-          async: props.async,
-          ...params
-        }).then((resp) => {
+        CommonApi.getDicts(_params).then((resp) => {
           const value = resp.data?.map(({ leaf, ...item }) => ({ isLeaf: leaf, ...item }))
           cacheStore.setValue(cacheKey, value)
           resolve(value)
@@ -65,7 +65,7 @@
 
   switch (props.component) {
     case 'treeSelect':
-      component.value = markRaw(NTreeSelect)
+      inputComponent.value = markRaw(NTreeSelect)
       compProps.value = {
         options,
         // cascade: true,
@@ -78,7 +78,7 @@
       }
       break
     case 'tree':
-      component.value = markRaw(NTree)
+      inputComponent.value = markRaw(NTree)
       compProps.value = {
         data: options,
         selectable: !props.multiple,
@@ -99,20 +99,20 @@
       }
       break
     case 'checkbox':
-      component.value = markRaw(NCheckbox)
+      inputComponent.value = markRaw(NCheckboxGroup)
       break
     case 'radio':
-      component.value = markRaw(NCheckbox)
+      inputComponent.value = markRaw(NCheckbox)
       break
     case 'switch':
-      component.value = markRaw(NSwitch)
+      inputComponent.value = markRaw(NSwitch)
       compProps.value = {
         checkedValue: 1,
         uncheckedValue: 0
       }
       break
     default:
-      component.value = markRaw(NSelect)
+      inputComponent.value = markRaw(NSelect)
       compProps.value = {
         options,
         multiple: props.multiple,
