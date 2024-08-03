@@ -56,9 +56,10 @@
         </e-form>
       </template>
     </e-model>
-    <e-form ref="mFormRef" v-bind="mFormProps" :before-submit="handleGenSubmit">
+    <e-form ref="mFormRef" v-bind="mFormProps" :before-submit="handleGenSubmit" ok-btn="预览">
       <n-form-item label="生成文件">
-        <n-checkbox-group v-model:value="checkedFileTypes">
+        <e-dict-input v-model:value="checkedFileTypes" component="checkbox" multiple code="#gen_template" :query-params="{ templateType: 'default' }" />
+        <!--<n-checkbox-group v-model:value="checkedFileTypes">
           <n-space>
             <n-checkbox label="Entity" value="entity" />
             <n-checkbox label="Mapper" value="mapper" />
@@ -69,7 +70,7 @@
             <n-checkbox label="WebList" value="webList" />
             <n-checkbox label="WebModel" value="webModel" />
           </n-space>
-        </n-checkbox-group>
+        </n-checkbox-group>-->
       </n-form-item>
       <template #bottom>
         <n-form-item label-placement="left" label="模板选择" :show-feedback="false">
@@ -89,6 +90,7 @@
       </template>
     </e-form>
     <gen-ai-modal ref="genAiModalRef" @complete="onAiComplete" />
+    <gen-preview ref="genPreviewRef" />
   </div>
 </template>
 
@@ -112,6 +114,7 @@
   import { FormTypeEnum } from 'easy-descriptor'
   import { commonFields } from '@/views/gen/table/commonFields'
   import GenAiModal from './comp/GenAiModal.vue'
+  import GenPreview from '@/views/gen/table/comp/GenPreview.vue'
 
   defineOptions({
     name: 'GenTableList'
@@ -123,6 +126,7 @@
   const tableIndexs = ref<GenTableIndex[]>([])
 
   const genAiModalRef = ref()
+  const genPreviewRef = ref()
 
   const columnNameOptions = computed(() => (rowIndex: number) => {
     const name = tableFields.value[rowIndex].columnName
@@ -262,7 +266,16 @@
     'delete'
   ]
   const genData = ref<IFormData<GenModule>>({})
-  const checkedFileTypes = ref<string[]>(['entity', 'mapper', 'mapperXml', 'service', 'serviceImpl', 'controller', 'webList', 'webModel'])
+  const checkedFileTypes = ref<string[]>([
+    'entity.vm',
+    'mapper.vm',
+    'mapperXml.vm',
+    'service.vm',
+    'serviceImpl.vm',
+    'controller.vm',
+    'webList.vm',
+    'webModel.vm'
+  ])
   const currTable = ref<Model>()
 
   const handleGenModuleTempChange = (value: string) => {
@@ -322,7 +335,8 @@
     }
     const data: GeneratorData = {
       tableId: currTable.value?.id,
-      files: checkedFileTypes.value.map((item) => {
+      files: checkedFileTypes.value.map((fName) => {
+        const item = fName.replace('.vm', '')
         const outputName = getOutFileName(item, module[item] as string)
         const className = outputName.substring(outputName.lastIndexOf('/') + 1, outputName.lastIndexOf('.'))
         const file: GeneratorFile = {
@@ -337,7 +351,11 @@
       })
     }
     console.log('module.value ---> ', module)
-    await GeneratorApi.generator(data)
+    const resp = await GeneratorApi.generator(data)
+    genPreviewRef.value?.open({
+      files: resp.data,
+      name: module.name
+    })
     return Promise.reject()
   }
 

@@ -14,7 +14,7 @@
     name: 'GenTemplateList'
   })
 
-  const opts = initModel(Model)
+  const opts = initModel(Model, { formProps: { cols: 4 } })
 </script>
 
 <style scoped></style>
