@@ -398,7 +398,7 @@ export class GenTableFieldForFk extends BaseModel {
   mainTableField?: string
 }
 
-export interface GenTableField extends GenTableFieldForRule, GenTableFieldForPage, GenTableFieldForDB, GenTableFieldForFk {}
+export interface GenTableField extends GenTableFieldForPage, GenTableFieldForDB, GenTableFieldForRule, GenTableFieldForFk {}
 
 export const field: any = {}
 

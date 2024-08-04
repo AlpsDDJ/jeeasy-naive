@@ -18,7 +18,7 @@
         </template>
       </e-table>
       <template #bottom>
-        <e-form ref="formRef" v-bind="formProps" :cols="6" :before-submit="beforeSubmit" :format-form-data="formatFormData">
+        <e-form ref="formRef" v-bind="formProps" :cols="6" :before-submit="formatGenTableSubmitData" :format-form-data="formatGenTableRowData">
           <n-divider />
           <n-tabs v-model:value="activeTab" type="line" animated>
             <n-tab-pane name="db" tab="数据库属性" display-directive="show">
@@ -59,18 +59,6 @@
     <e-form ref="mFormRef" v-bind="mFormProps" :before-submit="handleGenSubmit" ok-btn="预览">
       <n-form-item label="生成文件">
         <e-dict-input v-model:value="checkedFileTypes" component="checkbox" multiple code="#gen_template" :query-params="{ templateType: 'default' }" />
-        <!--<n-checkbox-group v-model:value="checkedFileTypes">
-          <n-space>
-            <n-checkbox label="Entity" value="entity" />
-            <n-checkbox label="Mapper" value="mapper" />
-            <n-checkbox label="MapperXml" value="mapperXml" />
-            <n-checkbox label="Service" value="service" />
-            <n-checkbox label="ServiceImpl" value="serviceImpl" />
-            <n-checkbox label="Controller" value="controller" />
-            <n-checkbox label="WebList" value="webList" />
-            <n-checkbox label="WebModel" value="webModel" />
-          </n-space>
-        </n-checkbox-group>-->
       </n-form-item>
       <template #bottom>
         <n-form-item label-placement="left" label="模板选择" :show-feedback="false">
@@ -151,21 +139,33 @@
 
   const tempIdPrefix = 'tmp_'
 
-  const beforeSubmit: FormatFormData<Model> = async (formData) => {
+  /**
+   * 提交前格式化生成表单数据
+   * @param formData
+   */
+  const formatGenTableSubmitData: FormatFormData<Model> = async (formData) => {
     activeTab.value = 'db'
-    return {
-      ...formData,
-      tableFields: tableFields.value.map(({ id, ...fields }) => ({ ...fields, id: id?.startsWith(tempIdPrefix) ? undefined : id })),
-      tableIndexs: tableIndexs.value.map(({ id, ...indexs }) => ({ ...indexs, id: id?.startsWith(tempIdPrefix) ? undefined : id }))
-    }
+    formData.tableFields = tableFields.value.map(({ id, ...fields }) => ({ id: id?.startsWith(tempIdPrefix) ? undefined : id, ...fields }))
+    formData.tableIndexs = tableIndexs.value.map(({ id, ...indexs }) => ({ id: id?.startsWith(tempIdPrefix) ? undefined : id, ...indexs }))
+    return formData
   }
-  const formatFormData: FormatFormData<Model> = async (formData) => {
+
+  /**
+   * 数据回填时格式化生成表单数据
+   * @param formData
+   */
+  const formatGenTableRowData: FormatFormData<Model> = async (formData) => {
     activeTab.value = 'db'
     tableFields.value = cloneDeep(formData?.tableFields || [])
     tableIndexs.value = cloneDeep(formData?.tableIndexs || [])
-    return { ...formData, tableFields: tableFields.value, tableIndexs: tableIndexs.value }
+    formData.tableFields = tableFields.value
+    formData.tableIndexs = tableIndexs.value
+    return formData
   }
 
+  /**
+   * GenTable 初始化配置
+   */
   const {
     refs: { tableRef, formRef, queryRef },
     commProps: { tableProps, formProps, queryProps }
