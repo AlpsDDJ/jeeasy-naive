@@ -14,31 +14,34 @@ NProgress.configure({
   parent: 'body' //指定进度条的父容器
 })
 
-router.beforeEach(async (to) => {
+router.beforeEach(async (to, from, next) => {
   NProgress.start()
   const userStore = useUserStore()
   if (to.name === PageEnum.BASE_LOGIN_NAME) {
     const user = await userStore.getLoginUser()
     if (user) {
-      return { path: to.query.redirect || PageEnum.BASE_HOME }
+      // return { path: to.query.redirect || PageEnum.BASE_HOME }
+      next({ path: (to.query.redirect as string) ?? PageEnum.BASE_HOME })
     }
-    return
+    next()
   }
   if (!to.meta.noAuth) {
     const user = await userStore.getLoginUser()
     if (!user) {
-      return { path: PageEnum.BASE_LOGIN, query: { redirect: to.fullPath } }
+      // return { path: PageEnum.BASE_LOGIN, query: { redirect: to.fullPath } }
+      next({ path: PageEnum.BASE_LOGIN, query: { redirect: to.fullPath } })
     }
     if (!userStore.menus || !userStore.menus.length) {
       const routers = (await menuToRouter(await userStore.getUserMenus())) || []
       for (const r of routers) {
-        await router.addRoute(r)
+        router.addRoute(r)
       }
       const { fullPath, query } = to
-      return { path: fullPath, query, replace: true }
+      // return { path: fullPath, query, replace: true }
+      next({ path: fullPath, query, replace: true })
     }
   }
-  return
+  next()
 })
 
 router.afterEach(() => {

@@ -3,6 +3,7 @@ import { CommonApi } from '@/api/common'
 import { router } from '@/router'
 import { cloneDeep } from 'lodash-es'
 import { useCacheStore } from '@/store/modules/cache'
+import { UserMenu } from '@/api/common/types'
 
 const nullState: UserState = {
   token: null,
@@ -45,7 +46,7 @@ export const useUserStore = defineStore('user', {
         return null
       }
     },
-    async getUserMenus() {
+    async getUserMenus(): Promise<UserMenu[]> {
       if (this.menus && this.menus.length) {
         return this.menus
       }
@@ -54,7 +55,7 @@ export const useUserStore = defineStore('user', {
         this.menus = menus
         return menus
       } catch (error) {
-        return null
+        return []
       }
     },
     async doLogout(remote = true) {

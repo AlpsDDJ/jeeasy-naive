@@ -13,7 +13,7 @@ export const router = createRouter({
 })
 
 export async function setupRouter(app: App) {
-  await app.use(router)
+  app.use(router)
   // 创建路由守卫
   // createRouterGuards(router)
 }
