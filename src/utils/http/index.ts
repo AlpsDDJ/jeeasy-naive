@@ -3,6 +3,7 @@ import type { AxiosInstance } from 'axios'
 import { BASE_URL, TIME_OUT } from '@/utils/http/config'
 import { setupRequest } from '@/utils/http/interceptors/request'
 import { setupResponse } from '@/utils/http/interceptors/response'
+import { HttpRequest } from 'easy-descriptor'
 
 const http: AxiosInstance = axios.create({
   baseURL: BASE_URL,
@@ -15,7 +16,7 @@ setupResponse(http)
 export default http
 type HttpRequestParam<T = any, P = any> = Parameters<HttpRequest<T, P>>
 
-export function httpRequest<T = any, P = any>(...[data, config = {}]: HttpRequestParam<T, P>): ReturnType<HttpRequest<T, P>> {
+export function httpRequest<T = any, P = any>(...[data, config = {}]: HttpRequestParam<T, P>): ReturnType<HttpRequest<R<T>, P>> {
   const method = config.method?.toUpperCase() || 'GET'
   config.method = method
   if (data) {

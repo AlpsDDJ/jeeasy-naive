@@ -1,4 +1,3 @@
-import type { HttpRequest } from 'easy-descriptor'
 import { Api, Post } from 'easy-descriptor'
 import { fetchEventSource } from '@microsoft/fetch-event-source'
 import { FetchEventSourceInit } from '@microsoft/fetch-event-source/lib/cjs/fetch'
@@ -29,7 +28,7 @@ class AiChatApi {
    * CommonApi.login()
    */
   @Post('/ai/chat', { timeout: 0 })
-  static chat: HttpRequest<R<ChatMessageResp>, ChatMessageType>
+  static chat: HttpReq<ChatMessageResp, ChatMessageType>
 }
 
 export const sseChat = (data: ChatMessageType, consfig?: Partial<FetchEventSourceInit>) => {

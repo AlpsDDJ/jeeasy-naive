@@ -6,7 +6,7 @@
       </template>
       <e-table ref="tableRef" v-bind="tableProps" :actions="rowActions">
         <template #toolBarEnd>
-          <n-button secondary type="success" @click="genAiModalRef.show()">
+          <n-button secondary type="success" @click="genAiModalRef!.show()">
             <template #icon>
               <Icon icon-name="InfiniteOutline" />
             </template>
@@ -56,7 +56,7 @@
         </e-form>
       </template>
     </e-model>
-    <e-form ref="mFormRef" v-bind="mFormProps" :before-submit="handleGenSubmit" ok-btn="预览">
+    <e-form ref="mFormRef" v-bind="mFormProps" :before-submit="handleGenSubmit" ok-btn="预览" title="生成代码">
       <n-form-item label="生成文件">
         <e-dict-input v-model:value="checkedFileTypes" component="checkbox" multiple code="#gen_template" :query-params="{ templateType: 'default' }" />
       </n-form-item>
@@ -102,7 +102,8 @@
   import { FormTypeEnum } from 'easy-descriptor'
   import { commonFields } from '@/views/gen/table/commonFields'
   import GenAiModal from './comp/GenAiModal.vue'
-  import GenPreview from '@/views/gen/table/comp/GenPreview.vue'
+  import GenPreview from './comp/GenPreview.vue'
+  import { useCompRef } from '@/hooks/useCompRef'
 
   defineOptions({
     name: 'GenTableList'
@@ -113,8 +114,8 @@
   const tableFields = ref<GenTableField[]>([])
   const tableIndexs = ref<GenTableIndex[]>([])
 
-  const genAiModalRef = ref()
-  const genPreviewRef = ref()
+  const genAiModalRef = useCompRef(GenAiModal)
+  const genPreviewRef = useCompRef(GenPreview)
 
   const columnNameOptions = computed(() => (rowIndex: number) => {
     const name = tableFields.value[rowIndex].columnName
@@ -306,7 +307,7 @@
   const handleGenSubmit: FormatFormData<GenModule> = async () => {
     console.log('currTable.value ---> ', currTable.value)
     const module = genData.value
-    const { name: tableName = '' } = currTable.value!
+    const { name: tableName = '', summary } = currTable.value!
     const javaFileName = upperFirst(camelCase(tableName))
     const moduleName = camelCase(tableName.substring(tableName.indexOf('_') + 1))
     const getOutFileName = (type: string, pkg: string) => {
@@ -354,7 +355,7 @@
     const resp = await GeneratorApi.generator(data)
     genPreviewRef.value?.open({
       files: resp.data,
-      name: module.name
+      name: summary ?? ''
     })
     return Promise.reject()
   }

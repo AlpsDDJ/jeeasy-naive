@@ -69,6 +69,8 @@
   import type { FieldOption, FormType, IFormData, TreeField } from 'easy-descriptor'
   import { EzModelOptions, FormTypeEnum } from 'easy-descriptor'
   import { EzFieldOption } from '@/hooks/useModel/types'
+  import { useCompRef } from '@/hooks/useCompRef'
+  import { NForm } from 'naive-ui'
 
   defineOptions({
     name: 'ETable'
@@ -86,7 +88,8 @@
     autoLoad: true,
     dataKey: 'id'
   })
-  const tableEditFormRef = ref()
+
+  const tableEditFormRef = useCompRef(NForm)
   const checkedRowKeys = defineModel<string[]>('checkedRowKeys', { default: () => [] })
 
   const modelState = ref<EzModelOptions<T>>(props.modelOptions)

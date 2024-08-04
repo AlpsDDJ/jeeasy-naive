@@ -2,25 +2,15 @@
   import { useDrawer } from '@/hooks/useDrawer'
   import { UseDrawerExpose } from '@/hooks/useDrawer/types'
   import { downloadFile, downloadZip, strToBlob } from '@/utils/download'
-
-  type GenPreviewFile = {
-    name: string
-    content: string
-    outputName: string
-  }
-
-  type GenPreviewProps = {
-    name: string
-    files: GenPreviewFile[]
-  }
+  import { GenPreviewProps } from '@/views/gen/table/model'
 
   defineOptions({
     name: 'GenPreview'
   })
   const { isShow, data, open, close } = useDrawer<GenPreviewProps>()
 
-  const codeType = computed<string>(() => (fileName: string) => {
-    const fileExt = fileName.split('.')[1]
+  const codeType = computed(() => (fileName: string) => {
+    const fileExt: string = fileName.split('.')[1]
     switch (fileExt) {
       case 'js':
         return 'javascript'
@@ -78,7 +68,7 @@
 <template>
   <n-drawer v-model:show="isShow" width="60%" :mask-closable="false">
     <n-drawer-content>
-      <template #header> 代码预览 </template>
+      <template #header> 代码预览 {{ data?.name ? ` - [ ${data?.name} ]` : '' }} </template>
       <n-tabs type="line" animated class="h-full">
         <n-tab-pane v-for="file in data?.files" :key="file.name" :name="file.name" class="h-full">
           <n-card style="height: calc(100% - 15px)" content-style="padding: 8px; height: calc(100% - 25px);">

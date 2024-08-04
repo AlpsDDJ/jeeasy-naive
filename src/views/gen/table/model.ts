@@ -424,10 +424,20 @@ export class GenTableIndex extends BaseModel {
   indexType?: string
 }
 
+export type GenPreviewFile = {
+  name: string
+  content: string
+  outputName: string
+}
+
+export type GenPreviewProps = {
+  name: string
+  files: GenPreviewFile[]
+}
 @Api('/gen')
 export class GeneratorApi extends BaseApi {
   @Post('/generator')
-  static generator: HttpRequest<string, GeneratorData>
+  static generator: HttpRequest<R<GenPreviewFile[]>, GeneratorData>
 }
 
 export interface GenAiForm {

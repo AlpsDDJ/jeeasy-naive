@@ -20,6 +20,7 @@
   import { initModel } from '@/components/ext'
   import { ButtonActions } from '@/components/ActionButton/commonActions'
   import AuthModal from '@/views/system/role/comp/AuthModal.vue'
+  import { useCompRef } from '@/hooks/useCompRef'
 
   defineOptions({
     name: 'SysRoleList'
@@ -29,10 +30,10 @@
   const { tableRef, formRef, queryRef } = refs
   const { tableProps, formProps, queryProps } = commProps
 
-  const authModalRef = ref()
+  const authModalRef = useCompRef(AuthModal)
 
   const handleAuth = ({ row: { id: roleId } }) => {
-    authModalRef.value.open(roleId)
+    authModalRef.value!.open(roleId)
   }
 
   const rowActions: ButtonActions = [
