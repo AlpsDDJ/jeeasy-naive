@@ -6,13 +6,13 @@ import { BaseModel } from '@/hooks/useModel'
  */
 @Model('SysTableDict')
 export default class SysTableDict extends BaseModel {
-  /**
-   * 版本
-   */
-  @Field('版本')
-  @Field.Hidden()
-  @Field.DataType(FormDataTypeEnum.STRING)
-  version?: string
+  // /**
+  //  * 版本
+  //  */
+  // @Field('版本')
+  // @Field.Hidden()
+  // @Field.DataType(FormDataTypeEnum.STRING)
+  // version?: string
   /**
    * 启用标记
    */
