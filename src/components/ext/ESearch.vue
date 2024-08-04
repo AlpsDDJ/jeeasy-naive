@@ -1,8 +1,16 @@
 <template>
-  <n-form ref="nFormRef" v-bind="{ ...defaultFormProps, ...formProps }" :model="queryData" label-placement="left" :show-feedback="false" inline>
+  <n-form
+    ref="nFormRef"
+    v-bind="{ ...defaultFormProps, ...formProps }"
+    :model="queryData"
+    label-placement="left"
+    :show-feedback="false"
+    inline
+    @keyup.enter="loadData"
+  >
     <n-grid :cols="cols" :y-gap="8" :x-gap="12" :collapsed="queryCollapsed">
       <n-form-item-gi v-for="item in queryScheme" :key="item.path || item.key" :label="item.label">
-        <component :is="createInpComp(item)" v-model="queryData[item.path || item.key || '']" />
+        <component :is="createInpComp(item)" v-if="queryData" v-model="queryData[item.path || item.key || '']" />
       </n-form-item-gi>
       <n-form-item-gi suffix class="query-action">
         <action-button :actions="['query', 'reset']" @action:query="loadData" @action:reset="resetHandle">
@@ -58,7 +66,9 @@
   const queryData = ref<IFormData<T>>()
   const queryCollapsed = defineModel<boolean>('collapsed', { default: true })
   const queryScheme = computed<FieldOption<T>[]>(() =>
-    Object.values(modelState.fields || []).filter(({ hidden }) => !(hidden === true || (hidden && hidden?.includes('query'))))
+    Object.values(modelState.fields || []).filter(
+      ({ hidden, key }) => !(hidden === true || (hidden && hidden?.includes('query'))) && !(key as string).startsWith('$')
+    )
   )
 
   const createInpComp = (field: FieldOption<T>) => {

@@ -27,17 +27,17 @@
           :loading="loading"
           :data="tableData"
           :pagination="showPage === false ? false : pagination"
-          :row-key="(row) => row[dateKey ?? 'id'] ?? row?.toString()"
+          :row-key="(row: T) => row[dateKey ?? 'id'] ?? row?.toString()"
           :remote="true"
           :tree="!!treeField"
-          @update:checked-row-keys="(val) => (checkedRowKeys = val as string[])"
+          @update:checked-row-keys="(val: string[]) => (checkedRowKeys = val)"
           @update:page="
-            (page) => {
+            (page: number) => {
               pageChangeHandle({ page })
             }
           "
           @update:page-size="
-            (pageSize) => {
+            (pageSize: number) => {
               pageChangeHandle({ pageSize })
             }
           "

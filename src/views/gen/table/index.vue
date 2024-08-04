@@ -256,14 +256,14 @@
 
   const rowActions: ButtonActions = [
     'edit',
+    'delete',
     {
       action: 'auth',
       html: '代码生成',
       text: true,
       type: 'warning',
       handle: handleGen
-    },
-    'delete'
+    }
   ]
   const genData = ref<IFormData<GenModule>>({})
   const checkedFileTypes = ref<string[]>([

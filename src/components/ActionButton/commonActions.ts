@@ -11,6 +11,7 @@ export type ActionButtonProps = {
   actions?: ButtonActions
   data?: any
   align?: 'stretch' | 'baseline' | 'start' | 'end' | 'center' | 'flex-end' | 'flex-start'
+  icon?: string
   // index: number
 }
 
@@ -30,18 +31,21 @@ export const commonActions: ActionOption[] = [
   {
     action: 'query',
     html: '查询',
+    icon: 'Search',
     secondary: true,
     type: 'primary'
   },
   {
     action: 'reset',
     html: '重置',
+    icon: 'Reload',
     secondary: true,
     type: 'tertiary'
   },
   {
     action: 'add',
     html: '添加',
+    icon: 'Add',
     secondary: true,
     type: 'primary'
   },
@@ -49,6 +53,7 @@ export const commonActions: ActionOption[] = [
     action: 'edit',
     html: '编辑',
     text: true,
+    icon: 'antd:EditTwotone',
     type: 'primary',
     isDisabled: true,
     autoShow: true
@@ -60,6 +65,7 @@ export const commonActions: ActionOption[] = [
     action: 'delete',
     html: '删除',
     text: true,
+    icon: 'TrashOutline',
     type: 'error',
     autoShow: true
     // handle: (row, index) => {
@@ -69,6 +75,7 @@ export const commonActions: ActionOption[] = [
   {
     action: 'view',
     html: '查看',
+    icon: 'EyeOutline',
     text: true,
     type: 'primary',
     autoShow: false

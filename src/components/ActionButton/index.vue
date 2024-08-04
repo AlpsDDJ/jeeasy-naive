@@ -7,6 +7,9 @@
         v-bind="{ ...opt, ...$attrs }"
         @click="opt.handle ? opt.handle(data) : $emit(`action:${opt.action}`, data)"
       >
+        <template v-if="opt.icon" #icon>
+          <Icon :icon-name="opt.icon" />
+        </template>
         {{ opt.html }}
       </n-button>
     </template>
