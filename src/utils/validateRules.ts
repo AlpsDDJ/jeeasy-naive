@@ -1,11 +1,12 @@
 import { FormItemRule } from 'naive-ui'
+import { flatten } from 'lodash-es'
 
 const passWordValidator = (str: string) => {
   const pattern = /^(?=.*[0-9].*)(?=.*[A-Z].*)(?=.*[a-z].*)(?=.*[`~!@#$%^&*()_\-+=<>.?:"{}/[\]';,\\|].*).{8,16}$/
   return pattern.test(str)
 }
 
-export const Rules = {
+const RuleMap: Record<string, FormItemRule[] | FormItemRule> = {
   required: [
     {
       required: true,
@@ -91,3 +92,9 @@ export const Rules = {
 // export const getRules = (...keys: (keyof typeof Rules)[]): EFormItemRule[] => {
 //   return keys.map((key) => Rules[key]) as EFormItemRule[]
 // }
+
+type RuleKey = keyof typeof RuleMap
+
+export const rules = (...keys: RuleKey[]): FormItemRule[] => {
+  return flatten(keys.map((key: RuleKey) => RuleMap[key]))
+}
